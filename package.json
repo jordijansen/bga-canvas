@@ -1,0 +1,24 @@
+{
+  "name": "canvas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "canvas.js",
+  "scripts": {
+    "build:ts": "tsc",
+    "build:scss": "sass src/Canvas.scss canvas.css",
+    "watch:ts": "tsc --watch",
+    "watch:scss": "sass --watch src/Canvas.scss canvas.css",
+    "watch": "npm run watch:ts & npm run watch:scss",
+    "build": "npm run build:ts & npm run build:scss"
+  },
+  "author": "Jordi Jansen",
+  "license": "ISC",
+  "dependencies": {
+    "bga-zoom": "thoun/bga-zoom#0.1.0",
+    "bga-cards": "thoun/bga-cards#2.0.2"
+  },
+  "devDependencies": {
+    "sass": "^1.62.1",
+    "typescript": "^5.0.4"
+  }
+}
