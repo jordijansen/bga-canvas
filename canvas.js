@@ -1827,6 +1827,8 @@ function sortFunction() {
         return 0;
     };
 }
+var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
+var BOARD_WIDTH = 2000;
 var ANIMATION_MS = 500;
 var TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 var LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
@@ -1846,18 +1848,46 @@ var Canvas = /** @class */ (function () {
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
     Canvas.prototype.setup = function (gamedatas) {
+        var _this = this;
         log("Starting game setup");
+        var maxZoomLevel = this.determineMaxZoomLevel();
         this.zoomManager = new ZoomManager({
             element: document.getElementById('canvas-table'),
             smooth: true,
+            zoomLevels: this.getZoomLevels(maxZoomLevel),
+            defaultZoom: maxZoomLevel,
             zoomControls: {
-                color: 'black',
+                color: 'white',
             },
-            localStorageZoomKey: LOCAL_STORAGE_ZOOM_KEY
+            onDimensionsChange: function (zoom) {
+                if (_this.zoomManager) {
+                    var newMaxZoomLevel = _this.determineMaxZoomLevel();
+                    // @ts-ignore
+                    var currentMaxZoomLevel = _this.zoomManager.zoomLevels[_this.zoomManager.zoomLevels.length - 1];
+                    if (newMaxZoomLevel != currentMaxZoomLevel) {
+                        // @ts-ignore
+                        _this.zoomManager.zoomLevels = _this.getZoomLevels(newMaxZoomLevel);
+                        _this.zoomManager.setZoom(newMaxZoomLevel);
+                    }
+                }
+            },
         });
         log('gamedatas', gamedatas);
         this.setupNotifications();
         log("Ending game setup");
+    };
+    Canvas.prototype.determineMaxZoomLevel = function () {
+        var bodycoords = dojo.marginBox("canvas-overall");
+        var contentWidth = bodycoords.w;
+        var rowWidth = BOARD_WIDTH;
+        if (contentWidth >= rowWidth) {
+            return 1;
+        }
+        return contentWidth / rowWidth;
+    };
+    Canvas.prototype.getZoomLevels = function (maxZoomLevels) {
+        var increments = maxZoomLevels / 5;
+        return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels];
     };
     ///////////////////////////////////////////////////
     //// Game & client states
@@ -1949,7 +1979,7 @@ var Canvas = /** @class */ (function () {
         var _this = this;
         log('notifications subscriptions setup');
         var notifs = [
-            ['cancelLastMoves', ANIMATION_MS],
+        // ['cancelLastMoves', ANIMATION_MS],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, "notif_".concat(notif[0]));

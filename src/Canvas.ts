@@ -7,6 +7,9 @@ declare const g_gamethemeurl;
 declare const g_replayFrom;
 declare const g_archive_mode;
 
+const ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
+
+const BOARD_WIDTH = 2000;
 const ANIMATION_MS = 500;
 const TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 const LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
@@ -37,19 +40,48 @@ class Canvas implements CanvasGame {
     public setup(gamedatas: CanvasGameData) {
         log( "Starting game setup" );
 
+        const maxZoomLevel = this.determineMaxZoomLevel();
         this.zoomManager = new ZoomManager({
             element: document.getElementById('canvas-table'),
             smooth: true,
+            zoomLevels: this.getZoomLevels(maxZoomLevel),
+            defaultZoom: maxZoomLevel,
             zoomControls: {
-                color: 'black',
+                color: 'white',
             },
-            localStorageZoomKey: LOCAL_STORAGE_ZOOM_KEY
+            onDimensionsChange: (zoom) => {
+                if (this.zoomManager) {
+                    const newMaxZoomLevel = this.determineMaxZoomLevel();
+                    // @ts-ignore
+                    const currentMaxZoomLevel = this.zoomManager.zoomLevels[this.zoomManager.zoomLevels.length -1];
+                    if (newMaxZoomLevel != currentMaxZoomLevel) {
+                        // @ts-ignore
+                        this.zoomManager.zoomLevels = this.getZoomLevels(newMaxZoomLevel);
+                        this.zoomManager.setZoom(newMaxZoomLevel)
+                    }
+                }
+            },
         });
 
         log('gamedatas', gamedatas);
 
         this.setupNotifications();
         log( "Ending game setup" );
+    }
+    private determineMaxZoomLevel () {
+        const bodycoords = dojo.marginBox("canvas-overall");
+        const contentWidth = bodycoords.w;
+        const rowWidth = BOARD_WIDTH;
+
+        if (contentWidth >= rowWidth) {
+            return 1;
+        }
+        return contentWidth / rowWidth;
+    }
+
+    private getZoomLevels(maxZoomLevels: number) {
+        const increments = maxZoomLevels / 5;
+        return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels]
     }
 
     ///////////////////////////////////////////////////
@@ -164,7 +196,7 @@ class Canvas implements CanvasGame {
         log( 'notifications subscriptions setup' );
 
         const notifs = [
-            ['cancelLastMoves', ANIMATION_MS],
+            // ['cancelLastMoves', ANIMATION_MS],
         ];
 
         notifs.forEach((notif) => {

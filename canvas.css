@@ -341,4 +341,33 @@ body > .card {
   top: calc((var(--height) + var(--shift)) * var(--order));
 }
 
+#bga-zoom-controls {
+  display: flex;
+  flex-direction: column-reverse;
+  margin-top: 5px;
+}
+
+#canvas-table #canvas-board-wrapper {
+  display: flex;
+  justify-content: center;
+}
+#canvas-table #canvas-board-wrapper #canvas-board {
+  background-image: url(img/canvas-board.png);
+  background-repeat: no-repeat;
+  width: 2000px;
+  height: 885px;
+  filter: drop-shadow(1px 1px 1px black);
+  -webkit-filter: drop-shadow(1px 1px 2px black);
+  position: relative;
+  border-radius: 5px;
+}
+
+#canvas-overall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
 /*# sourceMappingURL=canvas.css.map */

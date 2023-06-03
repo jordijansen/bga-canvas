@@ -27,8 +27,13 @@
 
 
 <div id="canvas-table">
-    Canvas
+    <div id="canvas-board-wrapper">
+        <div id="canvas-board">
+        </div>
+    </div>
 </div>
+
+<div id="canvas-overall"></div>
 
 
 <script type="text/javascript">
