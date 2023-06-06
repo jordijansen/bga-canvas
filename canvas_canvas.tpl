@@ -29,8 +29,15 @@
 <div id="canvas-table">
     <div id="canvas-board-wrapper">
         <div id="canvas-board">
+            <div id="scoring-card-display">
+            </div>
+            <div id="art-card-display">
+            </div>
+            <div id="art-card-deck">
+            </div>
         </div>
     </div>
+    <div id="player-areas"></div>
 </div>
 
 <div id="canvas-overall"></div>

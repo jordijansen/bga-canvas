@@ -341,6 +341,406 @@ body > .card {
   top: calc((var(--height) + var(--shift)) * var(--order));
 }
 
+.canvas-art-card {
+  display: inline-block;
+  position: relative;
+  width: 250px;
+  height: 425px;
+}
+.canvas-art-card .card-sides .card-side {
+  border-radius: 10px;
+  width: 250px;
+  height: 425px;
+}
+.canvas-art-card .card-sides .card-side > * {
+  pointer-events: none;
+  user-select: none;
+}
+.canvas-art-card .card-sides .card-side.back {
+  background-image: url("img/canvas-art-card-back.png");
+}
+.canvas-art-card .card-sides .card-side.front {
+  background-size: auto 600%;
+  background-image: url("img/canvas-art-cards.png");
+}
+.canvas-art-card .card-sides .card-side.front[data-type="1"] {
+  background-position: 0% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="2"] {
+  background-position: 10% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="3"] {
+  background-position: 20% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="4"] {
+  background-position: 30% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="5"] {
+  background-position: 40% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="6"] {
+  background-position: 50% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="7"] {
+  background-position: 60% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="8"] {
+  background-position: 70% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="9"] {
+  background-position: 80% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="10"] {
+  background-position: 90% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="11"] {
+  background-position: 100% 0%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="12"] {
+  background-position: 0% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="13"] {
+  background-position: 10% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="14"] {
+  background-position: 20% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="15"] {
+  background-position: 30% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="16"] {
+  background-position: 40% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="17"] {
+  background-position: 50% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="18"] {
+  background-position: 60% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="19"] {
+  background-position: 70% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="20"] {
+  background-position: 80% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="21"] {
+  background-position: 90% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="22"] {
+  background-position: 100% 20%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="23"] {
+  background-position: 0% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="24"] {
+  background-position: 10% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="25"] {
+  background-position: 20% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="26"] {
+  background-position: 30% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="27"] {
+  background-position: 40% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="28"] {
+  background-position: 50% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="29"] {
+  background-position: 60% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="30"] {
+  background-position: 70% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="31"] {
+  background-position: 80% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="32"] {
+  background-position: 90% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="33"] {
+  background-position: 100% 40%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="34"] {
+  background-position: 0% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="35"] {
+  background-position: 10% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="36"] {
+  background-position: 20% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="37"] {
+  background-position: 30% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="38"] {
+  background-position: 40% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="39"] {
+  background-position: 50% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="40"] {
+  background-position: 60% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="41"] {
+  background-position: 70% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="42"] {
+  background-position: 80% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="43"] {
+  background-position: 90% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="44"] {
+  background-position: 100% 60%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="45"] {
+  background-position: 0% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="46"] {
+  background-position: 10% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="47"] {
+  background-position: 20% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="48"] {
+  background-position: 30% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="49"] {
+  background-position: 40% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="50"] {
+  background-position: 50% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="51"] {
+  background-position: 60% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="52"] {
+  background-position: 70% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="53"] {
+  background-position: 80% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="54"] {
+  background-position: 90% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="55"] {
+  background-position: 100% 80%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="56"] {
+  background-position: 0% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="57"] {
+  background-position: 10% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="58"] {
+  background-position: 20% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="59"] {
+  background-position: 30% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="60"] {
+  background-position: 40% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="61"] {
+  background-position: 50% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="62"] {
+  background-position: 60% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="63"] {
+  background-position: 70% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="64"] {
+  background-position: 80% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="65"] {
+  background-position: 90% 100%;
+}
+.canvas-art-card .card-sides .card-side.front[data-type="66"] {
+  background-position: 100% 100%;
+}
+
+.canvas-background-card {
+  display: inline-block;
+  position: relative;
+  width: 250px;
+  height: 425px;
+}
+.canvas-background-card .card-sides .card-side {
+  border-radius: 10px;
+  width: 250px;
+  height: 425px;
+}
+.canvas-background-card .card-sides .card-side > * {
+  pointer-events: none;
+  user-select: none;
+}
+.canvas-background-card .card-sides .card-side.front {
+  background-size: auto 300%;
+  background-image: url("img/canvas-background-cards.png");
+}
+.canvas-background-card .card-sides .card-side.front[data-type="1"] {
+  background-position: 0% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="2"] {
+  background-position: 16.6666666667% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="3"] {
+  background-position: 33.3333333333% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="4"] {
+  background-position: 50% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="5"] {
+  background-position: 66.6666666667% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="6"] {
+  background-position: 83.3333333333% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="7"] {
+  background-position: 100% 0%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="8"] {
+  background-position: 0% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="9"] {
+  background-position: 16.6666666667% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="10"] {
+  background-position: 33.3333333333% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="11"] {
+  background-position: 50% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="12"] {
+  background-position: 66.6666666667% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="13"] {
+  background-position: 83.3333333333% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="14"] {
+  background-position: 100% 50%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="15"] {
+  background-position: 0% 100%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="16"] {
+  background-position: 16.6666666667% 100%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="17"] {
+  background-position: 33.3333333333% 100%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="18"] {
+  background-position: 50% 100%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="19"] {
+  background-position: 66.6666666667% 100%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="20"] {
+  background-position: 83.3333333333% 100%;
+}
+.canvas-background-card .card-sides .card-side.front[data-type="21"] {
+  background-position: 100% 100%;
+}
+
+.canvas-scoring-card {
+  display: inline-block;
+  position: relative;
+  width: 425px;
+  height: 250px;
+}
+.canvas-scoring-card .card-sides .card-side {
+  border-radius: 10px;
+  width: 425px;
+  height: 250px;
+}
+.canvas-scoring-card .card-sides .card-side > * {
+  pointer-events: none;
+  user-select: none;
+}
+.canvas-scoring-card .card-sides .card-side.back {
+  background-size: auto 400%;
+  background-image: url("img/canvas-scoring-cards-back.png");
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="1"] {
+  background-position: 0% 0%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="2"] {
+  background-position: 50% 0%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="3"] {
+  background-position: 100% 0%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="4"] {
+  background-position: 0% 33.3333333333%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="5"] {
+  background-position: 50% 33.3333333333%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="6"] {
+  background-position: 100% 33.3333333333%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="7"] {
+  background-position: 0% 66.6666666667%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="8"] {
+  background-position: 50% 66.6666666667%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="9"] {
+  background-position: 100% 66.6666666667%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="10"] {
+  background-position: 0% 100%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="11"] {
+  background-position: 50% 100%;
+}
+.canvas-scoring-card .card-sides .card-side.back[data-type="12"] {
+  background-position: 100% 100%;
+}
+.canvas-scoring-card .card-sides .card-side.front {
+  background-size: auto 400%;
+  background-image: url("img/canvas-scoring-cards-front.png");
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="1"] {
+  background-position: 0% 0%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="2"] {
+  background-position: 50% 0%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="3"] {
+  background-position: 100% 0%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="4"] {
+  background-position: 0% 33.3333333333%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="5"] {
+  background-position: 50% 33.3333333333%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="6"] {
+  background-position: 100% 33.3333333333%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="7"] {
+  background-position: 0% 66.6666666667%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="8"] {
+  background-position: 50% 66.6666666667%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="9"] {
+  background-position: 100% 66.6666666667%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="10"] {
+  background-position: 0% 100%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="11"] {
+  background-position: 50% 100%;
+}
+.canvas-scoring-card .card-sides .card-side.front[data-type="12"] {
+  background-position: 100% 100%;
+}
+
 #bga-zoom-controls {
   display: flex;
   flex-direction: column-reverse;
@@ -352,7 +752,7 @@ body > .card {
   justify-content: center;
 }
 #canvas-table #canvas-board-wrapper #canvas-board {
-  background-image: url(img/canvas-board.png);
+  background-image: url("img/canvas-board.png");
   background-repeat: no-repeat;
   width: 2000px;
   height: 885px;
@@ -360,6 +760,30 @@ body > .card {
   -webkit-filter: drop-shadow(1px 1px 2px black);
   position: relative;
   border-radius: 5px;
+}
+#canvas-table #canvas-board-wrapper #canvas-board #art-card-display {
+  height: 425px;
+  position: absolute;
+  top: 407px;
+  margin-left: 53px;
+  width: 1570px;
+  display: flex;
+  gap: 79px;
+}
+#canvas-table #canvas-board-wrapper #canvas-board #scoring-card-display {
+  height: 250px;
+  position: absolute;
+  top: 107px;
+  margin-left: 50px;
+  display: flex;
+  gap: 40px;
+}
+#canvas-table #canvas-board-wrapper #canvas-board #art-card-deck {
+  height: 425px;
+  position: absolute;
+  top: 407px;
+  right: 0;
+  margin-right: 53px;
 }
 
 #canvas-overall {

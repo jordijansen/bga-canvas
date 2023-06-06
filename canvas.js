@@ -1404,6 +1404,158 @@ var VoidStock = /** @class */ (function (_super) {
     };
     return VoidStock;
 }(CardStock));
+/**
+ * A basic stock for a list of cards, based on flex.
+ */
+var LineStock = /** @class */ (function (_super) {
+    __extends(LineStock, _super);
+    /**
+     * @param manager the card manager
+     * @param element the stock element (should be an empty HTML Element)
+     * @param settings a `LineStockSettings` object
+     */
+    function LineStock(manager, element, settings) {
+        var _this = this;
+        var _a, _b, _c, _d;
+        _this = _super.call(this, manager, element, settings) || this;
+        _this.manager = manager;
+        _this.element = element;
+        element.classList.add('line-stock');
+        element.dataset.center = ((_a = settings === null || settings === void 0 ? void 0 : settings.center) !== null && _a !== void 0 ? _a : true).toString();
+        element.style.setProperty('--wrap', (_b = settings === null || settings === void 0 ? void 0 : settings.wrap) !== null && _b !== void 0 ? _b : 'wrap');
+        element.style.setProperty('--direction', (_c = settings === null || settings === void 0 ? void 0 : settings.direction) !== null && _c !== void 0 ? _c : 'row');
+        element.style.setProperty('--gap', (_d = settings === null || settings === void 0 ? void 0 : settings.gap) !== null && _d !== void 0 ? _d : '8px');
+        return _this;
+    }
+    return LineStock;
+}(CardStock));
+/**
+ * A stock with fixed slots (some can be empty)
+ */
+var SlotStock = /** @class */ (function (_super) {
+    __extends(SlotStock, _super);
+    /**
+     * @param manager the card manager
+     * @param element the stock element (should be an empty HTML Element)
+     * @param settings a `SlotStockSettings` object
+     */
+    function SlotStock(manager, element, settings) {
+        var _this = this;
+        var _a, _b;
+        _this = _super.call(this, manager, element, settings) || this;
+        _this.manager = manager;
+        _this.element = element;
+        _this.slotsIds = [];
+        _this.slots = [];
+        element.classList.add('slot-stock');
+        _this.mapCardToSlot = settings.mapCardToSlot;
+        _this.slotsIds = (_a = settings.slotsIds) !== null && _a !== void 0 ? _a : [];
+        _this.slotClasses = (_b = settings.slotClasses) !== null && _b !== void 0 ? _b : [];
+        _this.slotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId);
+        });
+        return _this;
+    }
+    SlotStock.prototype.createSlot = function (slotId) {
+        var _a;
+        this.slots[slotId] = document.createElement("div");
+        this.slots[slotId].dataset.slotId = slotId;
+        this.element.appendChild(this.slots[slotId]);
+        (_a = this.slots[slotId].classList).add.apply(_a, __spreadArray(['slot'], this.slotClasses, true));
+    };
+    /**
+     * Add a card to the stock.
+     *
+     * @param card the card to add
+     * @param animation a `CardAnimation` object
+     * @param settings a `AddCardToSlotSettings` object
+     * @returns the promise when the animation is done (true if it was animated, false if it wasn't)
+     */
+    SlotStock.prototype.addCard = function (card, animation, settings) {
+        var _a, _b;
+        var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
+        if (slotId === undefined) {
+            throw new Error("Impossible to add card to slot : no SlotId. Add slotId to settings or set mapCardToSlot to SlotCard constructor.");
+        }
+        if (!this.slots[slotId]) {
+            throw new Error("Impossible to add card to slot \"".concat(slotId, "\" : slot \"").concat(slotId, "\" doesn't exists."));
+        }
+        var newSettings = __assign(__assign({}, settings), { forceToElement: this.slots[slotId] });
+        return _super.prototype.addCard.call(this, card, animation, newSettings);
+    };
+    /**
+     * Change the slots ids. Will empty the stock before re-creating the slots.
+     *
+     * @param slotsIds the new slotsIds. Will replace the old ones.
+     */
+    SlotStock.prototype.setSlotsIds = function (slotsIds) {
+        var _this = this;
+        if (slotsIds.length == this.slotsIds.length && slotsIds.every(function (slotId, index) { return _this.slotsIds[index] === slotId; })) {
+            // no change
+            return;
+        }
+        this.removeAll();
+        this.element.innerHTML = '';
+        this.slotsIds = slotsIds !== null && slotsIds !== void 0 ? slotsIds : [];
+        this.slotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId);
+        });
+    };
+    SlotStock.prototype.canAddCard = function (card, settings) {
+        var _a, _b;
+        if (!this.contains(card)) {
+            return true;
+        }
+        else {
+            var currentCardSlot = this.getCardElement(card).closest('.slot').dataset.slotId;
+            var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
+            return currentCardSlot != slotId;
+        }
+    };
+    /**
+     * Swap cards inside the slot stock.
+     *
+     * @param cards the cards to swap
+     * @param settings for `updateInformations` and `selectable`
+     */
+    SlotStock.prototype.swapCards = function (cards, settings) {
+        var _this = this;
+        if (!this.mapCardToSlot) {
+            throw new Error('You need to define SlotStock.mapCardToSlot to use SlotStock.swapCards');
+        }
+        var promises = [];
+        var elements = cards.map(function (card) { return _this.manager.getCardElement(card); });
+        var elementsRects = elements.map(function (element) { return element.getBoundingClientRect(); });
+        var cssPositions = elements.map(function (element) { return element.style.position; });
+        // we set to absolute so it doesn't mess with slide coordinates when 2 div are at the same place
+        elements.forEach(function (element) { return element.style.position = 'absolute'; });
+        cards.forEach(function (card, index) {
+            var _a, _b;
+            var cardElement = elements[index];
+            var promise;
+            var slotId = (_a = _this.mapCardToSlot) === null || _a === void 0 ? void 0 : _a.call(_this, card);
+            _this.slots[slotId].appendChild(cardElement);
+            cardElement.style.position = cssPositions[index];
+            var cardIndex = _this.cards.findIndex(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
+            if (cardIndex !== -1) {
+                _this.cards.splice(cardIndex, 1, card);
+            }
+            if ((_b = settings === null || settings === void 0 ? void 0 : settings.updateInformations) !== null && _b !== void 0 ? _b : true) { // after splice/push
+                _this.manager.updateCardInformations(card);
+            }
+            _this.removeSelectionClassesFromElement(cardElement);
+            promise = _this.animationFromElement(cardElement, elementsRects[index], {});
+            if (!promise) {
+                console.warn("CardStock.animationFromElement didn't return a Promise");
+                promise = Promise.resolve(false);
+            }
+            promise.then(function () { var _a; return _this.setSelectableCard(card, (_a = settings === null || settings === void 0 ? void 0 : settings.selectable) !== null && _a !== void 0 ? _a : true); });
+            promises.push(promise);
+        });
+        return Promise.all(promises);
+    };
+    return SlotStock;
+}(LineStock));
 var SlideAndBackAnimation = /** @class */ (function (_super) {
     __extends(SlideAndBackAnimation, _super);
     function SlideAndBackAnimation(manager, element, tempElement) {
@@ -1827,11 +1979,183 @@ function sortFunction() {
         return 0;
     };
 }
+var determineMaxZoomLevel = function () {
+    var bodycoords = dojo.marginBox("canvas-overall");
+    var contentWidth = bodycoords.w;
+    var rowWidth = BOARD_WIDTH;
+    if (contentWidth >= rowWidth) {
+        return 1;
+    }
+    return contentWidth / rowWidth;
+};
+var getZoomLevels = function (maxZoomLevels) {
+    var increments = maxZoomLevels / 5;
+    return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels];
+};
+var AutoZoomManager = /** @class */ (function (_super) {
+    __extends(AutoZoomManager, _super);
+    function AutoZoomManager(elementId) {
+        var _this = this;
+        var zoomLevels = getZoomLevels(determineMaxZoomLevel());
+        _this = _super.call(this, {
+            element: document.getElementById(elementId),
+            smooth: true,
+            zoomLevels: zoomLevels,
+            defaultZoom: zoomLevels[zoomLevels.length - 1],
+            zoomControls: {
+                color: 'white',
+            },
+            onDimensionsChange: function (zoom) {
+                if (_this) {
+                    var newMaxZoomLevel = determineMaxZoomLevel();
+                    // @ts-ignore
+                    var currentMaxZoomLevel = _this.zoomLevels[_this.zoomLevels.length - 1];
+                    if (newMaxZoomLevel != currentMaxZoomLevel) {
+                        // @ts-ignore
+                        _this.zoomLevels = _this.getZoomLevels(newMaxZoomLevel);
+                        _this.setZoom(newMaxZoomLevel);
+                    }
+                }
+            },
+        }) || this;
+        return _this;
+    }
+    return AutoZoomManager;
+}(ZoomManager));
+var ArtCardManager = /** @class */ (function (_super) {
+    __extends(ArtCardManager, _super);
+    function ArtCardManager(canvasGame) {
+        var _this = _super.call(this, canvasGame, {
+            getId: function (card) { return "canvas-art-card-".concat(card.id); },
+            setupDiv: function (card, div) {
+                div.classList.add('canvas-art-card');
+                div.dataset.id = '' + card.id;
+            },
+            setupFrontDiv: function (card, div) {
+                div.id = "".concat(_this.getId(card), "-front");
+                div.dataset.type = '' + card.type;
+            },
+            isCardVisible: function (card) { return !!card.type; },
+            cardWidth: CARD_WIDTH,
+            cardHeight: CARD_HEIGHT,
+        }) || this;
+        _this.canvasGame = canvasGame;
+        return _this;
+    }
+    ArtCardManager.prototype.setUp = function (gameData) {
+        var _this = this;
+        this.deck = new Deck(this, $('art-card-deck'), {
+            cardNumber: 60,
+            topCard: { id: -1 }
+        });
+        this.display = new SlotStock(this, $('art-card-display'), {
+            mapCardToSlot: function (card) { return "art-card-display-slot-".concat(card.location_arg); },
+            slotClasses: ['art-card-display-slot'],
+            slotsIds: ['art-card-display-slot-1', 'art-card-display-slot-2', 'art-card-display-slot-3', 'art-card-display-slot-4', 'art-card-display-slot-5']
+        });
+        gameData.display.forEach(function (card) { return _this.display.addCard(card); });
+    };
+    return ArtCardManager;
+}(CardManager));
+var BackgroundCardManager = /** @class */ (function (_super) {
+    __extends(BackgroundCardManager, _super);
+    function BackgroundCardManager(canvasGame) {
+        var _this = _super.call(this, canvasGame, {
+            getId: function (card) { return "canvas-background-card-".concat(card.id); },
+            setupDiv: function (card, div) {
+                div.classList.add('canvas-background-card');
+                div.dataset.id = '' + card.id;
+            },
+            setupFrontDiv: function (card, div) {
+                div.id = "".concat(_this.getId(card), "-front");
+                div.dataset.type = '' + card.type;
+            },
+            isCardVisible: function (card) { return !!card.type; },
+            cardWidth: CARD_WIDTH,
+            cardHeight: CARD_HEIGHT,
+        }) || this;
+        _this.canvasGame = canvasGame;
+        _this.players = {};
+        return _this;
+    }
+    BackgroundCardManager.prototype.setUp = function (gameData) {
+        var _this = this;
+        var _loop_3 = function (playersKey) {
+            this_1.players[Number(playersKey)] = new LineStock(this_1, $("player-background-".concat(playersKey)), {});
+            gameData.players[playersKey].backgroundCards.forEach(function (card) { return _this.players[Number(playersKey)].addCard(card); });
+        };
+        var this_1 = this;
+        for (var playersKey in gameData.players) {
+            _loop_3(playersKey);
+        }
+    };
+    return BackgroundCardManager;
+}(CardManager));
+var ScoringCardManager = /** @class */ (function (_super) {
+    __extends(ScoringCardManager, _super);
+    function ScoringCardManager(canvasGame) {
+        var _this = _super.call(this, canvasGame, {
+            getId: function (card) { return "canvas-scoring-card-".concat(card.id); },
+            setupDiv: function (card, div) {
+                div.classList.add('canvas-scoring-card');
+                div.dataset.id = '' + card.id;
+            },
+            setupFrontDiv: function (card, div) {
+                div.id = "".concat(_this.getId(card), "-front");
+                div.dataset.type = '' + card.type;
+            },
+            setupBackDiv: function (card, div) {
+                div.id = "".concat(_this.getId(card), "-back");
+                div.dataset.type = '' + card.type;
+            },
+            cardWidth: CARD_WIDTH,
+            cardHeight: CARD_HEIGHT,
+        }) || this;
+        _this.canvasGame = canvasGame;
+        return _this;
+    }
+    ScoringCardManager.prototype.setUp = function (gameData) {
+        var _this = this;
+        this.display = new SlotStock(this, $('scoring-card-display'), {
+            mapCardToSlot: function (card) { return "scoring-card-display-slot-".concat(card.location); },
+            slotClasses: ['scoring-card-display-slot'],
+            slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple'],
+        });
+        this.display.onCardClick = function (card) { return _this.flipCard(card); };
+        gameData.scoringCards.forEach(function (card) { return _this.display.addCard(card); });
+    };
+    return ScoringCardManager;
+}(CardManager));
+var PlayerManager = /** @class */ (function () {
+    function PlayerManager(game) {
+        this.game = game;
+    }
+    PlayerManager.prototype.setUp = function (gameData) {
+        var playerAreas = [];
+        for (var playerId in gameData.players) {
+            var player = gameData.players[playerId];
+            var playerArea = this.createPlayerArea(player);
+            if (Number(player.id) === this.game.getPlayerId()) {
+                playerAreas.unshift(playerArea);
+            }
+            else {
+                playerAreas.push(playerArea);
+            }
+        }
+        playerAreas.forEach(function (playerArea) { return dojo.place(playerArea, "player-areas"); });
+    };
+    PlayerManager.prototype.createPlayerArea = function (player) {
+        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h2 class=\"canvas-title\" style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h2>\n                    </div>\n                    <h2>").concat(_("Finished Paintings"), "</h2>\n                    <div id=\"player-finished-paintings-").concat(player.id, "\"></div>\n                    <h2>").concat(_("Background Cards"), "</h2>\n                    <div id=\"player-background-").concat(player.id, "\"></div>\n                </div>");
+    };
+    return PlayerManager;
+}());
 var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
 var BOARD_WIDTH = 2000;
 var ANIMATION_MS = 500;
 var TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 var LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
+var CARD_WIDTH = 250;
+var CARD_HEIGHT = 425;
 var Canvas = /** @class */ (function () {
     function Canvas() {
     }
@@ -1848,46 +2172,19 @@ var Canvas = /** @class */ (function () {
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
     Canvas.prototype.setup = function (gamedatas) {
-        var _this = this;
         log("Starting game setup");
-        var maxZoomLevel = this.determineMaxZoomLevel();
-        this.zoomManager = new ZoomManager({
-            element: document.getElementById('canvas-table'),
-            smooth: true,
-            zoomLevels: this.getZoomLevels(maxZoomLevel),
-            defaultZoom: maxZoomLevel,
-            zoomControls: {
-                color: 'white',
-            },
-            onDimensionsChange: function (zoom) {
-                if (_this.zoomManager) {
-                    var newMaxZoomLevel = _this.determineMaxZoomLevel();
-                    // @ts-ignore
-                    var currentMaxZoomLevel = _this.zoomManager.zoomLevels[_this.zoomManager.zoomLevels.length - 1];
-                    if (newMaxZoomLevel != currentMaxZoomLevel) {
-                        // @ts-ignore
-                        _this.zoomManager.zoomLevels = _this.getZoomLevels(newMaxZoomLevel);
-                        _this.zoomManager.setZoom(newMaxZoomLevel);
-                    }
-                }
-            },
-        });
+        this.zoomManager = new AutoZoomManager('canvas-table');
+        this.playerManager = new PlayerManager(this);
+        this.artCardManager = new ArtCardManager(this);
+        this.backgroundCardManager = new BackgroundCardManager(this);
+        this.scoringCardManager = new ScoringCardManager(this);
+        this.scoringCardManager.setUp(gamedatas);
+        this.playerManager.setUp(gamedatas);
+        this.artCardManager.setUp(gamedatas);
+        this.backgroundCardManager.setUp(gamedatas);
         log('gamedatas', gamedatas);
         this.setupNotifications();
         log("Ending game setup");
-    };
-    Canvas.prototype.determineMaxZoomLevel = function () {
-        var bodycoords = dojo.marginBox("canvas-overall");
-        var contentWidth = bodycoords.w;
-        var rowWidth = BOARD_WIDTH;
-        if (contentWidth >= rowWidth) {
-            return 1;
-        }
-        return contentWidth / rowWidth;
-    };
-    Canvas.prototype.getZoomLevels = function (maxZoomLevels) {
-        var increments = maxZoomLevels / 5;
-        return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels];
     };
     ///////////////////////////////////////////////////
     //// Game & client states

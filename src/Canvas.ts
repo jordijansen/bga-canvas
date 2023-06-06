@@ -13,12 +13,19 @@ const BOARD_WIDTH = 2000;
 const ANIMATION_MS = 500;
 const TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 const LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
+const CARD_WIDTH = 250;
+const CARD_HEIGHT = 425;
 
 class Canvas implements CanvasGame {
+
 
     instantaneousMode: boolean;
     private gamedatas: CanvasGameData;
     private zoomManager: ZoomManager;
+    private playerManager: PlayerManager;
+    private artCardManager: ArtCardManager;
+    private backgroundCardManager: BackgroundCardManager;
+    private scoringCardManager: ScoringCardManager;
 
     constructor() {
 
@@ -40,48 +47,21 @@ class Canvas implements CanvasGame {
     public setup(gamedatas: CanvasGameData) {
         log( "Starting game setup" );
 
-        const maxZoomLevel = this.determineMaxZoomLevel();
-        this.zoomManager = new ZoomManager({
-            element: document.getElementById('canvas-table'),
-            smooth: true,
-            zoomLevels: this.getZoomLevels(maxZoomLevel),
-            defaultZoom: maxZoomLevel,
-            zoomControls: {
-                color: 'white',
-            },
-            onDimensionsChange: (zoom) => {
-                if (this.zoomManager) {
-                    const newMaxZoomLevel = this.determineMaxZoomLevel();
-                    // @ts-ignore
-                    const currentMaxZoomLevel = this.zoomManager.zoomLevels[this.zoomManager.zoomLevels.length -1];
-                    if (newMaxZoomLevel != currentMaxZoomLevel) {
-                        // @ts-ignore
-                        this.zoomManager.zoomLevels = this.getZoomLevels(newMaxZoomLevel);
-                        this.zoomManager.setZoom(newMaxZoomLevel)
-                    }
-                }
-            },
-        });
+        this.zoomManager = new AutoZoomManager('canvas-table');
+        this.playerManager = new PlayerManager(this);
+        this.artCardManager = new ArtCardManager(this);
+        this.backgroundCardManager = new BackgroundCardManager(this);
+        this.scoringCardManager = new ScoringCardManager(this);
+
+        this.scoringCardManager.setUp(gamedatas);
+        this.playerManager.setUp(gamedatas);
+        this.artCardManager.setUp(gamedatas);
+        this.backgroundCardManager.setUp(gamedatas);
 
         log('gamedatas', gamedatas);
 
         this.setupNotifications();
         log( "Ending game setup" );
-    }
-    private determineMaxZoomLevel () {
-        const bodycoords = dojo.marginBox("canvas-overall");
-        const contentWidth = bodycoords.w;
-        const rowWidth = BOARD_WIDTH;
-
-        if (contentWidth >= rowWidth) {
-            return 1;
-        }
-        return contentWidth / rowWidth;
-    }
-
-    private getZoomLevels(maxZoomLevels: number) {
-        const increments = maxZoomLevels / 5;
-        return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels]
     }
 
     ///////////////////////////////////////////////////

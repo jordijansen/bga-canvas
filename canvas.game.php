@@ -19,10 +19,34 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 
+require_once('modules/php/Constants.inc.php');
 
-class canvas extends Table
+require_once('modules/php/objects/Undo.php');
+
+require_once('modules/php/framework/Card.php');
+
+require_once('modules/php/ArtCardManager.php');
+require_once('modules/php/BackgroundCardManager.php');
+require_once('modules/php/ScoringCardManager.php');
+require_once('modules/php/ActionTrait.php');
+require_once('modules/php/StateTrait.php');
+require_once('modules/php/ArgsTrait.php');
+require_once('modules/php/UtilsTrait.php');
+require_once('modules/php/DebugTrait.php');
+
+class Canvas extends Table
 {
-	function __construct( )
+    use ActionTrait;
+    use StateTrait;
+    use ArgsTrait;
+    use UtilsTrait;
+    use DebugTrait;
+
+    private ArtCardManager $artCardManager;
+    private BackgroundCardManager $backgroundCardManager;
+    private ScoringCardManager $scoringCardManager;
+
+    function __construct( )
 	{
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
@@ -39,8 +63,12 @@ class canvas extends Table
             //    "my_first_game_variant" => 100,
             //    "my_second_game_variant" => 101,
             //      ...
-        ) );        
-	}
+        ) );
+
+        $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"));
+        $this->backgroundCardManager = new BackgroundCardManager(self::getNew("module.common.deck"));
+        $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"));
+    }
 	
     protected function getGameName( )
     {
@@ -87,8 +115,17 @@ class canvas extends Table
         //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
         //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
-        // TODO: setup the initial game situation here
-       
+        // Create all art cards and fill the display with cards
+        $this->artCardManager->setUp();
+        $this->artCardManager->fillDisplay();
+
+        // Deal 3 background cards to all players
+        $this->backgroundCardManager->setUp();
+        $this->backgroundCardManager->dealBackgroundCardsToPlayers($players);
+
+        // Draw scoring cards for each coloured scoring category
+        $this->scoringCardManager->setUp();
+        $this->scoringCardManager->drawScoringCards();
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -115,6 +152,13 @@ class canvas extends Table
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
         $sql = "SELECT player_id id, player_score score FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
+
+        foreach($result['players'] as $playerId => &$player) {
+            $player['backgroundCards'] = $this->backgroundCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $playerId);
+        }
+
+        $result['scoringCards'] = $this->scoringCardManager->getAllScoringCards();
+        $result['display'] = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY);
   
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
   

@@ -4,7 +4,7 @@ class CardType {
     public int $id;
     public string $location;
     public int $location_arg;
-    public /*string|null*/ $type;
+    public /*int|null*/ $type;
     public /*int|null*/ $type_arg;
 
 
@@ -26,21 +26,8 @@ class Card extends CardType {
             $this->id = intval($dbCard['card_id'] ?? $dbCard['id']),
             $this->location = $dbCard['card_location'] ?? $dbCard['location'],
             $this->location_arg = intval($dbCard['card_location_arg'] ?? $dbCard['location_arg']),
-            $this->type = array_key_exists('card_type', $dbCard) || array_key_exists('type', $dbCard) ? $dbCard['card_type'] ?? $dbCard['type'] : null,
+            $this->type = array_key_exists('card_type', $dbCard) || array_key_exists('type', $dbCard) ? intval($dbCard['card_type'] ?? $dbCard['type']) : null,
             $this->type_arg = array_key_exists('card_type_arg', $dbCard) || array_key_exists('type_arg', $dbCard) ? intval($dbCard['card_type_arg'] ?? $dbCard['type_arg']) : null,
         );
-    }
-
-    public static function onlyPublicInfo($card)
-    {
-        if ($card == null) {
-            return null;
-        }
-
-        return new Card([
-            'card_id' => $card->id,
-            'card_location' => $card->location,
-            'card_location_arg' => $card->location_arg,
-        ]);
     }
 }

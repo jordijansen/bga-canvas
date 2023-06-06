@@ -66,9 +66,140 @@
         background-repeat: none;
     }
 */
+@use 'sass:math';
 
 @import '../node_modules/bga-zoom/bga-zoom';
 @import '../node_modules/bga-cards/bga-cards';
+
+$portrait-card-width: 250px;
+$portrait-card-height: 425px;
+
+$landscape-card-width: 425px;
+$landscape-card-height: 250px;
+
+.canvas-art-card {
+  display: inline-block;
+  position: relative;
+  width: $portrait-card-width;
+  height: $portrait-card-height;
+
+  .card-sides {
+    .card-side {
+      border-radius: 10px;
+      width: $portrait-card-width;
+      height: $portrait-card-height;
+
+      &>* {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      &.back {
+        background-image: url('img/canvas-art-card-back.png');
+      }
+
+      &.front {
+        background-size: auto 600%;
+        background-image: url('img/canvas-art-cards.png');
+
+        @for $row from 0 through 5 {
+          @for $column from 0 through 10 {
+            $type: ($row * 11) + ($column + 1);
+            &[data-type="#{$type}"] {
+              background-position: #{$column * math.div(100%, 10)} #{$row * math.div(100%, 5)};
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.canvas-background-card {
+  display: inline-block;
+  position: relative;
+  width: $portrait-card-width;
+  height: $portrait-card-height;
+
+  .card-sides {
+    .card-side {
+      border-radius: 10px;
+      width: $portrait-card-width;
+      height: $portrait-card-height;
+
+      &>* {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      &.back {
+        // No back
+      }
+
+      &.front {
+        background-size: auto 300%;
+        background-image: url('img/canvas-background-cards.png');
+
+        @for $row from 0 through 2 {
+          @for $column from 0 through 6 {
+            $type: ($row * 7) + ($column + 1);
+            &[data-type="#{$type}"] {
+              background-position: #{$column * math.div(100%, 6)} #{$row * math.div(100%, 2)};
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.canvas-scoring-card {
+  display: inline-block;
+  position: relative;
+  width: $landscape-card-width;
+  height: $landscape-card-height;
+
+  .card-sides {
+    .card-side {
+      border-radius: 10px;
+      width: $landscape-card-width;
+      height: $landscape-card-height;
+
+      &>* {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      &.back {
+        background-size: auto 400%;
+        background-image: url('img/canvas-scoring-cards-back.png');
+
+        @for $row from 0 through 3 {
+          @for $column from 0 through 2 {
+            $type: ($row * 3) + ($column + 1);
+            &[data-type="#{$type}"] {
+              background-position: #{$column * math.div(100%, 2)} #{$row * math.div(100%, 3)};
+            }
+          }
+        }
+      }
+
+      &.front {
+        background-size: auto 400%;
+        background-image: url('img/canvas-scoring-cards-front.png');
+
+        @for $row from 0 through 3 {
+          @for $column from 0 through 2 {
+            $type: ($row * 3) + ($column + 1);
+            &[data-type="#{$type}"] {
+              background-position: #{$column * math.div(100%, 2)} #{$row * math.div(100%, 3)};
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 #bga-zoom-controls {
   display: flex;
@@ -83,7 +214,7 @@
     justify-content: center;
 
     #canvas-board {
-      background-image: url(img/canvas-board.png);
+      background-image: url('img/canvas-board.png');
       background-repeat: no-repeat;
       width: 2000px;
       height: 885px;
@@ -91,6 +222,39 @@
       -webkit-filter: drop-shadow(1px 1px 2px black);
       position: relative;
       border-radius: 5px;
+
+      #art-card-display {
+        height: $portrait-card-height;
+        position: absolute;
+        top: 407px;
+        margin-left: 53px;
+        width: 1570px;
+        display: flex;
+        gap: 79px;
+
+        .art-card-display-slot {
+        }
+      }
+
+      #scoring-card-display {
+        height: $landscape-card-height;
+        position: absolute;
+        top: 107px;
+        margin-left: 50px;
+        display: flex;
+        gap: 40px;
+
+        .scoring-card-display-slot {
+        }
+      }
+
+      #art-card-deck {
+        height: $portrait-card-height;
+        position: absolute;
+        top: 407px;
+        right: 0;
+        margin-right: 53px;
+      }
     }
   }
 }

@@ -7,11 +7,12 @@ interface Card {
 }
 
 interface CanvasGameData extends GameData {
-
+    display: Card[],
+    scoringCards: Card[]
 }
 
 interface CanvasPlayer extends Player {
-
+    backgroundCards: Card[]
 }
 
 interface CanvasGame extends Game {

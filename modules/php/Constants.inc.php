@@ -1,6 +1,12 @@
 <?php
 
+const DISPLAY_CARD_SIZE = 5;
+const NR_OF_BACKGROUND_CARDS_PER_PLAYER = 3;
 
+const SCORING_RED = 'red';
+const SCORING_GREEN = 'green';
+const SCORING_BLUE = 'blue';
+const SCORING_PURPLE = 'purple';
 
 /**
  * State

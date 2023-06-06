@@ -33,3 +33,35 @@
 -- Example 2: add a custom field to the standard "player" table
 -- ALTER TABLE `player` ADD `player_my_custom_field` INT UNSIGNED NOT NULL DEFAULT '0';
 
+CREATE TABLE IF NOT EXISTS `art_card` (
+    `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `card_type` int(10) NOT NULL,
+    `card_type_arg` int(10) NOT NULL,
+    `card_location` varchar(16) NOT NULL,
+    `card_location_arg` int(11) NOT NULL,
+    PRIMARY KEY (`card_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `background_card` (
+    `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `card_type` int(10) NOT NULL,
+    `card_type_arg` int(10) NOT NULL,
+    `card_location` varchar(16) NOT NULL,
+    `card_location_arg` int(11) NOT NULL,
+    PRIMARY KEY (`card_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `scoring_card` (
+    `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `card_type` int(10) NOT NULL,
+    `card_type_arg` int(10) NOT NULL,
+    `card_location` varchar(16) NOT NULL,
+    `card_location_arg` int(11) NOT NULL,
+    PRIMARY KEY (`card_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS `global_variables` (
+    `name` varchar(50) NOT NULL,
+    `value` json,
+    PRIMARY KEY (`name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
