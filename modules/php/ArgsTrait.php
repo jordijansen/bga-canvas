@@ -10,6 +10,22 @@ trait ArgsTrait {
         These methods function is to return some additional information that is specific to the current
         game state.
     */
+    function argPlayerTurn(): array
+    {
+        return [
+            'availableActions' => $this->getAvailableActions()
+        ];
+    }
 
+    function argTakeArtCard(): array
+    {
+        $inspirationTokens= $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
+        $availableCards = $this->artCardManager->getAvailableCardsForTake(sizeof($inspirationTokens));
+
+        return [
+            'inspirationTokens' => $inspirationTokens,
+            'availableCards' => $availableCards
+        ];
+    }
 
 }

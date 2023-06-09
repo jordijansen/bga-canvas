@@ -23,10 +23,19 @@ class PlayerManager  {
                     <div class="canvas-title-wrapper">
                         <h2 class="canvas-title" style="background-color: #${player.color};">${player.name}${_("'s Art Collection")}</h2>
                     </div>
-                    <h2>${_("Finished Paintings")}</h2>
-                    <div id="player-finished-paintings-${player.id}"></div>
-                    <h2>${_("Background Cards")}</h2>
-                    <div id="player-background-${player.id}"></div>
+                    <div id="player-inspiration-tokens-${player.id}"></div>
+                    <h2>${_("Hand Cards")}</h2>
+                    <div id="player-hand-${player.id}"></div>
+                    <div class="player-collection-wrapper">
+                        <div class="player-collection-wrapper-item">
+                            <h2>${_("Background Cards")}</h2>
+                            <div id="player-background-${player.id}"></div>   
+                        </div>  
+                        <div class="player-collection-wrapper-item">
+                            <h2>${_("Finished Paintings")}</h2>
+                            <div id="player-finished-paintings-${player.id}"></div>
+                        </div>
+                    </div>
                 </div>`
     }
 }

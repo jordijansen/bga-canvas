@@ -77,11 +77,73 @@ $portrait-card-height: 425px;
 $landscape-card-width: 425px;
 $landscape-card-height: 250px;
 
+$inspiration-token-card-width: 60px;
+$inspiration-token-card-height: 52px;
+
+@mixin selectable {
+  &.bga-cards_selectable-card {
+    .card-side {
+      outline: 8px rgba(80, 200, 255, 0.75) solid;
+      cursor: pointer;
+    }
+  }
+}
+
+@mixin selected {
+  &.bga-cards_selected-card {
+    .card-side {
+      outline: 8px rgba(124, 252, 0, 0.75) solid;
+      cursor: pointer;
+    }
+  }
+}
+
+@mixin cost-indicator {
+  &.cost-indicator {
+    .card-side {
+
+      &::before {
+        display: inline-block;
+        filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.6274509804));
+        width: 80px;
+        height: 80px;
+        margin-left: calc(($portrait-card-width / 2) - 40px);
+        margin-top: calc(($portrait-card-height / 2) - 40px);
+        content: "";
+        background: url("img/canvas-inspiration-token-cost.png") no-repeat 0 0;
+        background-size: 100%;
+      }
+    }
+  }
+}
+
+html, .mode_3d #game_play_area_background {
+  background-image: url('img/canvas-background.png');
+  background-size: cover;
+  .whiteblock {
+    border-radius: 10px;
+  }
+}
+
 .canvas-art-card {
   display: inline-block;
   position: relative;
   width: $portrait-card-width;
   height: $portrait-card-height;
+
+  @include selectable();
+  @include selected();
+  @include cost-indicator();
+
+  .canvas-inspiration-token {
+      .card-side {
+        outline: none !important;
+      }
+  }
+
+  .inspiration-token-card-stock {
+    margin-top: 10px;
+  }
 
   .card-sides {
     .card-side {
@@ -201,6 +263,31 @@ $landscape-card-height: 250px;
   }
 }
 
+.canvas-inspiration-token {
+  display: inline-block;
+  position: relative;
+  width: $inspiration-token-card-width;
+  height: $inspiration-token-card-height;
+
+  .card-sides {
+    .card-side {
+      box-shadow: none;
+      width: $inspiration-token-card-width;
+      height: $inspiration-token-card-height;
+
+      &>* {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      &.front {
+        background-size: cover;
+        background-image: url('img/canvas-inspiration-token-3d.png');
+      }
+    }
+  }
+}
+
 #bga-zoom-controls {
   display: flex;
   flex-direction: column-reverse;
@@ -233,6 +320,7 @@ $landscape-card-height: 250px;
         gap: 79px;
 
         .art-card-display-slot {
+          width: $portrait-card-width;
         }
       }
 
@@ -254,6 +342,16 @@ $landscape-card-height: 250px;
         top: 407px;
         right: 0;
         margin-right: 53px;
+      }
+    }
+  }
+
+  .player-area {
+    .player-collection-wrapper {
+      display: flex;
+      .player-collection-wrapper-item {
+        flex: 1;
+        text-align: center;
       }
     }
   }

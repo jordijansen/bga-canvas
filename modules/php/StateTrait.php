@@ -10,6 +10,11 @@ trait StateTrait {
         The action method of state X is called everytime the current game state is set to X.
     */
 
+    function stNextPlayer()
+    {
+        $this->activeNextPlayer();
+        $this->gamestate->nextState( "nextPlayer");
+    }
 
 
 }

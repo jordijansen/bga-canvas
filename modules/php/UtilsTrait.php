@@ -5,7 +5,7 @@ use objects\Undo;
 trait UtilsTrait {
 
     //////////////////////////////////////////////////////////////////////////////
-    //////////// Utility functions
+    //////////// Generic Utility functions
     ////////////
 
     function saveForUndo() {
@@ -48,5 +48,21 @@ trait UtilsTrait {
 
     function getPlayerName(int $playerId) {
         return self::getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id = $playerId");
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    //////////// Canvas Utility functions
+    ////////////
+    function getAvailableActions(): array
+    {
+        $nrOfHandCards = $this->artCardManager->countCardsInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
+        $availableActions = [];
+        if ($nrOfHandCards < 5) {
+            $availableActions = [ACT_TAKE_ART_CARD];
+        }
+        if ($nrOfHandCards >= 3) {
+            $availableActions = [...$availableActions, ACT_COMPLETE_PAINTING];
+        }
+        return $availableActions;
     }
 }

@@ -48,64 +48,76 @@
 */
 
 //    !! It is not a good idea to modify this file when a game is running !!
+require_once("modules/php/Constants.inc.php");
 
- 
-$machinestates = array(
+$basicGameStates = [
 
     // The initial state. Please do not modify.
-    1 => array(
-        "name" => "gameSetup",
-        "description" => "",
+    ST_GAME_SETUP_ID => [
+        "name" => ST_GAME_SETUP,
+        "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array( "" => 2 )
-    ),
-    
-    // Note: ID=2 => your first state
+        "transitions" => [ "" => ST_PLAYER_TURN_ID ]
+    ],
 
-    2 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must play a card or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-    		"type" => "activeplayer",
-    		"possibleactions" => array( "playCard", "pass" ),
-    		"transitions" => array( "playCard" => 2, "pass" => 2 )
-    ),
-    
-/*
-    Examples:
-    
-    2 => array(
-        "name" => "nextPlayer",
-        "description" => '',
-        "type" => "game",
-        "action" => "stNextPlayer",
-        "updateGameProgression" => true,   
-        "transitions" => array( "endGame" => 99, "nextPlayer" => 10 )
-    ),
-    
-    10 => array(
-        "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must play a card or pass'),
-        "descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-        "type" => "activeplayer",
-        "possibleactions" => array( "playCard", "pass" ),
-        "transitions" => array( "playCard" => 2, "pass" => 2 )
-    ), 
-
-*/    
-   
     // Final state.
-    // Please do not modify (and do not overload action/args methods).
-    99 => array(
-        "name" => "gameEnd",
+    // Please do not modify.
+    ST_GAME_END_ID => [
+        "name" => ST_GAME_END,
         "description" => clienttranslate("End of game"),
         "type" => "manager",
         "action" => "stGameEnd",
-        "args" => "argGameEnd"
-    )
+        "args" => "argGameEnd",
+    ],
+];
 
-);
+$playerActionsGameStates = [
+    ST_PLAYER_TURN_ID => [
+        "name" => ST_PLAYER_TURN,
+        "description" => clienttranslate('${actplayer} must choose an action'),
+        "descriptionmyturn" => clienttranslate('${you} must choose an action: '),
+        "type" => "activeplayer",
+        "args" => "argPlayerTurn",
+        "possibleactions" => [
+            ACT_CHOOSE_ACTION,
+        ],
+        "transitions" => [
+            ACT_TAKE_ART_CARD => ST_TAKE_ART_CARD_ID,
+            ACT_COMPLETE_PAINTING => ST_COMPLETE_PAINTING_ID
+        ]
+    ],
+    ST_TAKE_ART_CARD_ID => [
+        "name" => ST_TAKE_ART_CARD,
+        "description" => clienttranslate('${actplayer} must Take an Art Card'),
+        "descriptionmyturn" => clienttranslate('${you} must Take an Art Card'),
+        "type" => "activeplayer",
+        "args" => "argTakeArtCard",
+        "possibleactions" => [
+            ACT_TAKE_ART_CARD,
+            ACT_CANCEL_ACTION
+        ],
+        "transitions" => [
+            ACT_CANCEL_ACTION => ST_PLAYER_TURN_ID,
+            ST_NEXT_PLAYER => ST_NEXT_PLAYER_ID
+        ]
+    ],
+];
+
+$gameGameStates = [
+    ST_NEXT_PLAYER_ID => [
+        "name" => ST_NEXT_PLAYER,
+        "description" => "",
+        "type" => "game",
+        "action" => "stNextPlayer",
+        "transitions" => [
+            'nextPlayer' => ST_PLAYER_TURN_ID,
+        ],
+        "updateGameProgression" => true
+    ],
+];
+
+$machinestates = $basicGameStates + $playerActionsGameStates + $gameGameStates;
 
 
 

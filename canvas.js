@@ -2040,6 +2040,7 @@ var ArtCardManager = /** @class */ (function (_super) {
             cardHeight: CARD_HEIGHT,
         }) || this;
         _this.canvasGame = canvasGame;
+        _this.playerHand = {};
         return _this;
     }
     ArtCardManager.prototype.setUp = function (gameData) {
@@ -2053,7 +2054,54 @@ var ArtCardManager = /** @class */ (function (_super) {
             slotClasses: ['art-card-display-slot'],
             slotsIds: ['art-card-display-slot-1', 'art-card-display-slot-2', 'art-card-display-slot-3', 'art-card-display-slot-4', 'art-card-display-slot-5']
         });
-        gameData.display.forEach(function (card) { return _this.display.addCard(card); });
+        for (var playersKey in gameData.players) {
+            this.playerHand[Number(playersKey)] = new LineStock(this, $("player-hand-".concat(playersKey)), {});
+            this.playerHand[Number(playersKey)].addCards(gameData.players[playersKey].handCards);
+        }
+        gameData.displayCards.forEach(function (card) {
+            _this.display.addCard(card);
+            dojo.place("<div id=\"inspiration-token-card-stock-".concat(card.id, "\" class=\"inspiration-token-card-stock\"></div>"), _this.getCardElement(card).getAttribute("id"));
+        });
+    };
+    ArtCardManager.prototype.takeCard = function (playerId, card) {
+        return this.playerHand[playerId].addCard(card);
+    };
+    ArtCardManager.prototype.enterDisplaySelectMode = function (availableCards) {
+        var _this = this;
+        this.display.setSelectionMode('single');
+        this.display.setSelectableCards(availableCards);
+        this.display.onSelectionChange = function (selection) {
+            _this.unsetDisplayCostIndicator();
+            if (selection.length === 1) {
+                _this.display.getCards()
+                    .filter(function (card) { return card.location_arg < selection[0].location_arg; })
+                    .map(function (card) { return _this.getCardElement(card); })
+                    .forEach(function (card) { return card.classList.add('cost-indicator'); });
+            }
+        };
+    };
+    ArtCardManager.prototype.exitDisplaySelectMode = function () {
+        this.display.setSelectionMode('none');
+        this.display.onSelectionChange = undefined;
+        this.unsetDisplayCostIndicator();
+    };
+    ArtCardManager.prototype.unsetDisplayCostIndicator = function () {
+        var _this = this;
+        this.display.getCards()
+            .map(function (card) { return _this.getCardElement(card); })
+            .forEach(function (card) { return card.classList.remove('cost-indicator'); });
+    };
+    ArtCardManager.prototype.getSelectedDisplayCardId = function () {
+        var selection = this.display.getSelection();
+        if (selection && selection.length === 1) {
+            return this.display.getSelection()[0].id;
+        }
+        return null;
+    };
+    ArtCardManager.prototype.updateDisplayCards = function (displayCards) {
+        var _this = this;
+        return this.display.addCards(displayCards.slice(0, -1))
+            .then(function () { return _this.display.addCard(displayCards[displayCards.length - 1], { fromStock: _this.deck }); });
     };
     return ArtCardManager;
 }(CardManager));
@@ -2126,6 +2174,51 @@ var ScoringCardManager = /** @class */ (function (_super) {
     };
     return ScoringCardManager;
 }(CardManager));
+var InspirationTokenManager = /** @class */ (function (_super) {
+    __extends(InspirationTokenManager, _super);
+    function InspirationTokenManager(canvasGame) {
+        var _this = _super.call(this, canvasGame, {
+            getId: function (token) { return "canvas-inspiration-token-".concat(token.id); },
+            setupDiv: function (token, div) {
+                div.classList.add('canvas-inspiration-token');
+                div.dataset.id = '' + token.id;
+            },
+            cardWidth: INSPIRATION_TOKEN_WIDTH,
+            cardHeight: INSPIRATION_TOKEN_HEIGHT,
+        }) || this;
+        _this.canvasGame = canvasGame;
+        _this.players = {};
+        _this.cards = {};
+        return _this;
+    }
+    InspirationTokenManager.prototype.setUp = function (gameData) {
+        var _this = this;
+        var _loop_4 = function (playersKey) {
+            this_2.players[Number(playersKey)] = new LineStock(this_2, $("player-inspiration-tokens-".concat(playersKey)), {});
+            gameData.players[playersKey].inspirationTokens.forEach(function (token) { return _this.players[Number(playersKey)].addCard(token); });
+        };
+        var this_2 = this;
+        for (var playersKey in gameData.players) {
+            _loop_4(playersKey);
+        }
+        this.placeOnCards(gameData.displayInspirationTokens);
+    };
+    InspirationTokenManager.prototype.placeOnCards = function (tokens) {
+        var _this = this;
+        var promises = [];
+        tokens.forEach(function (token) {
+            if (!_this.cards[token.location_arg]) {
+                _this.cards[token.location_arg] = new LineStock(_this, $("inspiration-token-card-stock-".concat(token.location_arg)), {});
+            }
+            promises.push(_this.cards[token.location_arg].addCard(token));
+        });
+        return Promise.all(promises);
+    };
+    InspirationTokenManager.prototype.moveToPlayer = function (playerId, tokens) {
+        return this.players[playerId].addCards(tokens);
+    };
+    return InspirationTokenManager;
+}(CardManager));
 var PlayerManager = /** @class */ (function () {
     function PlayerManager(game) {
         this.game = game;
@@ -2145,7 +2238,7 @@ var PlayerManager = /** @class */ (function () {
         playerAreas.forEach(function (playerArea) { return dojo.place(playerArea, "player-areas"); });
     };
     PlayerManager.prototype.createPlayerArea = function (player) {
-        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h2 class=\"canvas-title\" style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h2>\n                    </div>\n                    <h2>").concat(_("Finished Paintings"), "</h2>\n                    <div id=\"player-finished-paintings-").concat(player.id, "\"></div>\n                    <h2>").concat(_("Background Cards"), "</h2>\n                    <div id=\"player-background-").concat(player.id, "\"></div>\n                </div>");
+        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h2 class=\"canvas-title\" style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h2>\n                    </div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <h2>").concat(_("Hand Cards"), "</h2>\n                    <div id=\"player-hand-").concat(player.id, "\"></div>\n                    <div class=\"player-collection-wrapper\">\n                        <div class=\"player-collection-wrapper-item\">\n                            <h2>").concat(_("Background Cards"), "</h2>\n                            <div id=\"player-background-").concat(player.id, "\"></div>   \n                        </div>  \n                        <div class=\"player-collection-wrapper-item\">\n                            <h2>").concat(_("Finished Paintings"), "</h2>\n                            <div id=\"player-finished-paintings-").concat(player.id, "\"></div>\n                        </div>\n                    </div>\n                </div>");
     };
     return PlayerManager;
 }());
@@ -2156,6 +2249,8 @@ var TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : un
 var LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
 var CARD_WIDTH = 250;
 var CARD_HEIGHT = 425;
+var INSPIRATION_TOKEN_WIDTH = 60;
+var INSPIRATION_TOKEN_HEIGHT = 52;
 var Canvas = /** @class */ (function () {
     function Canvas() {
     }
@@ -2173,16 +2268,18 @@ var Canvas = /** @class */ (function () {
     */
     Canvas.prototype.setup = function (gamedatas) {
         log("Starting game setup");
+        log('gamedatas', gamedatas);
         this.zoomManager = new AutoZoomManager('canvas-table');
         this.playerManager = new PlayerManager(this);
         this.artCardManager = new ArtCardManager(this);
         this.backgroundCardManager = new BackgroundCardManager(this);
         this.scoringCardManager = new ScoringCardManager(this);
+        this.inspirationTokenManager = new InspirationTokenManager(this);
         this.scoringCardManager.setUp(gamedatas);
         this.playerManager.setUp(gamedatas);
-        this.artCardManager.setUp(gamedatas);
         this.backgroundCardManager.setUp(gamedatas);
-        log('gamedatas', gamedatas);
+        this.artCardManager.setUp(gamedatas);
+        this.inspirationTokenManager.setUp(gamedatas);
         this.setupNotifications();
         log("Ending game setup");
     };
@@ -2194,12 +2291,24 @@ var Canvas = /** @class */ (function () {
     Canvas.prototype.onEnteringState = function (stateName, args) {
         log('Entering state: ' + stateName, args.args);
         switch (stateName) {
+            case 'takeArtCard':
+                this.onEnteringTakeArtCard(args.args);
+                break;
         }
+    };
+    Canvas.prototype.onEnteringTakeArtCard = function (args) {
+        this.artCardManager.enterDisplaySelectMode(args.availableCards);
     };
     Canvas.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         switch (stateName) {
+            case 'takeArtCard':
+                this.onLeavingTakeArtCard();
+                break;
         }
+    };
+    Canvas.prototype.onLeavingTakeArtCard = function () {
+        this.artCardManager.exitDisplaySelectMode();
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -2208,11 +2317,29 @@ var Canvas = /** @class */ (function () {
         var _this = this;
         if (this.isCurrentPlayerActive() && !this.isReadOnly()) {
             switch (stateName) {
+                case 'playerTurn':
+                    this.addActionButton('chooseActionTakeArtCard', _("Take an Art Card"), function () { return _this.chooseAction('takeArtCard'); });
+                    this.addActionButton('chooseActionCompletePainting', _("Complete Painting"), function () { return _this.chooseAction('completePainting'); });
+                    break;
+                case 'takeArtCard':
+                    this.addActionButton('confirmTakeArtCard', _("Confirm"), function () { return _this.confirmTakeArtCard(); });
+                    this.addActionButton('undoLastMoves', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    break;
             }
             if ([].includes(stateName) && args.canCancelMoves) {
                 this.addActionButton('undoLastMoves', _("Undo last moves"), function () { return _this.undoLastMoves(); }, null, null, 'gray');
             }
         }
+    };
+    Canvas.prototype.chooseAction = function (chosenAction) {
+        this.takeAction('chooseAction', { chosenAction: chosenAction });
+    };
+    Canvas.prototype.cancelAction = function () {
+        this.takeAction('cancelAction', {});
+    };
+    Canvas.prototype.confirmTakeArtCard = function () {
+        var cardId = this.artCardManager.getSelectedDisplayCardId();
+        this.takeAction('takeArtCard', { cardId: cardId });
     };
     Canvas.prototype.undoLastMoves = function () {
         this.takeAction('undoLastMoves');
@@ -2276,12 +2403,28 @@ var Canvas = /** @class */ (function () {
         var _this = this;
         log('notifications subscriptions setup');
         var notifs = [
-        // ['cancelLastMoves', ANIMATION_MS],
+            ['artCardTaken', undefined],
+            ['displayRefilled', undefined],
         ];
         notifs.forEach(function (notif) {
-            dojo.subscribe(notif[0], _this, "notif_".concat(notif[0]));
+            dojo.subscribe(notif[0], _this, function (notifDetails) {
+                log("notif_".concat(notif[0]), notifDetails.args);
+                var promise = _this["notif_".concat(notif[0])](notifDetails.args);
+                // tell the UI notification ends
+                promise === null || promise === void 0 ? void 0 : promise.then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
+            });
+            // make all notif as synchronous
             _this.notifqueue.setSynchronous(notif[0], notif[1]);
         });
+    };
+    Canvas.prototype.notif_artCardTaken = function (args) {
+        var _this = this;
+        return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced)
+            .then(function () { return _this.inspirationTokenManager.moveToPlayer(args.playerId, args.inspirationTokensTaken); })
+            .then(function () { return _this.artCardManager.takeCard(args.playerId, args.cardTaken); });
+    };
+    Canvas.prototype.notif_displayRefilled = function (args) {
+        return this.artCardManager.updateDisplayCards(args.displayCards);
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
         try {

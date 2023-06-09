@@ -341,11 +341,44 @@ body > .card {
   top: calc((var(--height) + var(--shift)) * var(--order));
 }
 
+html, .mode_3d #game_play_area_background {
+  background-image: url("img/canvas-background.png");
+  background-size: cover;
+}
+html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
+  border-radius: 10px;
+}
+
 .canvas-art-card {
   display: inline-block;
   position: relative;
   width: 250px;
   height: 425px;
+}
+.canvas-art-card.bga-cards_selectable-card .card-side {
+  outline: 8px rgba(80, 200, 255, 0.75) solid;
+  cursor: pointer;
+}
+.canvas-art-card.bga-cards_selected-card .card-side {
+  outline: 8px rgba(124, 252, 0, 0.75) solid;
+  cursor: pointer;
+}
+.canvas-art-card.cost-indicator .card-side::before {
+  display: inline-block;
+  filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.6274509804));
+  width: 80px;
+  height: 80px;
+  margin-left: 85px;
+  margin-top: 172.5px;
+  content: "";
+  background: url("img/canvas-inspiration-token-cost.png") no-repeat 0 0;
+  background-size: 100%;
+}
+.canvas-art-card .canvas-inspiration-token .card-side {
+  outline: none !important;
+}
+.canvas-art-card .inspiration-token-card-stock {
+  margin-top: 10px;
 }
 .canvas-art-card .card-sides .card-side {
   border-radius: 10px;
@@ -741,6 +774,26 @@ body > .card {
   background-position: 100% 100%;
 }
 
+.canvas-inspiration-token {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 52px;
+}
+.canvas-inspiration-token .card-sides .card-side {
+  box-shadow: none;
+  width: 60px;
+  height: 52px;
+}
+.canvas-inspiration-token .card-sides .card-side > * {
+  pointer-events: none;
+  user-select: none;
+}
+.canvas-inspiration-token .card-sides .card-side.front {
+  background-size: cover;
+  background-image: url("img/canvas-inspiration-token-3d.png");
+}
+
 #bga-zoom-controls {
   display: flex;
   flex-direction: column-reverse;
@@ -770,6 +823,9 @@ body > .card {
   display: flex;
   gap: 79px;
 }
+#canvas-table #canvas-board-wrapper #canvas-board #art-card-display .art-card-display-slot {
+  width: 250px;
+}
 #canvas-table #canvas-board-wrapper #canvas-board #scoring-card-display {
   height: 250px;
   position: absolute;
@@ -784,6 +840,13 @@ body > .card {
   top: 407px;
   right: 0;
   margin-right: 53px;
+}
+#canvas-table .player-area .player-collection-wrapper {
+  display: flex;
+}
+#canvas-table .player-area .player-collection-wrapper .player-collection-wrapper-item {
+  flex: 1;
+  text-align: center;
 }
 
 #canvas-overall {

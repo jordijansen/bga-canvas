@@ -15,12 +15,15 @@ const TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : 
 const LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
 const CARD_WIDTH = 250;
 const CARD_HEIGHT = 425;
+const INSPIRATION_TOKEN_WIDTH = 60;
+const INSPIRATION_TOKEN_HEIGHT = 52;
 
 class Canvas implements CanvasGame {
 
-
     instantaneousMode: boolean;
-    private gamedatas: CanvasGameData;
+    notifqueue: {};
+    inspirationTokenManager: InspirationTokenManager;
+    public gamedatas: CanvasGameData;
     private zoomManager: ZoomManager;
     private playerManager: PlayerManager;
     private artCardManager: ArtCardManager;
@@ -46,19 +49,20 @@ class Canvas implements CanvasGame {
 
     public setup(gamedatas: CanvasGameData) {
         log( "Starting game setup" );
+        log('gamedatas', gamedatas);
 
         this.zoomManager = new AutoZoomManager('canvas-table');
         this.playerManager = new PlayerManager(this);
         this.artCardManager = new ArtCardManager(this);
         this.backgroundCardManager = new BackgroundCardManager(this);
         this.scoringCardManager = new ScoringCardManager(this);
+        this.inspirationTokenManager = new InspirationTokenManager(this);
 
         this.scoringCardManager.setUp(gamedatas);
         this.playerManager.setUp(gamedatas);
-        this.artCardManager.setUp(gamedatas);
         this.backgroundCardManager.setUp(gamedatas);
-
-        log('gamedatas', gamedatas);
+        this.artCardManager.setUp(gamedatas);
+        this.inspirationTokenManager.setUp(gamedatas);
 
         this.setupNotifications();
         log( "Ending game setup" );
@@ -74,8 +78,14 @@ class Canvas implements CanvasGame {
         log('Entering state: ' + stateName, args.args);
 
         switch (stateName) {
-
+            case 'takeArtCard':
+                this.onEnteringTakeArtCard(args.args);
+                break;
         }
+    }
+
+    private onEnteringTakeArtCard(args: TakeArtCardArgs) {
+        this.artCardManager.enterDisplaySelectMode(args.availableCards);
     }
 
 
@@ -83,10 +93,15 @@ class Canvas implements CanvasGame {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
-
+            case 'takeArtCard':
+                this.onLeavingTakeArtCard();
+                break;
         }
     }
 
+    private onLeavingTakeArtCard() {
+        this.artCardManager.exitDisplaySelectMode();
+    }
 
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -96,6 +111,14 @@ class Canvas implements CanvasGame {
 
         if ((this as any).isCurrentPlayerActive() && !this.isReadOnly()) {
             switch (stateName) {
+                case 'playerTurn':
+                    (this as any).addActionButton('chooseActionTakeArtCard', _("Take an Art Card"), () => this.chooseAction('takeArtCard'));
+                    (this as any).addActionButton('chooseActionCompletePainting', _("Complete Painting"), () => this.chooseAction('completePainting'));
+                    break;
+                case 'takeArtCard':
+                    (this as any).addActionButton('confirmTakeArtCard', _("Confirm"), () => this.confirmTakeArtCard());
+                    (this as any).addActionButton('undoLastMoves', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    break;
 
             }
 
@@ -103,6 +126,20 @@ class Canvas implements CanvasGame {
                 (this as any).addActionButton('undoLastMoves', _("Undo last moves"), () => this.undoLastMoves(), null, null, 'gray');
             }
         }
+    }
+
+    private chooseAction(chosenAction: string) {
+        this.takeAction('chooseAction', {chosenAction})
+    }
+
+    private cancelAction() {
+        this.takeAction('cancelAction', {})
+    }
+
+    private confirmTakeArtCard() {
+        const cardId = this.artCardManager.getSelectedDisplayCardId();
+        this.takeAction('takeArtCard', {cardId})
+
     }
 
     private undoLastMoves() {
@@ -176,14 +213,34 @@ class Canvas implements CanvasGame {
         log( 'notifications subscriptions setup' );
 
         const notifs = [
-            // ['cancelLastMoves', ANIMATION_MS],
+            ['artCardTaken', undefined],
+            ['displayRefilled', undefined],
         ];
 
         notifs.forEach((notif) => {
-            dojo.subscribe(notif[0], this, `notif_${notif[0]}`);
+            dojo.subscribe(notif[0], this, notifDetails => {
+                log(`notif_${notif[0]}`, notifDetails.args);
+
+                const promise = this[`notif_${notif[0]}`](notifDetails.args);
+
+                // tell the UI notification ends
+                promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
+            });
+            // make all notif as synchronous
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
     }
+
+    notif_artCardTaken(args: NotifArtCardTaken) {
+        return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced)
+            .then(() => this.inspirationTokenManager.moveToPlayer(args.playerId, args.inspirationTokensTaken))
+            .then(() => this.artCardManager.takeCard(args.playerId, args.cardTaken));
+    }
+
+    notif_displayRefilled(args: NotifDisplayRefilled) {
+        return this.artCardManager.updateDisplayCards(args.displayCards);
+    }
+
 
     public format_string_recursive(log: string, args: any) {
         try {

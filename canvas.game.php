@@ -28,10 +28,12 @@ require_once('modules/php/framework/Card.php');
 require_once('modules/php/ArtCardManager.php');
 require_once('modules/php/BackgroundCardManager.php');
 require_once('modules/php/ScoringCardManager.php');
+require_once('modules/php/InspirationTokenManager.php');
+require_once('modules/php/RibbonManager.php');
+require_once('modules/php/UtilsTrait.php');
 require_once('modules/php/ActionTrait.php');
 require_once('modules/php/StateTrait.php');
 require_once('modules/php/ArgsTrait.php');
-require_once('modules/php/UtilsTrait.php');
 require_once('modules/php/DebugTrait.php');
 
 class Canvas extends Table
@@ -45,6 +47,8 @@ class Canvas extends Table
     private ArtCardManager $artCardManager;
     private BackgroundCardManager $backgroundCardManager;
     private ScoringCardManager $scoringCardManager;
+    private RibbonManager $ribbonManager;
+    private InspirationTokenManager $inspirationTokenManager;
 
     function __construct( )
 	{
@@ -68,6 +72,9 @@ class Canvas extends Table
         $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"));
         $this->backgroundCardManager = new BackgroundCardManager(self::getNew("module.common.deck"));
         $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"));
+        $this->ribbonManager = new RibbonManager(self::getNew("module.common.deck"));
+        $this->inspirationTokenManager = new InspirationTokenManager(self::getNew("module.common.deck"));
+
     }
 	
     protected function getGameName( )
@@ -127,6 +134,13 @@ class Canvas extends Table
         $this->scoringCardManager->setUp();
         $this->scoringCardManager->drawScoringCards();
 
+        // Give each player 5 inspiration tokens
+        $this->inspirationTokenManager->setUp($players);
+        $this->inspirationTokenManager->distributeInitialInspirationTokens($players);
+
+        // Initiate the Ribbon Manager
+        $this->ribbonManager->setUp();
+
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
 
@@ -154,12 +168,15 @@ class Canvas extends Table
         $result['players'] = self::getCollectionFromDb( $sql );
 
         foreach($result['players'] as $playerId => &$player) {
+            $player['handCards'] = $this->artCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $playerId);
             $player['backgroundCards'] = $this->backgroundCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $playerId);
+            $player['inspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId);
         }
 
         $result['scoringCards'] = $this->scoringCardManager->getAllScoringCards();
-        $result['display'] = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY);
-  
+        $result['displayCards'] = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY);
+        $result['displayInspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_CARD);
+
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
   
         return $result;
