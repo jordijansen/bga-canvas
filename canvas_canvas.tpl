@@ -27,6 +27,9 @@
 
 
 <div id="canvas-table">
+    <div id="complete-painting-wrapper">
+        <div id="complete-painting"></div>
+    </div>
     <div id="canvas-board-wrapper">
         <div id="canvas-board">
             <div id="scoring-card-display">
@@ -41,7 +44,7 @@
 </div>
 
 <div id="canvas-overall"></div>
-
+<div id="html2canvas-result"></div>
 
 <script type="text/javascript">
 

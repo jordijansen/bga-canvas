@@ -70,9 +70,16 @@
 
 @import '../node_modules/bga-zoom/bga-zoom';
 @import '../node_modules/bga-cards/bga-cards';
+@import 'LoadingIndicator';
 
 $portrait-card-width: 250px;
 $portrait-card-height: 425px;
+
+$large-portrait-card-width: 375px;
+$large-portrait-card-height: 637.5px;
+
+$extra-large-portrait-card-width: 935px;
+$extra-large-portrait-card-height: 1593.75px;
 
 $landscape-card-width: 425px;
 $landscape-card-height: 250px;
@@ -117,13 +124,68 @@ $inspiration-token-card-height: 52px;
   }
 }
 
+/* latin-ext */
+@font-face {
+  font-family: 'Welcome2019';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('img/Welcome2019.woff2') format('woff2');
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Welcome2019';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('img/Welcome2019.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 html, .mode_3d #game_play_area_background {
   background-image: url('img/canvas-background.png');
-  background-size: cover;
   .whiteblock {
     border-radius: 10px;
   }
 }
+
+.bgabutton.bgabutton_blue, .bgabutton.bgabutton_blue:hover {
+  background: #7eced8;
+}
+
+.art-card {
+  width: $portrait-card-width;
+  height: $portrait-card-height;
+  background-size: auto 600%;
+  background-image: url('img/canvas-art-cards.png');
+
+  @for $row from 0 through 5 {
+    @for $column from 0 through 10 {
+      $type: ($row * 11) + ($column + 1);
+      &.art-card-#{$type} {
+        background-position: #{$column * math.div(100%, 10)} #{$row * math.div(100%, 5)};
+      }
+    }
+  }
+}
+
+.background-card {
+  width: $portrait-card-width;
+  height: $portrait-card-height;
+  background-size: auto 300%;
+  background-image: url('img/canvas-background-cards.png');
+
+  @for $row from 0 through 2 {
+    @for $column from 0 through 6 {
+      $type: ($row * 7) + ($column + 1);
+      &.background-card-#{$type} {
+        background-position: #{$column * math.div(100%, 6)} #{$row * math.div(100%, 2)};
+      }
+    }
+  }
+}
+
 
 .canvas-art-card {
   display: inline-block;
@@ -161,17 +223,7 @@ html, .mode_3d #game_play_area_background {
       }
 
       &.front {
-        background-size: auto 600%;
-        background-image: url('img/canvas-art-cards.png');
-
-        @for $row from 0 through 5 {
-          @for $column from 0 through 10 {
-            $type: ($row * 11) + ($column + 1);
-            &[data-type="#{$type}"] {
-              background-position: #{$column * math.div(100%, 10)} #{$row * math.div(100%, 5)};
-            }
-          }
-        }
+        // Additional Class
       }
     }
   }
@@ -199,17 +251,7 @@ html, .mode_3d #game_play_area_background {
       }
 
       &.front {
-        background-size: auto 300%;
-        background-image: url('img/canvas-background-cards.png');
 
-        @for $row from 0 through 2 {
-          @for $column from 0 through 6 {
-            $type: ($row * 7) + ($column + 1);
-            &[data-type="#{$type}"] {
-              background-position: #{$column * math.div(100%, 6)} #{$row * math.div(100%, 2)};
-            }
-          }
-        }
       }
     }
   }
@@ -296,6 +338,34 @@ html, .mode_3d #game_play_area_background {
 
 #canvas-table {
 
+  .title-wrapper {
+    display: flex;
+    justify-content: center;
+
+    .title {
+      background-image: url('img/canvas-title-background-primary.png');
+      background-size: 100% 100%;
+
+      &.secondary {
+        background-image: url('img/canvas-title-background-secondary.png');
+      }
+
+      h1 {
+        font-family: 'Welcome2019', cursive;
+        text-align: center;
+        font-size: 35px;
+        padding-top: 10px;
+        padding-left: 50px;
+        padding-right: 50px;
+      }
+
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+  }
+
+
   #canvas-board-wrapper {
     display: flex;
     justify-content: center;
@@ -308,7 +378,7 @@ html, .mode_3d #game_play_area_background {
       filter: drop-shadow(1px 1px 1px black);
       -webkit-filter: drop-shadow(1px 1px 2px black);
       position: relative;
-      border-radius: 5px;
+      border-radius: 25px;
 
       #art-card-display {
         height: $portrait-card-height;
@@ -346,6 +416,103 @@ html, .mode_3d #game_play_area_background {
     }
   }
 
+  #complete-painting-wrapper {
+    display: flex;
+    justify-content: center;
+
+    #complete-painting {
+      width: 2000px;
+      background-image: url('img/canvas-white-background.png');
+      background-size: cover;
+      display: flex;
+      border-radius: 25px;
+
+      #complete-painting-picker-wrapper {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+
+        #art-cards-picker-unused {
+          display: flex;
+          justify-content: center;
+          padding-bottom: 10px;
+        }
+
+        #art-cards-picker {
+          display: flex;
+          position: relative;
+
+          #art-cards-picker-bottom-text, #art-cards-picker-top-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            text-transform: uppercase;
+            text-align: center;
+            font-weight: bolder;
+            padding: 10px;
+          }
+
+          .center-button-wrapper {
+            position: absolute;
+            top: math.div($portrait-card-height, 2);
+            z-index: 15; // Card animations have z-index of 10, we want this button on top of the card
+          }
+
+          .button-wrapper {
+            display: flex;
+            justify-content: center;
+            width: $portrait-card-width;
+
+            .bgabutton {
+              width: $portrait-card-width - 80px;
+              text-align: center;
+              font-size: 25px;
+              line-height: 20px;
+            }
+          }
+
+          .complete-painting-art-card-slot {
+            width: $portrait-card-width;
+            height: $portrait-card-height;
+          }
+        }
+      }
+
+      #complete-painting-preview {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 10px;
+
+        #complete-painting-preview-slot-wrapper {
+          background-image: url('img/canvas-painting-frame.png');
+          background-size: cover;
+          width: 545px;
+          height: 810px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        #complete-painting-preview-scoring {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 20px;
+
+          .complete-painting-preview-scoring-ribbon {
+            font-family: Welcome2019, serif;
+            font-size: 50px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            line-height: 50px;
+          }
+        }
+      }
+    }
+  }
+
   .player-area {
     .player-collection-wrapper {
       display: flex;
@@ -353,7 +520,83 @@ html, .mode_3d #game_play_area_background {
         flex: 1;
         text-align: center;
       }
+      .player-finished-paintings {
+        display: flex;
+        justify-content: center;
+      }
     }
+  }
+}
+
+.canvas-painting {
+  display: inline-block;
+  .canvas-painting-cards-wrapper {
+    width: $portrait-card-width;
+    height: $portrait-card-height;
+    position: relative;
+    .art-card, .background-card, .card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: $portrait-card-width;
+      height: $portrait-card-height;
+    }
+  }
+
+  #canvas-copyright {
+    width: $portrait-card-width;
+    text-align: center;
+    background-color: white;
+    padding: 10px 0;
+  }
+
+  .bgabutton {
+    width: $portrait-card-width - 80px;
+    text-align: center;
+    font-size: 25px;
+    line-height: 20px;
+  }
+
+  &.large {
+    #canvas-copyright {
+      width: $large-portrait-card-width;
+    }
+
+    .canvas-painting-cards-wrapper {
+      width: $large-portrait-card-width;
+      height: $large-portrait-card-height;
+
+      .art-card, .background-card, .card {
+        width: $large-portrait-card-width;
+        height: $large-portrait-card-height;
+      }
+    }
+  }
+
+
+}
+
+.canvas-ribbon {
+  display: inline-block;
+  background-image: url('img/canvas-ribbons.png');
+  background-size: cover;
+  width: 44px;
+  height: 70px;
+
+  &[data-type="green"] {
+    background-position: 0 0;
+  }
+  &[data-type="red"] {
+    background-position: 25% 0;
+  }
+  &[data-type="blue"] {
+    background-position: 50% 0;
+  }
+  &[data-type="purple"] {
+    background-position: 75% 0;
+  }
+  &[data-type="grey"] {
+    background-position: 100% 0;
   }
 }
 
@@ -363,4 +606,18 @@ html, .mode_3d #game_play_area_background {
   align-items: center;
   justify-content: center;
   margin-top: 10px;
+}
+
+.share-painting-dialog-content {
+  width: $large-portrait-card-width;
+  span {
+    display: block;
+    text-align: center;
+    padding: 10px;
+  }
+  .bgabutton {
+    display: block;
+    text-align: center;
+    font-size: 25px;
+  }
 }

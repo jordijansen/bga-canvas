@@ -14,6 +14,13 @@ interface Token {
     location_arg?: number
 }
 
+interface Painting {
+    id: number,
+    playerId: number,
+    backgroundCard: Card,
+    artCards: Card[]
+}
+
 interface CanvasGameData extends GameData {
     displayCards: Card[],
     displayInspirationTokens: Token[],
@@ -23,11 +30,14 @@ interface CanvasGameData extends GameData {
 interface CanvasPlayer extends Player {
     handCards: Card[],
     backgroundCards: Card[],
-    inspirationTokens: Token[]
+    inspirationTokens: Token[],
+    paintings: Painting[]
 }
 
 interface CanvasGame extends Game {
     inspirationTokenManager: InspirationTokenManager;
+    artCardManager: ArtCardManager;
+    backgroundCardManager: BackgroundCardManager;
     gamedatas: CanvasGameData;
     getPlayerId(): number;
     getPlayer(playerId: number): CanvasPlayer;
@@ -38,6 +48,11 @@ interface CanvasGame extends Game {
 interface TakeArtCardArgs {
     availableCards: Card[],
     inspirationTokens: Token[]
+}
+
+interface CompletePaintingArgs {
+    backgroundCards: Card[],
+    artCards: Card[]
 }
 
 /**
@@ -54,4 +69,14 @@ interface NotifArtCardTaken {
 
 interface NotifDisplayRefilled {
     displayCards: Card[]
+}
+
+interface NotifPaintingScored {
+    [scoringType: string]: number
+}
+
+interface NotifPaintingCompleted {
+    playerId: number,
+    player_name: string,
+    painting: Painting
 }

@@ -102,6 +102,21 @@ $playerActionsGameStates = [
             ST_NEXT_PLAYER => ST_NEXT_PLAYER_ID
         ]
     ],
+    ST_COMPLETE_PAINTING_ID => [
+        "name" => ST_COMPLETE_PAINTING,
+        "description" => clienttranslate('${actplayer} must Complete a Painting'),
+        "descriptionmyturn" => clienttranslate('${you} must Complete a Painting'),
+        "type" => "activeplayer",
+        "args" => "argCompletePainting",
+        "possibleactions" => [
+            ACT_COMPLETE_PAINTING,
+            ACT_CANCEL_ACTION
+        ],
+        "transitions" => [
+            ACT_CANCEL_ACTION => ST_PLAYER_TURN_ID,
+            ST_NEXT_PLAYER => ST_NEXT_PLAYER_ID
+        ]
+    ],
 ];
 
 $gameGameStates = [

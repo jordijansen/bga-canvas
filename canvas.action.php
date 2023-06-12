@@ -64,6 +64,48 @@ class action_canvas extends APP_GameAction
 
         self::ajaxResponse();
     }
+
+    public function scorePainting() {
+        self::setAjaxMode();
+
+        $painting = self::getArg('painting', AT_json, true);
+        $this->validateJSonAlphaNum($painting, 'painting');
+
+        $this->game->scorePainting($painting);
+
+        self::ajaxResponse();
+    }
+
+    public function completePainting() {
+        self::setAjaxMode();
+
+        $painting = self::getArg('painting', AT_json, true);
+        $this->validateJSonAlphaNum($painting, 'painting');
+
+        $this->game->completePainting($painting);
+
+        self::ajaxResponse();
+    }
+
+    private function validateJSonAlphaNum($value, $argName = 'unknown')
+    {
+        if (is_array($value)) {
+            foreach ($value as $key => $v) {
+                $this->validateJSonAlphaNum($key, $argName);
+                $this->validateJSonAlphaNum($v, $argName);
+            }
+            return true;
+        }
+        if (is_int($value)) {
+            return true;
+        }
+
+        $bValid = preg_match("/^[_0-9a-zA-Z- ]*$/", $value) === 1; // NOI18N
+        if (!$bValid) {
+            throw new BgaSystemException("Bad value for: $argName", true, true, FEX_bad_input_argument);
+        }
+        return true;
+    }
 }
   
 

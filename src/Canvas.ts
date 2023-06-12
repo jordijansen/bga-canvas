@@ -23,11 +23,13 @@ class Canvas implements CanvasGame {
     instantaneousMode: boolean;
     notifqueue: {};
     inspirationTokenManager: InspirationTokenManager;
+    artCardManager: ArtCardManager;
+    backgroundCardManager: BackgroundCardManager;
+
     public gamedatas: CanvasGameData;
     private zoomManager: ZoomManager;
     private playerManager: PlayerManager;
-    private artCardManager: ArtCardManager;
-    private backgroundCardManager: BackgroundCardManager;
+    private paintingManager: PaintingManager;
     private scoringCardManager: ScoringCardManager;
 
     constructor() {
@@ -57,12 +59,14 @@ class Canvas implements CanvasGame {
         this.backgroundCardManager = new BackgroundCardManager(this);
         this.scoringCardManager = new ScoringCardManager(this);
         this.inspirationTokenManager = new InspirationTokenManager(this);
+        this.paintingManager = new PaintingManager(this);
 
         this.scoringCardManager.setUp(gamedatas);
         this.playerManager.setUp(gamedatas);
         this.backgroundCardManager.setUp(gamedatas);
         this.artCardManager.setUp(gamedatas);
         this.inspirationTokenManager.setUp(gamedatas);
+        this.paintingManager.setUp(gamedatas);
 
         this.setupNotifications();
         log( "Ending game setup" );
@@ -81,11 +85,22 @@ class Canvas implements CanvasGame {
             case 'takeArtCard':
                 this.onEnteringTakeArtCard(args.args);
                 break;
+            case 'completePainting':
+                this.onEnteringCompletePainting(args.args);
+                break;
         }
     }
 
     private onEnteringTakeArtCard(args: TakeArtCardArgs) {
-        this.artCardManager.enterDisplaySelectMode(args.availableCards);
+        if ((this as any).isCurrentPlayerActive()) {
+            this.artCardManager.enterDisplaySelectMode(args.availableCards);
+        }
+    }
+
+    private onEnteringCompletePainting(args: CompletePaintingArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.paintingManager.enterCompletePaintingMode(args.backgroundCards, args.artCards);
+        }
     }
 
 
@@ -96,11 +111,22 @@ class Canvas implements CanvasGame {
             case 'takeArtCard':
                 this.onLeavingTakeArtCard();
                 break;
+            case 'completePainting':
+                this.onLeavingCompletePainting();
+                break;
         }
     }
 
     private onLeavingTakeArtCard() {
-        this.artCardManager.exitDisplaySelectMode();
+        if ((this as any).isCurrentPlayerActive()) {
+            this.artCardManager.exitDisplaySelectMode();
+        }
+    }
+
+    private onLeavingCompletePainting() {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.paintingManager.exitCompletePaintingMode();
+        }
     }
 
 
@@ -112,12 +138,20 @@ class Canvas implements CanvasGame {
         if ((this as any).isCurrentPlayerActive() && !this.isReadOnly()) {
             switch (stateName) {
                 case 'playerTurn':
-                    (this as any).addActionButton('chooseActionTakeArtCard', _("Take an Art Card"), () => this.chooseAction('takeArtCard'));
-                    (this as any).addActionButton('chooseActionCompletePainting', _("Complete Painting"), () => this.chooseAction('completePainting'));
+                    if (args.availableActions.includes('takeArtCard')) {
+                        (this as any).addActionButton('chooseActionTakeArtCard', _("Take an Art Card"), () => this.chooseAction('takeArtCard'));
+                    }
+                    if (args.availableActions.includes('completePainting')) {
+                        (this as any).addActionButton('chooseActionCompletePainting', _("Complete Painting"), () => this.chooseAction('completePainting'));
+                    }
                     break;
                 case 'takeArtCard':
                     (this as any).addActionButton('confirmTakeArtCard', _("Confirm"), () => this.confirmTakeArtCard());
-                    (this as any).addActionButton('undoLastMoves', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    break;
+                case 'completePainting':
+                    (this as any).addActionButton('confirmCompletePainting', _("Confirm"), () => this.confirmCompletePainting());
+                    (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
                     break;
 
             }
@@ -139,7 +173,10 @@ class Canvas implements CanvasGame {
     private confirmTakeArtCard() {
         const cardId = this.artCardManager.getSelectedDisplayCardId();
         this.takeAction('takeArtCard', {cardId})
+    }
 
+    private confirmCompletePainting() {
+        this.paintingManager.confirmPainting();
     }
 
     private undoLastMoves() {
@@ -215,6 +252,8 @@ class Canvas implements CanvasGame {
         const notifs = [
             ['artCardTaken', undefined],
             ['displayRefilled', undefined],
+            ['paintingScored', 1],
+            ['paintingCompleted', ANIMATION_MS]
         ];
 
         notifs.forEach((notif) => {
@@ -232,6 +271,7 @@ class Canvas implements CanvasGame {
     }
 
     notif_artCardTaken(args: NotifArtCardTaken) {
+        this.artCardManager.exitDisplaySelectMode();
         return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced)
             .then(() => this.inspirationTokenManager.moveToPlayer(args.playerId, args.inspirationTokensTaken))
             .then(() => this.artCardManager.takeCard(args.playerId, args.cardTaken));
@@ -239,6 +279,14 @@ class Canvas implements CanvasGame {
 
     notif_displayRefilled(args: NotifDisplayRefilled) {
         return this.artCardManager.updateDisplayCards(args.displayCards);
+    }
+
+    notif_paintingScored(args: NotifPaintingScored) {
+        this.paintingManager.updatePreviewScore(args)
+    }
+
+    notif_paintingCompleted(args: NotifPaintingCompleted) {
+        this.paintingManager.createPainting(args.painting);
     }
 
 

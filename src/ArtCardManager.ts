@@ -3,6 +3,7 @@ class ArtCardManager extends CardManager<Card> {
     private deck: Deck<Card>
     private display: SlotStock<Card>
     private playerHand: {[playerId: number]: LineStock<Card> } = {}
+    private paintings: {[paintingId: number]: LineStock<Card>} = {}
 
     constructor(protected canvasGame: CanvasGame) {
         super(canvasGame, {
@@ -13,6 +14,8 @@ class ArtCardManager extends CardManager<Card> {
             },
             setupFrontDiv: (card: Card, div: HTMLElement) => {
                 div.id = `${this.getId(card)}-front`;
+                div.classList.add('art-card')
+                div.classList.add('art-card-'+card.type)
                 div.dataset.type = ''+card.type;
             },
             isCardVisible: (card: Card) => !!card.type,
@@ -84,5 +87,11 @@ class ArtCardManager extends CardManager<Card> {
     updateDisplayCards(displayCards: Card[]) {
         return this.display.addCards(displayCards.slice(0, -1))
             .then(() => this.display.addCard(displayCards[displayCards.length - 1], {fromStock: this.deck}));
+    }
+
+    public createPaintingStock(id: number, elementId: string, cards: Card[]) {
+        dojo.place(`<div id="${elementId}-art"></div>`, elementId);
+        this.paintings[id] = new LineStock<Card>(this, $(elementId + "-art"), {})
+        this.paintings[id].addCards(cards);
     }
 }

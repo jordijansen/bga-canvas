@@ -37,7 +37,8 @@ interface GameData {
 
 /* TODO repace Function by (..params) => void */
 interface Dojo {
-    place: (html: string, node: string | HTMLElement, action?: string) => void;
+    place: (html: string | any, node: string | HTMLElement, pos?: string | number) => void;
+    empty: (node: string | HTMLElement) => void;
     style: Function;
     hitch: Function;
     hasClass: (node: string | HTMLElement, className: string) => boolean;

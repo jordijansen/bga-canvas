@@ -14,8 +14,8 @@
   "author": "Jordi Jansen",
   "license": "ISC",
   "dependencies": {
-    "bga-zoom": "thoun/bga-zoom#0.1.0",
-    "bga-cards": "thoun/bga-cards#2.0.2"
+    "bga-cards": "thoun/bga-cards#2.0.2",
+    "bga-zoom": "thoun/bga-zoom#0.2.0"
   },
   "devDependencies": {
     "sass": "^1.62.1",

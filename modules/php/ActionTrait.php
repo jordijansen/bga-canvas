@@ -77,4 +77,46 @@ trait ActionTrait {
         $this->gamestate->nextState(ACT_CANCEL_ACTION);
     }
 
+    public function scorePainting($painting) {
+        // TODO implement scoring
+        self::notifyPlayer($this->getActivePlayerId(), 'paintingScored', '', [
+            SCORING_RED => bga_rand(1, 6),
+            SCORING_GREEN => bga_rand(1, 6),
+            SCORING_BLUE => bga_rand(1, 6),
+            SCORING_PURPLE => bga_rand(1, 6),
+            SCORING_GREY => bga_rand(1, 6)
+        ]);
+    }
+
+    public function completePainting($painting) {
+        self::checkAction(ACT_COMPLETE_PAINTING);
+        $activePlayerId = $this->getActivePlayerId();
+        if (!isset($painting['backgroundCardId'])) {
+            throw new BgaUserException("No background card provided");
+        }
+
+        $backgroundCard = $this->backgroundCardManager->getCard($painting['backgroundCardId']);
+        if ($backgroundCard->location != ZONE_PLAYER_HAND || $backgroundCard->location_arg != $activePlayerId) {
+            throw new BgaUserException("Background card not in your hand");
+        }
+        $this->DbQuery("INSERT INTO painting (id, player_id) VALUES (".$backgroundCard->id.", ". $activePlayerId .")");
+        $backgroundCard = $this->backgroundCardManager->addCardToPainting($backgroundCard->id, 0, $backgroundCard->id);
+
+        foreach ($painting['artCardIds'] as $index => $artCardId) {
+            $artCard = $this->artCardManager->getCard($artCardId);
+            if ($artCard->location != ZONE_PLAYER_HAND || $artCard->location_arg != $activePlayerId) {
+                throw new BgaUserException("Art card not in your hand");
+            }
+            $this->artCardManager->addCardToPainting($artCardId, $index, $backgroundCard->id);
+        }
+
+        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes a painting and scores ${ribbons}', [
+            'playerId' => $activePlayerId,
+            'player_name' => $this->getPlayerName($activePlayerId),
+            'painting' => $this->paintingManager->getPainting($backgroundCard->id),
+            'ribbons' => 0
+        ]);
+
+        $this->gamestate->nextState(ST_NEXT_PLAYER);
+    }
 }

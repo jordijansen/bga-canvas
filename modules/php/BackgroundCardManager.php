@@ -29,4 +29,17 @@ class BackgroundCardManager {
         $dbResults = $this->cards->getCardsInLocation($location, $location_arg, 'id');
         return array_map(fn($dbCard) => new Card($dbCard), array_values($dbResults));
     }
+
+    public function getCard(int $cardId) {
+        return new Card($this->cards->getCard($cardId));
+    }
+
+    public function addCardToPainting($cardId, $orderNo, $paintingId) {
+        $this->cards->moveCard($cardId, ZONE_PAINTING.'_'.$paintingId, $orderNo);
+        return $this->getCard($cardId);
+    }
+
+    public function getPaintings($playerId) {
+
+    }
 }

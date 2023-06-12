@@ -2,7 +2,7 @@
 
 class ArtCardManager {
 
-    protected Deck $cards;
+    public Deck $cards;
 
     public function __construct(Deck $deck) {
         $this->cards = $deck;
@@ -16,6 +16,7 @@ class ArtCardManager {
             $cards[] = array('type' => $i, 'type_arg' => $i, 'nbr' => 1);
         }
         $this->cards->createCards($cards, 'deck');
+        $this->cards->shuffle('deck');
     }
 
     public function fillDisplay() {
@@ -46,6 +47,11 @@ class ArtCardManager {
 
     public function takeCard($playerId, $cardId) {
         $this->cards->moveCard($cardId, ZONE_PLAYER_HAND, $playerId);
+        return $this->getCard($cardId);
+    }
+
+    public function addCardToPainting($cardId, $orderNo, $paintingId) {
+        $this->cards->moveCard($cardId, ZONE_PAINTING.'_'.$paintingId, $orderNo);
         return $this->getCard($cardId);
     }
 

@@ -50,6 +50,7 @@ const ZONE_DECK = 'deck';
 const ZONE_DISPLAY = 'display';
 const ZONE_DISCARD = 'discard';
 const ZONE_PLAYER_HAND = 'hand';
+const ZONE_PAINTING = 'painting';
 const ZONE_CARD = 'card';
 
 /**

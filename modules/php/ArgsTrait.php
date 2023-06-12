@@ -1,6 +1,7 @@
 <?php
 
-trait ArgsTrait {
+trait ArgsTrait
+{
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Game state arguments
@@ -19,12 +20,23 @@ trait ArgsTrait {
 
     function argTakeArtCard(): array
     {
-        $inspirationTokens= $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
+        $inspirationTokens = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
         $availableCards = $this->artCardManager->getAvailableCardsForTake(sizeof($inspirationTokens));
 
         return [
             'inspirationTokens' => $inspirationTokens,
             'availableCards' => $availableCards
+        ];
+    }
+
+    function argCompletePainting(): array
+    {
+        $backgroundCards = $this->backgroundCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
+        $artCards = $this->artCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
+
+        return [
+            'backgroundCards' => $backgroundCards,
+            'artCards' => $artCards
         ];
     }
 

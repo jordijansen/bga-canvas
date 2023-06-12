@@ -6,8 +6,10 @@
     "lib": ["dom", "esnext"],
     "sourceMap": false,
     "outFile": "canvas.js",
+    "allowJs": true
   },
   "files": [
+    "src/dom-to-image-more.min.js",
     "src/bga/Framework.d.ts",
     "src/bga/Counter.d.ts",
     "src/bga/Define.ts",
@@ -40,6 +42,7 @@
     "src/BackgroundCardManager.ts",
     "src/ScoringCardManager.ts",
     "src/InspirationTokenManager.ts",
+    "src/PaintingManager.ts",
     "src/PlayerManager.ts",
     "src/Canvas.ts"
   ]

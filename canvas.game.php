@@ -22,6 +22,7 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 require_once('modules/php/Constants.inc.php');
 
 require_once('modules/php/objects/Undo.php');
+require_once('modules/php/objects/Painting.php');
 
 require_once('modules/php/framework/Card.php');
 
@@ -29,6 +30,7 @@ require_once('modules/php/ArtCardManager.php');
 require_once('modules/php/BackgroundCardManager.php');
 require_once('modules/php/ScoringCardManager.php');
 require_once('modules/php/InspirationTokenManager.php');
+require_once('modules/php/PaintingManager.php');
 require_once('modules/php/RibbonManager.php');
 require_once('modules/php/UtilsTrait.php');
 require_once('modules/php/ActionTrait.php');
@@ -44,11 +46,12 @@ class Canvas extends Table
     use UtilsTrait;
     use DebugTrait;
 
-    private ArtCardManager $artCardManager;
-    private BackgroundCardManager $backgroundCardManager;
+    public ArtCardManager $artCardManager;
+    public BackgroundCardManager $backgroundCardManager;
     private ScoringCardManager $scoringCardManager;
     private RibbonManager $ribbonManager;
     private InspirationTokenManager $inspirationTokenManager;
+    private PaintingManager $paintingManager;
 
     function __construct( )
 	{
@@ -74,6 +77,7 @@ class Canvas extends Table
         $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"));
         $this->ribbonManager = new RibbonManager(self::getNew("module.common.deck"));
         $this->inspirationTokenManager = new InspirationTokenManager(self::getNew("module.common.deck"));
+        $this->paintingManager = new PaintingManager($this);
 
     }
 	
@@ -171,6 +175,7 @@ class Canvas extends Table
             $player['handCards'] = $this->artCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $playerId);
             $player['backgroundCards'] = $this->backgroundCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $playerId);
             $player['inspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId);
+            $player['paintings'] = $this->paintingManager->getPaintings($playerId);
         }
 
         $result['scoringCards'] = $this->scoringCardManager->getAllScoringCards();

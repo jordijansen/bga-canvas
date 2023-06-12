@@ -1,3 +1,79 @@
+/*! dom-to-image-more 26-04-2023 */
+!function (u) {
+    "use strict";
+    var f = function () { var e = 0; return { escape: function (e) { return e.replace(/([.*+?^${}()|[]\/\\])/g, "\\$1"); }, isDataUrl: function (e) { return -1 !== e.search(/^(data:)/); }, canvasToBlob: function (t) { if (t.toBlob)
+            return new Promise(function (e) { t.toBlob(e); }); return function (r) { return new Promise(function (e) { var t = s(r.toDataURL().split(",")[1]), n = t.length, o = new Uint8Array(n); for (var e_1 = 0; e_1 < n; e_1++)
+            o[e_1] = t.charCodeAt(e_1); e(new Blob([o], { type: "image/png" })); }); }(t); }, resolveUrl: function (e, t) { var n = document.implementation.createHTMLDocument(), o = n.createElement("base"), r = (n.head.appendChild(o), n.createElement("a")); return n.body.appendChild(r), o.href = t, r.href = e, r.href; }, getAndEncode: function (u) { var e = c.impl.urlCache.find(function (e) { return e.url === u; }); e || (e = { url: u, promise: null }, c.impl.urlCache.push(e)); null === e.promise && (c.impl.options.cacheBust && (u += (/\?/.test(u) ? "&" : "?") + (new Date).getTime()), e.promise = new Promise(function (t) { var e = c.impl.options.httpTimeout, n = new XMLHttpRequest; n.onreadystatechange = function () { if (4 === n.readyState)
+            if (200 !== n.status)
+                o ? t(o) : i("cannot fetch resource: ".concat(u, ", status: ") + n.status);
+            else {
+                var e_2 = new FileReader;
+                e_2.onloadend = function () { t(e_2.result); }, e_2.readAsDataURL(n.response);
+            } }, n.ontimeout = function () { o ? t(o) : i("timeout of ".concat(e, "ms occured while fetching resource: ") + u); }, n.responseType = "blob", n.timeout = e, c.impl.options.useCredentials && (n.withCredentials = !0), n.open("GET", u, !0), n.send(); var o; var r; function i(e) { console.error(e), t(""); } c.impl.options.imagePlaceholder && (r = c.impl.options.imagePlaceholder.split(/,/)) && r[1] && (o = r[1]); })); return e.promise; }, uid: function () { return "u" + ("0000" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4) + e++; }, delay: function (n) { return function (t) { return new Promise(function (e) { setTimeout(function () { e(t); }, n); }); }; }, asArray: function (t) { var n = [], o = t.length; for (var e_3 = 0; e_3 < o; e_3++)
+            n.push(t[e_3]); return n; }, escapeXhtml: function (e) { return e.replace(/%/g, "%25").replace(/#/g, "%23").replace(/\n/g, "%0A"); }, makeImage: function (o) { return "data:," !== o ? new Promise(function (e, t) { var n = new Image; c.impl.options.useCredentials && (n.crossOrigin = "use-credentials"), n.onload = function () { window && window.requestAnimationFrame ? window.requestAnimationFrame(function () { e(n); }) : e(n); }, n.onerror = t, n.src = o; }) : Promise.resolve(); }, width: function (e) { var t = i(e, "width"); if (!isNaN(t))
+            return t; var t = i(e, "border-left-width"), n = i(e, "border-right-width"); return e.scrollWidth + t + n; }, height: function (e) { var t = i(e, "height"); if (!isNaN(t))
+            return t; var t = i(e, "border-top-width"), n = i(e, "border-bottom-width"); return e.scrollHeight + t + n; }, getWindow: t, isElement: r, isElementHostForOpenShadowRoot: function (e) { return r(e) && null !== e.shadowRoot; }, isShadowRoot: n, isInShadowRoot: o, isHTMLElement: function (e) { return e instanceof t(e).HTMLElement; }, isHTMLCanvasElement: function (e) { return e instanceof t(e).HTMLCanvasElement; }, isHTMLInputElement: function (e) { return e instanceof t(e).HTMLInputElement; }, isHTMLImageElement: function (e) { return e instanceof t(e).HTMLImageElement; }, isHTMLLinkElement: function (e) { return e instanceof t(e).HTMLLinkElement; }, isHTMLScriptElement: function (e) { return e instanceof t(e).HTMLScriptElement; }, isHTMLStyleElement: function (e) { return e instanceof t(e).HTMLStyleElement; }, isHTMLTextAreaElement: function (e) { return e instanceof t(e).HTMLTextAreaElement; }, isShadowSlotElement: function (e) { return o(e) && e instanceof t(e).HTMLSlotElement; }, isSVGElement: function (e) { return e instanceof t(e).SVGElement; }, isSVGRectElement: function (e) { return e instanceof t(e).SVGRectElement; }, isDimensionMissing: function (e) { return isNaN(e) || e <= 0; } }; function t(e) { e = e ? e.ownerDocument : void 0; return (e ? e.defaultView : void 0) || u || window; } function n(e) { return e instanceof t(e).ShadowRoot; } function o(e) { return null !== e && Object.prototype.hasOwnProperty.call(e, "getRootNode") && n(e.getRootNode()); } function r(e) { return e instanceof t(e).Element; } function i(t, n) { if (t.nodeType === a) {
+        var e_4 = h(t).getPropertyValue(n);
+        if ("px" === e_4.slice(-2))
+            return e_4 = e_4.slice(0, -2), parseFloat(e_4);
+    } return NaN; } }(), r = function () { var o = /url\(['"]?([^'"]+?)['"]?\)/g; return { inlineAll: function (t, o, r) { if (!e(t))
+            return Promise.resolve(t); return Promise.resolve(t).then(n).then(function (e) { var n = Promise.resolve(t); return e.forEach(function (t) { n = n.then(function (e) { return i(e, t, o, r); }); }), n; }); }, shouldProcess: e, impl: { readUrls: n, inline: i } }; function e(e) { return -1 !== e.search(o); } function n(e) { for (var t, n = []; null !== (t = o.exec(e));)
+        n.push(t[1]); return n.filter(function (e) { return !f.isDataUrl(e); }); } function i(n, o, t, e) { return Promise.resolve(o).then(function (e) { return t ? f.resolveUrl(e, t) : e; }).then(e || f.getAndEncode).then(function (e) { return n.replace((t = o, new RegExp("(url\\(['\"]?)(".concat(f.escape(t), ")(['\"]?\\))"), "g")), "$1".concat(e, "$3")); var t; }); } }(), e = { resolveAll: function () { return t().then(function (e) { return Promise.all(e.map(function (e) { return e.resolve(); })); }).then(function (e) { return e.join("\n"); }); }, impl: { readAll: t } };
+    function t() { return Promise.resolve(f.asArray(document.styleSheets)).then(function (e) { var n = []; return e.forEach(function (t) { if (Object.prototype.hasOwnProperty.call(Object.getPrototypeOf(t), "cssRules"))
+        try {
+            f.asArray(t.cssRules || []).forEach(n.push.bind(n));
+        }
+        catch (e) {
+            console.error("domtoimage: Error while reading CSS rules from " + t.href, e.toString());
+        } }), n; }).then(function (e) { return e.filter(function (e) { return e.type === CSSRule.FONT_FACE_RULE; }).filter(function (e) { return r.shouldProcess(e.style.getPropertyValue("src")); }); }).then(function (e) { return e.map(t); }); function t(t) { return { resolve: function () { var e = (t.parentStyleSheet || {}).href; return r.inlineAll(t.cssText, e); }, src: function () { return t.style.getPropertyValue("src"); } }; } }
+    var n = { inlineAll: function t(e) { if (!f.isElement(e))
+            return Promise.resolve(e); return n(e).then(function () { return f.isHTMLImageElement(e) ? o(e).inline() : Promise.all(f.asArray(e.childNodes).map(function (e) { return t(e); })); }); function n(o) { var e = ["background", "background-image"], t = e.map(function (t) { var e = o.style.getPropertyValue(t), n = o.style.getPropertyPriority(t); return e ? r.inlineAll(e).then(function (e) { o.style.setProperty(t, e, n); }) : Promise.resolve(); }); return Promise.all(t).then(function () { return o; }); } }, impl: { newImage: o } };
+    function o(n) { return { inline: function (e) { if (f.isDataUrl(n.src))
+            return Promise.resolve(); return Promise.resolve(n.src).then(e || f.getAndEncode).then(function (t) { return new Promise(function (e) { n.onload = e, n.onerror = e, n.src = t; }); }); } }; }
+    var l = { copyDefaultStyles: !0, imagePlaceholder: void 0, cacheBust: !1, useCredentials: !1, httpTimeout: 3e4, styleCaching: "strict" }, c = { toSvg: m, toPng: function (e, t) { return i(e, t).then(function (e) { return e.toDataURL(); }); }, toJpeg: function (e, t) { return i(e, t).then(function (e) { return e.toDataURL("image/jpeg", (t ? t.quality : void 0) || 1); }); }, toBlob: function (e, t) { return i(e, t).then(f.canvasToBlob); }, toPixelData: function (t, e) { return i(t, e).then(function (e) { return e.getContext("2d").getImageData(0, 0, f.width(t), f.height(t)).data; }); }, toCanvas: i, impl: { fontFaces: e, images: n, util: f, inliner: r, urlCache: [], options: {} } }, a = ("object" == typeof exports && "object" == typeof module ? module.exports = c : u.domtoimage = c, ("undefined" != typeof Node ? Node.ELEMENT_NODE : void 0) || 1), h = (void 0 !== u ? u.getComputedStyle : void 0) || ("undefined" != typeof window ? window.getComputedStyle : void 0) || globalThis.getComputedStyle, s = (void 0 !== u ? u.atob : void 0) || ("undefined" != typeof window ? window.atob : void 0) || globalThis.atob;
+    function m(e, r) { var t = c.impl.util.getWindow(e); var n = r = r || {}; void 0 === n.copyDefaultStyles ? c.impl.options.copyDefaultStyles = l.copyDefaultStyles : c.impl.options.copyDefaultStyles = n.copyDefaultStyles, void 0 === n.imagePlaceholder ? c.impl.options.imagePlaceholder = l.imagePlaceholder : c.impl.options.imagePlaceholder = n.imagePlaceholder, void 0 === n.cacheBust ? c.impl.options.cacheBust = l.cacheBust : c.impl.options.cacheBust = n.cacheBust, void 0 === n.useCredentials ? c.impl.options.useCredentials = l.useCredentials : c.impl.options.useCredentials = n.useCredentials, void 0 === n.httpTimeout ? c.impl.options.httpTimeout = l.httpTimeout : c.impl.options.httpTimeout = n.httpTimeout, void 0 === n.styleCaching ? c.impl.options.styleCaching = l.styleCaching : c.impl.options.styleCaching = n.styleCaching; var i = []; return Promise.resolve(e).then(function (e) { if (e.nodeType === a)
+        return e; var t = e, n = e.parentNode, o = document.createElement("span"); return n.replaceChild(o, t), o.append(e), i.push({ parent: n, child: t, wrapper: o }), o; }).then(function (e) { return function l(t, a, r, s) { var e = a.filter; if (t === d || f.isHTMLScriptElement(t) || f.isHTMLStyleElement(t) || f.isHTMLLinkElement(t) || null !== r && e && !e(t))
+        return Promise.resolve(); return Promise.resolve(t).then(n).then(function (e) { return i(e, o(t)); }).then(function (e) { return u(e, t); }); function n(e) { return f.isHTMLCanvasElement(e) ? f.makeImage(e.toDataURL()) : e.cloneNode(!1); } function o(e) { return f.isElementHostForOpenShadowRoot(e) ? e.shadowRoot : e; } function i(t, e) { var n = i(e); var o = Promise.resolve(); if (0 !== n.length) {
+        var u_1 = h(r(e));
+        f.asArray(n).forEach(function (e) { o = o.then(function () { return l(e, a, u_1, s).then(function (e) { e && t.appendChild(e); }); }); });
+    } return o.then(function () { return t; }); function r(e) { return f.isShadowRoot(e) ? e.host : e; } function i(e) { return f.isShadowSlotElement(e) ? e.assignedNodes() : e.childNodes; } } function u(s, c) { return !f.isElement(s) || f.isShadowSlotElement(c) ? Promise.resolve(s) : Promise.resolve().then(e).then(t).then(n).then(o).then(function () { return s; }); function e() { function o(e, t) { t.font = e.font, t.fontFamily = e.fontFamily, t.fontFeatureSettings = e.fontFeatureSettings, t.fontKerning = e.fontKerning, t.fontSize = e.fontSize, t.fontStretch = e.fontStretch, t.fontStyle = e.fontStyle, t.fontVariant = e.fontVariant, t.fontVariantCaps = e.fontVariantCaps, t.fontVariantEastAsian = e.fontVariantEastAsian, t.fontVariantLigatures = e.fontVariantLigatures, t.fontVariantNumeric = e.fontVariantNumeric, t.fontVariationSettings = e.fontVariationSettings, t.fontWeight = e.fontWeight; } function e(e, t) { var n = h(e); n.cssText ? (t.style.cssText = n.cssText, o(n, t.style)) : (y(a, e, n, r, t), null === r && (["inset-block", "inset-block-start", "inset-block-end"].forEach(function (e) { return t.style.removeProperty(e); }), ["left", "right", "top", "bottom"].forEach(function (e) { t.style.getPropertyValue(e) && t.style.setProperty(e, "0px"); }))); } e(c, s); } function t() { var l = f.uid(); function t(r) { var i = h(c, r), u = i.getPropertyValue("content"); if ("" !== u && "none" !== u) {
+        var t_1 = s.getAttribute("class") || "", n_1 = (s.setAttribute("class", t_1 + " " + l), document.createElement("style"));
+        function e() { var e = ".".concat(l, ":") + r, t = (i.cssText ? n : o)(); return document.createTextNode(e + "{".concat(t, "}")); function n() { return "".concat(i.cssText, " content: ").concat(u, ";"); } function o() { var e = f.asArray(i).map(t).join("; "); return e + ";"; function t(e) { var t = i.getPropertyValue(e), n = i.getPropertyPriority(e) ? " !important" : ""; return e + ": " + t + n; } } }
+        n_1.appendChild(e()), s.appendChild(n_1);
+    } } [":before", ":after"].forEach(function (e) { t(e); }); } function n() { f.isHTMLTextAreaElement(c) && (s.innerHTML = c.value), f.isHTMLInputElement(c) && s.setAttribute("value", c.value); } function o() { f.isSVGElement(s) && (s.setAttribute("xmlns", "http://www.w3.org/2000/svg"), f.isSVGRectElement(s)) && ["width", "height"].forEach(function (e) { var t = s.getAttribute(e); t && s.style.setProperty(e, t); }); } } }(e, r, null, t); }).then(p).then(g).then(function (t) { r.bgcolor && (t.style.backgroundColor = r.bgcolor); r.width && (t.style.width = r.width + "px"); r.height && (t.style.height = r.height + "px"); r.style && Object.keys(r.style).forEach(function (e) { t.style[e] = r.style[e]; }); var e = null; "function" == typeof r.onclone && (e = r.onclone(t)); return Promise.resolve(e).then(function () { return t; }); }).then(function (e) { var n = r.width || f.width(e), o = r.height || f.height(e); return Promise.resolve(e).then(function (e) { return e.setAttribute("xmlns", "http://www.w3.org/1999/xhtml"), (new XMLSerializer).serializeToString(e); }).then(f.escapeXhtml).then(function (e) { var t = (f.isDimensionMissing(n) ? ' width="100%"' : " width=\"".concat(n, "\"")) + (f.isDimensionMissing(o) ? ' height="100%"' : " height=\"".concat(o, "\"")); return "<svg xmlns=\"http://www.w3.org/2000/svg\"".concat((f.isDimensionMissing(n) ? "" : " width=\"".concat(n, "\"")) + (f.isDimensionMissing(o) ? "" : " height=\"".concat(o, "\"")), "><foreignObject").concat(t, ">").concat(e, "</foreignObject></svg>"); }).then(function (e) { return "data:image/svg+xml;charset=utf-8," + e; }); }).then(function (e) { for (; 0 < i.length;) {
+        var t = i.pop();
+        t.parent.replaceChild(t.child, t.wrapper);
+    } return e; }).then(function (e) { return c.impl.urlCache = [], function () { d && (document.body.removeChild(d), d = null); w && clearTimeout(w); w = setTimeout(function () { w = null, E = {}; }, 2e4); }(), e; }); }
+    function i(r, i) { return m(r, i = i || {}).then(f.makeImage).then(function (e) { var t = "number" != typeof i.scale ? 1 : i.scale, n = function (e, t) { var n = i.width || f.width(e), o = i.height || f.height(e); f.isDimensionMissing(n) && (n = f.isDimensionMissing(o) ? 300 : 2 * o); f.isDimensionMissing(o) && (o = n / 2); e = document.createElement("canvas"); e.width = n * t, e.height = o * t, i.bgcolor && ((t = e.getContext("2d")).fillStyle = i.bgcolor, t.fillRect(0, 0, e.width, e.height)); return e; }(r, t), o = n.getContext("2d"); return o.msImageSmoothingEnabled = !1, o.imageSmoothingEnabled = !1, e && (o.scale(t, t), o.drawImage(e, 0, 0)), n; }); }
+    var d = null;
+    function p(n) { return e.resolveAll().then(function (e) { var t; return "" !== e && (t = document.createElement("style"), n.appendChild(t), t.appendChild(document.createTextNode(e))), n; }); }
+    function g(e) { return n.inlineAll(e).then(function () { return e; }); }
+    function y(e, t, i, u, n) { var l = c.impl.options.copyDefaultStyles ? function (t, e) { var e = function (e) { var t = []; do {
+        if (e.nodeType === a) {
+            var n = e.tagName;
+            if (t.push(n), v.includes(n))
+                break;
+        }
+    } while (e = e.parentNode, e); return t; }(e), n = function (e) { return ("relaxed" !== t.styleCaching ? e : e.filter(function (e, t, n) { return 0 === t || t === n.length - 1; })).join(">"); }(e); if (E[n])
+        return E[n]; var o = function () { if (d)
+        return d.contentWindow; var e = document.characterSet || "UTF-8", t = document.doctype, t = t ? ("<!DOCTYPE ".concat(n(t.name), " ").concat(n(t.publicId), " ") + n(t.systemId)).trim() + ">" : ""; return (d = document.createElement("iframe")).id = "domtoimage-sandbox-" + f.uid(), d.style.visibility = "hidden", d.style.position = "fixed", document.body.appendChild(d), function (e, t, n, o) { try {
+        return e.contentWindow.document.write(t + "<html><head><meta charset='".concat(n, "'><title>").concat(o, "</title></head><body></body></html>")), e.contentWindow;
+    }
+    catch (e) { } var r = document.createElement("meta"); r.setAttribute("charset", n); try {
+        var i = document.implementation.createHTMLDocument(o), u = (i.head.appendChild(r), t + i.documentElement.outerHTML);
+        return e.setAttribute("srcdoc", u), e.contentWindow;
+    }
+    catch (e) { } return e.contentDocument.head.appendChild(r), e.contentDocument.title = o, e.contentWindow; }(d, t, e, "domtoimage-sandbox"); function n(e) { var t; return e ? ((t = document.createElement("div")).innerText = e, t.innerHTML) : ""; } }(), e = function (e, t) { var n = e.body; do {
+        var o = t.pop(), o = e.createElement(o);
+        n.appendChild(o), n = o;
+    } while (0 < t.length); return n.textContent = "​", n; }(o.document, e), o = function (e, t) { var n = {}, o = e.getComputedStyle(t); return f.asArray(o).forEach(function (e) { n[e] = "width" === e || "height" === e ? "auto" : o.getPropertyValue(e); }), n; }(o, e); return function (e) { do {
+        var t = e.parentElement;
+        null !== t && t.removeChild(e), e = t;
+    } while (e && "BODY" !== e.tagName); }(e), E[n] = o; }(e, t) : {}, s = n.style; f.asArray(i).forEach(function (e) { var t, n = i.getPropertyValue(e), o = l[e], r = u ? u.getPropertyValue(e) : void 0; (n !== o || u && n !== r) && (o = i.getPropertyPriority(e), r = s, n = n, o = o, t = 0 <= ["background-clip"].indexOf(e = e), o ? (r.setProperty(e, n, o), t && r.setProperty("-webkit-" + e, n, o)) : (r.setProperty(e, n), t && r.setProperty("-webkit-" + e, n))); }); }
+    var w = null, E = {};
+    var v = ["ADDRESS", "ARTICLE", "ASIDE", "BLOCKQUOTE", "DETAILS", "DIALOG", "DD", "DIV", "DL", "DT", "FIELDSET", "FIGCAPTION", "FIGURE", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "LI", "MAIN", "NAV", "OL", "P", "PRE", "SECTION", "SVG", "TABLE", "UL", "math", "svg", "BODY", "HEAD", "HTML"];
+}(this);
+//# sourceMappingURL=dom-to-image-more.min.js.map
 var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
 var log = isDebug ? console.log.bind(window.console) : function () { };
 define([
@@ -22,7 +98,7 @@ var ZoomManager = /** @class */ (function () {
         if (!settings.element) {
             throw new DOMException('You need to set the element to wrap in the zoom element');
         }
-        this.zoomLevels = (_a = settings.zoomLevels) !== null && _a !== void 0 ? _a : DEFAULT_ZOOM_LEVELS;
+        this._zoomLevels = (_a = settings.zoomLevels) !== null && _a !== void 0 ? _a : DEFAULT_ZOOM_LEVELS;
         this._zoom = this.settings.defaultZoom || 1;
         if (this.settings.localStorageZoomKey) {
             var zoomStr = localStorage.getItem(this.settings.localStorageZoomKey);
@@ -69,6 +145,16 @@ var ZoomManager = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(ZoomManager.prototype, "zoomLevels", {
+        /**
+         * Returns the zoom levels
+         */
+        get: function () {
+            return this._zoomLevels;
+        },
+        enumerable: false,
+        configurable: true
+    });
     ZoomManager.prototype.setAutoZoom = function () {
         var _this = this;
         var _a, _b, _c;
@@ -79,8 +165,8 @@ var ZoomManager = /** @class */ (function () {
         }
         var expectedWidth = (_a = this.settings.autoZoom) === null || _a === void 0 ? void 0 : _a.expectedWidth;
         var newZoom = this.zoom;
-        while (newZoom > this.zoomLevels[0] && newZoom > ((_c = (_b = this.settings.autoZoom) === null || _b === void 0 ? void 0 : _b.minZoomLevel) !== null && _c !== void 0 ? _c : 0) && zoomWrapperWidth / newZoom < expectedWidth) {
-            newZoom = this.zoomLevels[this.zoomLevels.indexOf(newZoom) - 1];
+        while (newZoom > this._zoomLevels[0] && newZoom > ((_c = (_b = this.settings.autoZoom) === null || _b === void 0 ? void 0 : _b.minZoomLevel) !== null && _c !== void 0 ? _c : 0) && zoomWrapperWidth / newZoom < expectedWidth) {
+            newZoom = this._zoomLevels[this._zoomLevels.indexOf(newZoom) - 1];
         }
         if (this._zoom == newZoom) {
             if (this.settings.localStorageZoomKey) {
@@ -90,6 +176,19 @@ var ZoomManager = /** @class */ (function () {
         else {
             this.setZoom(newZoom);
         }
+    };
+    /**
+     * Sets the available zoomLevels and new zoom to the provided values.
+     * @param zoomLevels the new array of zoomLevels that can be used.
+     * @param newZoom if provided the zoom will be set to this value, if not the last element of the zoomLevels array will be set as the new zoom
+     */
+    ZoomManager.prototype.setZoomLevels = function (zoomLevels, newZoom) {
+        if (!zoomLevels || zoomLevels.length <= 0) {
+            return;
+        }
+        this._zoomLevels = zoomLevels;
+        var zoomIndex = newZoom && zoomLevels.includes(newZoom) ? this._zoomLevels.indexOf(newZoom) : this._zoomLevels.length - 1;
+        this.setZoom(this._zoomLevels[zoomIndex]);
     };
     /**
      * Set the zoom level. Ideally, use a zoom level in the zoomLevels range.
@@ -102,8 +201,8 @@ var ZoomManager = /** @class */ (function () {
         if (this.settings.localStorageZoomKey) {
             localStorage.setItem(this.settings.localStorageZoomKey, '' + this._zoom);
         }
-        var newIndex = this.zoomLevels.indexOf(this._zoom);
-        (_a = this.zoomInButton) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', newIndex === this.zoomLevels.length - 1);
+        var newIndex = this._zoomLevels.indexOf(this._zoom);
+        (_a = this.zoomInButton) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', newIndex === this._zoomLevels.length - 1);
         (_b = this.zoomOutButton) === null || _b === void 0 ? void 0 : _b.classList.toggle('disabled', newIndex === 0);
         this.settings.element.style.transform = zoom === 1 ? '' : "scale(".concat(zoom, ")");
         (_d = (_c = this.settings).onZoomChange) === null || _d === void 0 ? void 0 : _d.call(_c, this._zoom);
@@ -131,21 +230,21 @@ var ZoomManager = /** @class */ (function () {
      * Simulates a click on the Zoom-in button.
      */
     ZoomManager.prototype.zoomIn = function () {
-        if (this._zoom === this.zoomLevels[this.zoomLevels.length - 1]) {
+        if (this._zoom === this._zoomLevels[this._zoomLevels.length - 1]) {
             return;
         }
-        var newIndex = this.zoomLevels.indexOf(this._zoom) + 1;
-        this.setZoom(newIndex === -1 ? 1 : this.zoomLevels[newIndex]);
+        var newIndex = this._zoomLevels.indexOf(this._zoom) + 1;
+        this.setZoom(newIndex === -1 ? 1 : this._zoomLevels[newIndex]);
     };
     /**
      * Simulates a click on the Zoom-out button.
      */
     ZoomManager.prototype.zoomOut = function () {
-        if (this._zoom === this.zoomLevels[0]) {
+        if (this._zoom === this._zoomLevels[0]) {
             return;
         }
-        var newIndex = this.zoomLevels.indexOf(this._zoom) - 1;
-        this.setZoom(newIndex === -1 ? 1 : this.zoomLevels[newIndex]);
+        var newIndex = this._zoomLevels.indexOf(this._zoom) - 1;
+        this.setZoom(newIndex === -1 ? 1 : this._zoomLevels[newIndex]);
     };
     /**
      * Changes the color of the zoom controls.
@@ -2003,17 +2102,14 @@ var AutoZoomManager = /** @class */ (function (_super) {
             zoomLevels: zoomLevels,
             defaultZoom: zoomLevels[zoomLevels.length - 1],
             zoomControls: {
-                color: 'white',
+                color: 'black',
             },
             onDimensionsChange: function (zoom) {
                 if (_this) {
                     var newMaxZoomLevel = determineMaxZoomLevel();
-                    // @ts-ignore
                     var currentMaxZoomLevel = _this.zoomLevels[_this.zoomLevels.length - 1];
                     if (newMaxZoomLevel != currentMaxZoomLevel) {
-                        // @ts-ignore
-                        _this.zoomLevels = _this.getZoomLevels(newMaxZoomLevel);
-                        _this.setZoom(newMaxZoomLevel);
+                        _this.setZoomLevels(getZoomLevels(newMaxZoomLevel), newMaxZoomLevel);
                     }
                 }
             },
@@ -2033,6 +2129,8 @@ var ArtCardManager = /** @class */ (function (_super) {
             },
             setupFrontDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-front");
+                div.classList.add('art-card');
+                div.classList.add('art-card-' + card.type);
                 div.dataset.type = '' + card.type;
             },
             isCardVisible: function (card) { return !!card.type; },
@@ -2041,6 +2139,7 @@ var ArtCardManager = /** @class */ (function (_super) {
         }) || this;
         _this.canvasGame = canvasGame;
         _this.playerHand = {};
+        _this.paintings = {};
         return _this;
     }
     ArtCardManager.prototype.setUp = function (gameData) {
@@ -2103,6 +2202,11 @@ var ArtCardManager = /** @class */ (function (_super) {
         return this.display.addCards(displayCards.slice(0, -1))
             .then(function () { return _this.display.addCard(displayCards[displayCards.length - 1], { fromStock: _this.deck }); });
     };
+    ArtCardManager.prototype.createPaintingStock = function (id, elementId, cards) {
+        dojo.place("<div id=\"".concat(elementId, "-art\"></div>"), elementId);
+        this.paintings[id] = new LineStock(this, $(elementId + "-art"), {});
+        this.paintings[id].addCards(cards);
+    };
     return ArtCardManager;
 }(CardManager));
 var BackgroundCardManager = /** @class */ (function (_super) {
@@ -2116,6 +2220,8 @@ var BackgroundCardManager = /** @class */ (function (_super) {
             },
             setupFrontDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-front");
+                div.classList.add('background-card');
+                div.classList.add('background-card-' + card.type);
                 div.dataset.type = '' + card.type;
             },
             isCardVisible: function (card) { return !!card.type; },
@@ -2124,18 +2230,28 @@ var BackgroundCardManager = /** @class */ (function (_super) {
         }) || this;
         _this.canvasGame = canvasGame;
         _this.players = {};
+        _this.paintings = {};
         return _this;
     }
     BackgroundCardManager.prototype.setUp = function (gameData) {
         var _this = this;
         var _loop_3 = function (playersKey) {
+            var player = gameData.players[playersKey];
             this_1.players[Number(playersKey)] = new LineStock(this_1, $("player-background-".concat(playersKey)), {});
-            gameData.players[playersKey].backgroundCards.forEach(function (card) { return _this.players[Number(playersKey)].addCard(card); });
+            player.backgroundCards.forEach(function (card) { return _this.moveCardToPlayerHand(Number(playersKey), card); });
         };
         var this_1 = this;
         for (var playersKey in gameData.players) {
             _loop_3(playersKey);
         }
+    };
+    BackgroundCardManager.prototype.moveCardToPlayerHand = function (playerId, card) {
+        return this.players[playerId].addCard(card);
+    };
+    BackgroundCardManager.prototype.createPaintingStock = function (id, elementId, card) {
+        dojo.place("<div id=\"".concat(elementId, "-background\"></div>"), elementId);
+        this.paintings[id] = new LineStock(this, $($(elementId + "-background")), {});
+        this.paintings[id].addCard(card);
     };
     return BackgroundCardManager;
 }(CardManager));
@@ -2219,6 +2335,254 @@ var InspirationTokenManager = /** @class */ (function (_super) {
     };
     return InspirationTokenManager;
 }(CardManager));
+var PaintingManager = /** @class */ (function () {
+    function PaintingManager(canvasGame) {
+        this.canvasGame = canvasGame;
+        this.completePaintingMode = {
+            backgroundCards: [],
+            artCards: [],
+            painting: {
+                backgroundCard: undefined,
+                artCards: []
+            },
+        };
+    }
+    PaintingManager.prototype.setUp = function (gameData) {
+        var _this = this;
+        for (var playersKey in gameData.players) {
+            var player = gameData.players[playersKey];
+            player.paintings.forEach(function (painting) { return _this.createPainting(painting); });
+        }
+    };
+    PaintingManager.prototype.createPainting = function (painting) {
+        var _this = this;
+        var paintingElementId = "player-finished-painting-".concat(painting.id);
+        var cardsWrapperId = "".concat(paintingElementId, "-cards-wrapper");
+        dojo.place("<div id=\"".concat(paintingElementId, "\" class=\"canvas-painting\">\n                            <div id=\"").concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>\n                            <a id=\"save-painting-").concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-heart\" aria-hidden=\"true\"></i></a>\n                         </div>"), "player-finished-paintings-".concat(painting.playerId));
+        this.canvasGame.backgroundCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.backgroundCard);
+        this.canvasGame.artCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.artCards);
+        dojo.connect($("save-painting-".concat(painting.id)), 'onclick', function () { return _this.paintingToPng(painting); });
+    };
+    PaintingManager.prototype.enterCompletePaintingMode = function (backgroundCards, artCards) {
+        var _this = this;
+        this.completePaintingMode = {
+            backgroundCards: backgroundCards,
+            artCards: artCards,
+            painting: {
+                backgroundCard: backgroundCards[0],
+                artCards: artCards.slice(0, 3)
+            }
+        };
+        dojo.place(this.createCompletePaintingPickerElement(), 'complete-painting');
+        dojo.place(this.createCompletePaintingPreviewElement(), 'complete-painting');
+        dojo.place(this.createBackgroundSlot(this.completePaintingMode.backgroundCards.length), 'art-cards-picker-top-text', 'before');
+        dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard), 'complete-painting-background-card-slot');
+        dojo.connect($('change-background-button'), 'onclick', function () { return _this.changeBackgroundCard(); });
+        var _loop_5 = function (i) {
+            dojo.place(this_3.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
+            dojo.place(this_3.createArtCardElement(this_3.completePaintingMode.painting.artCards[i - 1]), "complete-painting-art-card-slot-".concat(i));
+            dojo.connect($("art-card-move-left-".concat(i)), 'onclick', function () { return _this.moveArtCard('left', i); });
+            dojo.connect($("art-card-move-right-".concat(i)), 'onclick', function () { return _this.moveArtCard('right', i); });
+            dojo.connect($("art-card-change-".concat(i)), 'onclick', function () { return _this.changeArtCard(i); });
+        };
+        var this_3 = this;
+        for (var i = 1; i <= 3; i++) {
+            _loop_5(i);
+        }
+        this.updateUnusedCards();
+        this.updatePreview();
+    };
+    PaintingManager.prototype.changeBackgroundCard = function () {
+        var newBackgroundCardIndex = this.completePaintingMode.backgroundCards.indexOf(this.completePaintingMode.painting.backgroundCard) + 1;
+        if (newBackgroundCardIndex >= this.completePaintingMode.backgroundCards.length) {
+            newBackgroundCardIndex = 0;
+        }
+        var newBackgroundCard = this.completePaintingMode.backgroundCards[newBackgroundCardIndex];
+        if (newBackgroundCard) {
+            dojo.place(this.createBackgroundElement(newBackgroundCard), 'complete-painting-background-card-slot', 'only');
+            this.completePaintingMode.painting.backgroundCard = newBackgroundCard;
+        }
+        this.updatePreview();
+    };
+    PaintingManager.prototype.moveArtCard = function (direction, i) {
+        var newIndex = direction === 'left' ? i - 1 : i + 1;
+        var newPositionCard = this.completePaintingMode.painting.artCards[newIndex - 1];
+        var oldPositionCard = this.completePaintingMode.painting.artCards[i - 1];
+        dojo.place(this.createArtCardElement(newPositionCard), "complete-painting-art-card-slot-".concat(i), 'only');
+        this.completePaintingMode.painting.artCards[i - 1] = newPositionCard;
+        dojo.place(this.createArtCardElement(oldPositionCard), "complete-painting-art-card-slot-".concat(newIndex), 'only');
+        this.completePaintingMode.painting.artCards[newIndex - 1] = oldPositionCard;
+        this.updatePreview();
+    };
+    PaintingManager.prototype.changeArtCard = function (i) {
+        var currentCard = this.completePaintingMode.painting.artCards[i - 1];
+        var currentCardIndex = this.completePaintingMode.artCards.indexOf(currentCard);
+        var searchIndex = currentCardIndex + 1;
+        var newCard = undefined;
+        while (!newCard) {
+            if (this.completePaintingMode.artCards.length === searchIndex) {
+                searchIndex = 0;
+            }
+            if (!this.completePaintingMode.painting.artCards.includes(this.completePaintingMode.artCards[searchIndex])) {
+                newCard = this.completePaintingMode.artCards[searchIndex];
+            }
+            searchIndex = searchIndex + 1;
+        }
+        dojo.place(this.createArtCardElement(newCard), "complete-painting-art-card-slot-".concat(i), 'only');
+        this.completePaintingMode.painting.artCards[i - 1] = newCard;
+        this.updateUnusedCards();
+        this.updatePreview();
+    };
+    PaintingManager.prototype.exitCompletePaintingMode = function () {
+        dojo.empty('complete-painting');
+    };
+    PaintingManager.prototype.createCompletePaintingPickerElement = function () {
+        return "\n            <div id=\"complete-painting-picker-wrapper\">\n                <div class=\"title-wrapper\"><div class=\"title\"><h1>".concat(_("Art Picker"), "</h1></div></div>\n                <div id=\"art-cards-picker\">\n                    <div id=\"art-cards-picker-bottom-text\"><h1>").concat(_("Bottom"), "</h1></div>\n                    <div id=\"art-cards-picker-top-text\"><h1>").concat(_("Top"), "</h1></div>\n                </div> \n                <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Unused Cards"), "</h1></div></div>\n                <div id=\"art-cards-picker-unused\">\n                    \n                </div> \n            </div>\n        ");
+    };
+    PaintingManager.prototype.createCompletePaintingPreviewElement = function () {
+        return "\n            <div id=\"complete-painting-preview\">\n                <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>".concat(_("Painting Preview"), "</h1></div></div>\n                <div id=\"complete-painting-preview-scoring\"></div>\n                <div id=\"complete-painting-preview-slot-wrapper\">\n                    <div id=\"complete-painting-preview-slot\" class=\"canvas-painting\"></div>   \n                </div>  \n            </div>\n        ");
+    };
+    PaintingManager.prototype.createArtCardSlot = function (id) {
+        return "\n            <div>\n                <div class=\"top-button-wrapper button-wrapper\"><a id=\"art-card-move-left-".concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ").concat(id === 1 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-art-card-slot-").concat(id, "\" class=\"complete-painting-art-card-slot\"></div>\n                <div class=\"center-button-wrapper button-wrapper\"><a id=\"art-card-change-").concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ").concat(this.completePaintingMode.artCards.length <= 3 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div class=\"bottom-button-wrapper button-wrapper\"><a id=\"art-card-move-right-").concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ").concat(id === 3 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-arrow-right\" aria-hidden=\"true\"></i></a></div>\n            </div>\n        ");
+    };
+    PaintingManager.prototype.createBackgroundSlot = function (nrOfBackgroundCards) {
+        return "\n            <div>\n                <div class=\"top-button-wrapper button-wrapper\"><a id=\"change-background-button\" class=\"bgabutton bgabutton_blue ".concat(nrOfBackgroundCards <= 1 ? 'disabled' : '', "\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-background-card-slot\" class=\"complete-painting-art-card-slot\"></div>\n            </div>\n        ");
+    };
+    PaintingManager.prototype.createBackgroundElement = function (card, postfix) {
+        if (postfix === void 0) { postfix = 'clone'; }
+        var clone = this.canvasGame.backgroundCardManager.getCardElement(card).cloneNode(true);
+        clone.id = "".concat(clone.id, "-").concat(postfix);
+        return clone;
+    };
+    PaintingManager.prototype.createArtCardElement = function (card, postfix) {
+        if (postfix === void 0) { postfix = 'clone'; }
+        var clone = this.canvasGame.artCardManager.getCardElement(card).cloneNode(true);
+        clone.id = "".concat(clone.id, "-").concat(postfix);
+        return clone;
+    };
+    PaintingManager.prototype.updateUnusedCards = function () {
+        var _this = this;
+        dojo.empty($("art-cards-picker-unused"));
+        this.completePaintingMode.artCards
+            .filter(function (card) { return !_this.completePaintingMode.painting.artCards.includes(card); })
+            .forEach(function (card) {
+            dojo.place(_this.createArtCardElement(card), "art-cards-picker-unused");
+        });
+    };
+    PaintingManager.prototype.updatePreview = function () {
+        this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large');
+        this.canvasGame.takeNoLockAction('scorePainting', {
+            painting: {
+                backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
+                artCardIds: this.completePaintingMode.painting.artCards.map(function (card) { return card.id; })
+            }
+        });
+    };
+    PaintingManager.prototype.updatePreviewScore = function (args) {
+        dojo.empty($('complete-painting-preview-scoring'));
+        Object.entries(args).forEach(function (_a) {
+            var key = _a[0], value = _a[1];
+            dojo.place("<span class=\"complete-painting-preview-scoring-ribbon\"><span>".concat(value, "</span><span class=\"canvas-ribbon\" data-type=\"").concat(key, "\"></span></span>"), 'complete-painting-preview-scoring');
+        });
+    };
+    PaintingManager.prototype.confirmPainting = function () {
+        dojo.destroy('complete-painting-picker-wrapper');
+        this.canvasGame.takeAction('completePainting', {
+            painting: JSON.stringify({
+                backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
+                artCardIds: this.completePaintingMode.painting.artCards.map(function (card) { return card.id; })
+            })
+        });
+    };
+    PaintingManager.prototype.createPaintingElement = function (backgroundCard, artCards, node, size, copyright) {
+        if (size === void 0) { size = 'normal'; }
+        if (copyright === void 0) { copyright = false; }
+        var paintingId = "canvas-painting-".concat(backgroundCard.id, "-preview");
+        dojo.place("<div id=\"".concat(paintingId, "\" class=\"canvas-painting ").concat(size, "\"></div>"), node, 'only');
+        var cardsWrapperId = "".concat(paintingId, "-cards-wrapper");
+        dojo.place("<div id=\"".concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>"), paintingId);
+        dojo.place("<div class=\"background-card background-card-".concat(backgroundCard.type, "\"></div>"), cardsWrapperId);
+        artCards.forEach(function (card) { dojo.place("<div class=\"art-card art-card-".concat(card.type, "\"></div>"), cardsWrapperId); });
+        if (copyright) {
+            dojo.place('<div id="canvas-copyright">#CanvasPainting<br/>&#169; Road To Infamy Games<br/>Play Canvas on BoardGameArena.com</div>', paintingId);
+        }
+        return paintingId;
+    };
+    PaintingManager.prototype.paintingToPng = function (painting) {
+        var dialogId = 'share-painting-' + painting.id;
+        var dialogContentId = 'share-painting-' + painting.id + '-content';
+        var myDlg = new ebg.popindialog();
+        myDlg.create(dialogId);
+        myDlg.setTitle(_("Share your painting!"));
+        myDlg.setContent("<div id=\"".concat(dialogContentId, "\" class=\"share-painting-dialog-content\"><div class=\"lds-ellipsis\"><div></div><div></div><div></div><div></div></div></div>"));
+        myDlg.show();
+        var elementId = this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large', true);
+        var el = document.getElementById(elementId);
+        // @ts-ignore
+        domtoimage
+            .toPng(el)
+            .then(function (dataUrl) {
+            // dojo.empty('html2canvas-result')
+            dojo.place("<img src=\"".concat(dataUrl, "\" />"), dialogContentId, 'only');
+            dojo.place("<span>".concat(_("Share your #CanvasPainting with the world by clicking the button below"), "</span>"), dialogContentId);
+            dojo.place("<a id=\"share-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>"), dialogContentId);
+            dojo.connect($("share-painting-".concat(painting.id)), 'onclick', function () {
+                // @ts-ignore
+                domtoimage
+                    .toBlob(el)
+                    .then(function (blob) {
+                    return __awaiter(this, void 0, void 0, function () {
+                        var fileName, data, a, url, err_1;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    fileName = "my-canvas-painting-".concat(new Date().getTime(), ".png");
+                                    data = {
+                                        files: [
+                                            new File([blob], fileName, {
+                                                type: blob.type,
+                                            }),
+                                        ],
+                                        title: 'Canvas Painting'
+                                    };
+                                    _a.label = 1;
+                                case 1:
+                                    _a.trys.push([1, 5, , 6]);
+                                    if (!(navigator.canShare && navigator.canShare(data))) return [3 /*break*/, 3];
+                                    return [4 /*yield*/, navigator.share(data)];
+                                case 2:
+                                    _a.sent();
+                                    return [3 /*break*/, 4];
+                                case 3:
+                                    a = document.createElement('a');
+                                    url = window.URL.createObjectURL(blob);
+                                    a.href = url;
+                                    a.download = fileName;
+                                    a.click();
+                                    window.URL.revokeObjectURL(url);
+                                    a.remove();
+                                    _a.label = 4;
+                                case 4: return [3 /*break*/, 6];
+                                case 5:
+                                    err_1 = _a.sent();
+                                    console.error(err_1.name, err_1.message);
+                                    return [3 /*break*/, 6];
+                                case 6: return [2 /*return*/];
+                            }
+                        });
+                    });
+                })
+                    .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                });
+            });
+        })
+            .catch(function (error) {
+            console.error('oops, something went wrong!', error);
+        });
+    };
+    return PaintingManager;
+}());
 var PlayerManager = /** @class */ (function () {
     function PlayerManager(game) {
         this.game = game;
@@ -2238,7 +2602,7 @@ var PlayerManager = /** @class */ (function () {
         playerAreas.forEach(function (playerArea) { return dojo.place(playerArea, "player-areas"); });
     };
     PlayerManager.prototype.createPlayerArea = function (player) {
-        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h2 class=\"canvas-title\" style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h2>\n                    </div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <h2>").concat(_("Hand Cards"), "</h2>\n                    <div id=\"player-hand-").concat(player.id, "\"></div>\n                    <div class=\"player-collection-wrapper\">\n                        <div class=\"player-collection-wrapper-item\">\n                            <h2>").concat(_("Background Cards"), "</h2>\n                            <div id=\"player-background-").concat(player.id, "\"></div>   \n                        </div>  \n                        <div class=\"player-collection-wrapper-item\">\n                            <h2>").concat(_("Finished Paintings"), "</h2>\n                            <div id=\"player-finished-paintings-").concat(player.id, "\"></div>\n                        </div>\n                    </div>\n                </div>");
+        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h1 style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h1>\n                    </div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Hand Cards"), "</h1></div></div>\n                    <div id=\"player-hand-").concat(player.id, "\"></div>\n                    <div class=\"player-collection-wrapper\">\n                        <div class=\"player-collection-wrapper-item\">\n                            <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>").concat(_("Background Cards"), "</h1></div></div>\n                            <div id=\"player-background-").concat(player.id, "\"></div>   \n                        </div>  \n                        <div class=\"player-collection-wrapper-item\">\n                            <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>").concat(_("Finished Paintings"), "</h1></div></div>\n                            <div id=\"player-finished-paintings-").concat(player.id, "\" class=\"player-finished-paintings\">\n                                \n                            </div>\n                        </div>\n                    </div>\n                </div>");
     };
     return PlayerManager;
 }());
@@ -2275,11 +2639,13 @@ var Canvas = /** @class */ (function () {
         this.backgroundCardManager = new BackgroundCardManager(this);
         this.scoringCardManager = new ScoringCardManager(this);
         this.inspirationTokenManager = new InspirationTokenManager(this);
+        this.paintingManager = new PaintingManager(this);
         this.scoringCardManager.setUp(gamedatas);
         this.playerManager.setUp(gamedatas);
         this.backgroundCardManager.setUp(gamedatas);
         this.artCardManager.setUp(gamedatas);
         this.inspirationTokenManager.setUp(gamedatas);
+        this.paintingManager.setUp(gamedatas);
         this.setupNotifications();
         log("Ending game setup");
     };
@@ -2294,10 +2660,20 @@ var Canvas = /** @class */ (function () {
             case 'takeArtCard':
                 this.onEnteringTakeArtCard(args.args);
                 break;
+            case 'completePainting':
+                this.onEnteringCompletePainting(args.args);
+                break;
         }
     };
     Canvas.prototype.onEnteringTakeArtCard = function (args) {
-        this.artCardManager.enterDisplaySelectMode(args.availableCards);
+        if (this.isCurrentPlayerActive()) {
+            this.artCardManager.enterDisplaySelectMode(args.availableCards);
+        }
+    };
+    Canvas.prototype.onEnteringCompletePainting = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.paintingManager.enterCompletePaintingMode(args.backgroundCards, args.artCards);
+        }
     };
     Canvas.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
@@ -2305,10 +2681,20 @@ var Canvas = /** @class */ (function () {
             case 'takeArtCard':
                 this.onLeavingTakeArtCard();
                 break;
+            case 'completePainting':
+                this.onLeavingCompletePainting();
+                break;
         }
     };
     Canvas.prototype.onLeavingTakeArtCard = function () {
-        this.artCardManager.exitDisplaySelectMode();
+        if (this.isCurrentPlayerActive()) {
+            this.artCardManager.exitDisplaySelectMode();
+        }
+    };
+    Canvas.prototype.onLeavingCompletePainting = function () {
+        if (this.isCurrentPlayerActive()) {
+            this.paintingManager.exitCompletePaintingMode();
+        }
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -2318,12 +2704,20 @@ var Canvas = /** @class */ (function () {
         if (this.isCurrentPlayerActive() && !this.isReadOnly()) {
             switch (stateName) {
                 case 'playerTurn':
-                    this.addActionButton('chooseActionTakeArtCard', _("Take an Art Card"), function () { return _this.chooseAction('takeArtCard'); });
-                    this.addActionButton('chooseActionCompletePainting', _("Complete Painting"), function () { return _this.chooseAction('completePainting'); });
+                    if (args.availableActions.includes('takeArtCard')) {
+                        this.addActionButton('chooseActionTakeArtCard', _("Take an Art Card"), function () { return _this.chooseAction('takeArtCard'); });
+                    }
+                    if (args.availableActions.includes('completePainting')) {
+                        this.addActionButton('chooseActionCompletePainting', _("Complete Painting"), function () { return _this.chooseAction('completePainting'); });
+                    }
                     break;
                 case 'takeArtCard':
                     this.addActionButton('confirmTakeArtCard', _("Confirm"), function () { return _this.confirmTakeArtCard(); });
-                    this.addActionButton('undoLastMoves', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    this.addActionButton('cancelAction', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    break;
+                case 'completePainting':
+                    this.addActionButton('confirmCompletePainting', _("Confirm"), function () { return _this.confirmCompletePainting(); });
+                    this.addActionButton('cancelAction', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
                     break;
             }
             if ([].includes(stateName) && args.canCancelMoves) {
@@ -2340,6 +2734,9 @@ var Canvas = /** @class */ (function () {
     Canvas.prototype.confirmTakeArtCard = function () {
         var cardId = this.artCardManager.getSelectedDisplayCardId();
         this.takeAction('takeArtCard', { cardId: cardId });
+    };
+    Canvas.prototype.confirmCompletePainting = function () {
+        this.paintingManager.confirmPainting();
     };
     Canvas.prototype.undoLastMoves = function () {
         this.takeAction('undoLastMoves');
@@ -2405,6 +2802,8 @@ var Canvas = /** @class */ (function () {
         var notifs = [
             ['artCardTaken', undefined],
             ['displayRefilled', undefined],
+            ['paintingScored', 1],
+            ['paintingCompleted', ANIMATION_MS]
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -2419,12 +2818,19 @@ var Canvas = /** @class */ (function () {
     };
     Canvas.prototype.notif_artCardTaken = function (args) {
         var _this = this;
+        this.artCardManager.exitDisplaySelectMode();
         return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced)
             .then(function () { return _this.inspirationTokenManager.moveToPlayer(args.playerId, args.inspirationTokensTaken); })
             .then(function () { return _this.artCardManager.takeCard(args.playerId, args.cardTaken); });
     };
     Canvas.prototype.notif_displayRefilled = function (args) {
         return this.artCardManager.updateDisplayCards(args.displayCards);
+    };
+    Canvas.prototype.notif_paintingScored = function (args) {
+        this.paintingManager.updatePreviewScore(args);
+    };
+    Canvas.prototype.notif_paintingCompleted = function (args) {
+        this.paintingManager.createPainting(args.painting);
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
         try {
