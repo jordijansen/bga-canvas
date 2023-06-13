@@ -2130,8 +2130,8 @@ var ArtCardManager = /** @class */ (function (_super) {
             setupFrontDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-front");
                 div.classList.add('art-card');
-                div.classList.add('art-card-' + card.type);
-                div.dataset.type = '' + card.type;
+                div.classList.add('art-card-' + card.type_arg);
+                div.dataset.type = '' + card.type_arg;
             },
             isCardVisible: function (card) { return !!card.type; },
             cardWidth: CARD_WIDTH,
@@ -2271,11 +2271,11 @@ var ScoringCardManager = /** @class */ (function (_super) {
             },
             setupFrontDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-front");
-                div.dataset.type = '' + card.type;
+                div.dataset.type = '' + card.id;
             },
             setupBackDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-back");
-                div.dataset.type = '' + card.type;
+                div.dataset.type = '' + card.id;
             },
             cardWidth: CARD_WIDTH,
             cardHeight: CARD_HEIGHT,
@@ -2477,10 +2477,10 @@ var PaintingManager = /** @class */ (function () {
     PaintingManager.prototype.updatePreview = function () {
         this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large');
         this.canvasGame.takeNoLockAction('scorePainting', {
-            painting: {
+            painting: JSON.stringify({
                 backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
                 artCardIds: this.completePaintingMode.painting.artCards.map(function (card) { return card.id; })
-            }
+            })
         });
     };
     PaintingManager.prototype.updatePreviewScore = function (args) {
@@ -2507,7 +2507,7 @@ var PaintingManager = /** @class */ (function () {
         var cardsWrapperId = "".concat(paintingId, "-cards-wrapper");
         dojo.place("<div id=\"".concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>"), paintingId);
         dojo.place("<div class=\"background-card background-card-".concat(backgroundCard.type, "\"></div>"), cardsWrapperId);
-        artCards.forEach(function (card) { dojo.place("<div class=\"art-card art-card-".concat(card.type, "\"></div>"), cardsWrapperId); });
+        artCards.forEach(function (card) { dojo.place("<div class=\"art-card art-card-".concat(card.type_arg, "\"></div>"), cardsWrapperId); });
         if (copyright) {
             dojo.place('<div id="canvas-copyright">#CanvasPainting<br/>&#169; Road To Infamy Games<br/>Play Canvas on BoardGameArena.com</div>', paintingId);
         }

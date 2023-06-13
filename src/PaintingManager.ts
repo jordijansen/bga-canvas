@@ -198,10 +198,10 @@ class PaintingManager {
         this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large')
 
         this.canvasGame.takeNoLockAction('scorePainting', {
-            painting: {
+            painting: JSON.stringify({
                 backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
                 artCardIds: this.completePaintingMode.painting.artCards.map(card => card.id)
-            }
+            })
         })
     }
 
@@ -228,7 +228,7 @@ class PaintingManager {
         const cardsWrapperId = `${paintingId}-cards-wrapper`;
         dojo.place(`<div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>`, paintingId)
         dojo.place(`<div class="background-card background-card-${backgroundCard.type}"></div>`, cardsWrapperId);
-        artCards.forEach(card => { dojo.place(`<div class="art-card art-card-${card.type}"></div>`, cardsWrapperId);})
+        artCards.forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}"></div>`, cardsWrapperId);})
         if (copyright) {
             dojo.place('<div id="canvas-copyright">#CanvasPainting<br/>&#169; Road To Infamy Games<br/>Play Canvas on BoardGameArena.com</div>', paintingId);
         }

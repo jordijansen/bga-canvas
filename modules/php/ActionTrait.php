@@ -78,14 +78,15 @@ trait ActionTrait {
     }
 
     public function scorePainting($painting) {
+        $artCards = [];
+        foreach ($painting['artCardIds'] as $index => $artCardId) {
+            $artCards[] = $this->artCardManager->getCard($artCardId);
+        }
+
+        $result = $this->scoringCardManager->scorePainting($artCards);
+
         // TODO implement scoring
-        self::notifyPlayer($this->getActivePlayerId(), 'paintingScored', '', [
-            SCORING_RED => bga_rand(1, 6),
-            SCORING_GREEN => bga_rand(1, 6),
-            SCORING_BLUE => bga_rand(1, 6),
-            SCORING_PURPLE => bga_rand(1, 6),
-            SCORING_GREY => bga_rand(1, 6)
-        ]);
+        self::notifyPlayer($this->getActivePlayerId(), 'paintingScored', '', $result);
     }
 
     public function completePainting($painting) {

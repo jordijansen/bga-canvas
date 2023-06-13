@@ -35,7 +35,7 @@
 
 CREATE TABLE IF NOT EXISTS `art_card` (
     `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `card_type` int(10) NOT NULL,
+    `card_type` varchar(16) NOT NULL,
     `card_type_arg` int(10) NOT NULL,
     `card_location` varchar(16) NOT NULL,
     `card_location_arg` int(11) NOT NULL,
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS `background_card` (
 
 CREATE TABLE IF NOT EXISTS `scoring_card` (
     `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `card_type` int(10) NOT NULL,
-    `card_type_arg` int(10) NOT NULL,
+    `card_type` varchar(100) NOT NULL,
+    `card_type_arg` varchar(100) NOT NULL,
     `card_location` varchar(16) NOT NULL,
     `card_location_arg` int(11) NOT NULL,
     PRIMARY KEY (`card_id`)

@@ -10,6 +10,8 @@ const SCORING_BLUE = 'blue';
 const SCORING_PURPLE = 'purple';
 const SCORING_GREY = 'grey';
 
+
+
 const TOKEN_INSPIRATION = 'INSPIRATION';
 const TOKEN_RIBBON = 'RIBBON';
 
@@ -52,6 +54,19 @@ const ZONE_DISCARD = 'discard';
 const ZONE_PLAYER_HAND = 'hand';
 const ZONE_PAINTING = 'painting';
 const ZONE_CARD = 'card';
+
+/**
+ * Element Icons
+ */
+const HUE = 'HUE';
+const SHAPE = 'SHAPE';
+const TEXTURE = 'TEXTURE';
+const TONE = 'TONE';
+
+const BONUS_HUE = 'BONUS_HUE';
+const BONUS_SHAPE = 'BONUS_SHAPE';
+const BONUS_TEXTURE = 'BONUS_TEXTURE';
+const BONUS_TONE = 'BONUS_TONE';
 
 /**
  * Global variables

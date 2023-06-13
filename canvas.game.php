@@ -72,7 +72,7 @@ class Canvas extends Table
             //      ...
         ) );
 
-        $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"));
+        $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"), $this->ART_CARDS);
         $this->backgroundCardManager = new BackgroundCardManager(self::getNew("module.common.deck"));
         $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"));
         $this->ribbonManager = new RibbonManager(self::getNew("module.common.deck"));

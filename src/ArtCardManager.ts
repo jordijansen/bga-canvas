@@ -15,8 +15,8 @@ class ArtCardManager extends CardManager<Card> {
             setupFrontDiv: (card: Card, div: HTMLElement) => {
                 div.id = `${this.getId(card)}-front`;
                 div.classList.add('art-card')
-                div.classList.add('art-card-'+card.type)
-                div.dataset.type = ''+card.type;
+                div.classList.add('art-card-'+card.type_arg)
+                div.dataset.type = ''+card.type_arg;
             },
             isCardVisible: (card: Card) => !!card.type,
             cardWidth: CARD_WIDTH,

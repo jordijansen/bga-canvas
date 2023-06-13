@@ -38,8 +38,4 @@ class BackgroundCardManager {
         $this->cards->moveCard($cardId, ZONE_PAINTING.'_'.$paintingId, $orderNo);
         return $this->getCard($cardId);
     }
-
-    public function getPaintings($playerId) {
-
-    }
 }

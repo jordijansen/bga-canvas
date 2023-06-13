@@ -3,8 +3,10 @@
 class ArtCardManager {
 
     public Deck $cards;
+    public $ART_CARDS;
 
-    public function __construct(Deck $deck) {
+    public function __construct(Deck $deck, $ART_CARDS) {
+        $this->ART_CARDS = $ART_CARDS;
         $this->cards = $deck;
         $this->cards->init('art_card');
     }
@@ -13,7 +15,7 @@ class ArtCardManager {
         $cards = [];
 
         for ($i = 1; $i <= 60; $i++) {
-            $cards[] = array('type' => $i, 'type_arg' => $i, 'nbr' => 1);
+            $cards[] = array('type' => 'BASE_GAME', 'type_arg' => $i, 'nbr' => 1);
         }
         $this->cards->createCards($cards, 'deck');
         $this->cards->shuffle('deck');
@@ -42,7 +44,7 @@ class ArtCardManager {
     }
 
     public function getCard($cardId) {
-        return new Card($this->cards->getCard($cardId));
+        return new ArtCard($this->cards->getCard($cardId), $this->ART_CARDS);
     }
 
     public function takeCard($playerId, $cardId) {
@@ -58,7 +60,7 @@ class ArtCardManager {
     public function getCardsInLocation(string $location, int $location_arg = null): array
     {
         $dbResults = $this->cards->getCardsInLocation($location, $location_arg, 'location_arg');
-        return array_map(fn($dbCard) => new Card($dbCard), array_values($dbResults));
+        return array_map(fn($dbCard) => new ArtCard($dbCard, $this->ART_CARDS), array_values($dbResults));
     }
 
     public function countCardsInLocation(string $location, int $location_arg = null): int
