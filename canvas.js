@@ -2200,7 +2200,12 @@ var ArtCardManager = /** @class */ (function (_super) {
     ArtCardManager.prototype.updateDisplayCards = function (displayCards) {
         var _this = this;
         return this.display.addCards(displayCards.slice(0, -1))
-            .then(function () { return _this.display.addCard(displayCards[displayCards.length - 1], { fromStock: _this.deck }); });
+            .then(function () {
+            var card = displayCards[displayCards.length - 1];
+            var promise = _this.display.addCard(card, { fromStock: _this.deck });
+            dojo.place("<div id=\"inspiration-token-card-stock-".concat(card.id, "\" class=\"inspiration-token-card-stock\"></div>"), _this.getCardElement(card).getAttribute("id"));
+            return promise;
+        });
     };
     ArtCardManager.prototype.createPaintingStock = function (id, elementId, cards) {
         dojo.place("<div id=\"".concat(elementId, "-art\"></div>"), elementId);

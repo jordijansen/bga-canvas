@@ -86,7 +86,12 @@ class ArtCardManager extends CardManager<Card> {
 
     updateDisplayCards(displayCards: Card[]) {
         return this.display.addCards(displayCards.slice(0, -1))
-            .then(() => this.display.addCard(displayCards[displayCards.length - 1], {fromStock: this.deck}));
+            .then(() => {
+                const card = displayCards[displayCards.length - 1];
+                const promise = this.display.addCard(card, {fromStock: this.deck})
+                dojo.place(`<div id="inspiration-token-card-stock-${card.id}" class="inspiration-token-card-stock"></div>`, this.getCardElement(card).getAttribute("id"))
+                return promise;
+            });
     }
 
     public createPaintingStock(id: number, elementId: string, cards: Card[]) {

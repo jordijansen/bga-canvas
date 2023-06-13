@@ -512,20 +512,28 @@ html, .mode_3d #game_play_area_background {
       }
     }
   }
+  #player-areas {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 
-  .player-area {
-    .player-collection-wrapper {
-      display: flex;
-      .player-collection-wrapper-item {
-        flex: 1;
-        text-align: center;
-      }
-      .player-finished-paintings {
+    .player-area {
+      width: 1980px;
+      .player-collection-wrapper {
         display: flex;
-        justify-content: center;
+        .player-collection-wrapper-item {
+          flex: 1;
+          text-align: center;
+        }
+        .player-finished-paintings {
+          display: flex;
+          justify-content: center;
+        }
       }
     }
   }
+
 }
 
 .canvas-painting {
@@ -608,8 +616,15 @@ html, .mode_3d #game_play_area_background {
   margin-top: 10px;
 }
 
+#html2canvas-result {
+  position: fixed;
+  left: -1000px;
+  top: 0;
+}
+
 .share-painting-dialog-content {
   width: $large-portrait-card-width;
+  height: 800px;
   span {
     display: block;
     text-align: center;

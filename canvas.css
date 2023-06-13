@@ -1031,14 +1031,23 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   text-align: center;
   line-height: 50px;
 }
-#canvas-table .player-area .player-collection-wrapper {
+#canvas-table #player-areas {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+#canvas-table #player-areas .player-area {
+  width: 1980px;
+}
+#canvas-table #player-areas .player-area .player-collection-wrapper {
   display: flex;
 }
-#canvas-table .player-area .player-collection-wrapper .player-collection-wrapper-item {
+#canvas-table #player-areas .player-area .player-collection-wrapper .player-collection-wrapper-item {
   flex: 1;
   text-align: center;
 }
-#canvas-table .player-area .player-collection-wrapper .player-finished-paintings {
+#canvas-table #player-areas .player-area .player-collection-wrapper .player-finished-paintings {
   display: flex;
   justify-content: center;
 }
@@ -1113,8 +1122,15 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   margin-top: 10px;
 }
 
+#html2canvas-result {
+  position: fixed;
+  left: -1000px;
+  top: 0;
+}
+
 .share-painting-dialog-content {
   width: 375px;
+  height: 800px;
 }
 .share-painting-dialog-content span {
   display: block;
