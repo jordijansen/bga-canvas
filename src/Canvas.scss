@@ -465,7 +465,7 @@ html, .mode_3d #game_play_area_background {
             .bgabutton {
               width: $portrait-card-width - 80px;
               text-align: center;
-              font-size: 25px;
+              font-size: 40px;
               line-height: 20px;
             }
           }
@@ -561,8 +561,7 @@ html, .mode_3d #game_play_area_background {
   .bgabutton {
     width: $portrait-card-width - 80px;
     text-align: center;
-    font-size: 25px;
-    line-height: 20px;
+    font-size: 40px;
   }
 
   &.large {
@@ -608,6 +607,30 @@ html, .mode_3d #game_play_area_background {
   }
 }
 
+.player-board {
+  .canvas-counters {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+
+    .canvas-ribbon-counter {
+      font-family: Welcome2019, serif;
+      display: flex;
+      align-items: center;
+      font-size: 35px;
+    }
+
+    .canvas-ribbon {
+      width: 22px;
+      height: 35px;
+      margin: 5px;
+    }
+  }
+}
+
+
 #canvas-overall {
   display: flex;
   flex-direction: column;
@@ -624,7 +647,7 @@ html, .mode_3d #game_play_area_background {
 
 .share-painting-dialog-content {
   width: $large-portrait-card-width;
-  height: 800px;
+  min-height: 800px;
   span {
     display: block;
     text-align: center;
@@ -633,6 +656,6 @@ html, .mode_3d #game_play_area_background {
   .bgabutton {
     display: block;
     text-align: center;
-    font-size: 25px;
+    font-size: 40px;
   }
 }

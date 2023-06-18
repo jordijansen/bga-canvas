@@ -994,7 +994,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .button-wrapper .bgabutton {
   width: 170px;
   text-align: center;
-  font-size: 25px;
+  font-size: 40px;
   line-height: 20px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .complete-painting-art-card-slot {
@@ -1076,8 +1076,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .canvas-painting .bgabutton {
   width: 170px;
   text-align: center;
-  font-size: 25px;
-  line-height: 20px;
+  font-size: 40px;
 }
 .canvas-painting.large #canvas-copyright {
   width: 375px;
@@ -1114,6 +1113,25 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-position: 100% 0;
 }
 
+.player-board .canvas-counters {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.player-board .canvas-counters .canvas-ribbon-counter {
+  font-family: Welcome2019, serif;
+  display: flex;
+  align-items: center;
+  font-size: 35px;
+}
+.player-board .canvas-counters .canvas-ribbon {
+  width: 22px;
+  height: 35px;
+  margin: 5px;
+}
+
 #canvas-overall {
   display: flex;
   flex-direction: column;
@@ -1130,7 +1148,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 
 .share-painting-dialog-content {
   width: 375px;
-  height: 800px;
+  min-height: 800px;
 }
 .share-painting-dialog-content span {
   display: block;
@@ -1140,7 +1158,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .share-painting-dialog-content .bgabutton {
   display: block;
   text-align: center;
-  font-size: 25px;
+  font-size: 40px;
 }
 
 /*# sourceMappingURL=canvas.css.map */

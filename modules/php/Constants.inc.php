@@ -62,6 +62,7 @@ const HUE = 'HUE';
 const SHAPE = 'SHAPE';
 const TEXTURE = 'TEXTURE';
 const TONE = 'TONE';
+const BASIC_ELEMENTS = [HUE, SHAPE, TEXTURE, TONE];
 
 const BONUS_HUE = 'BONUS_HUE';
 const BONUS_SHAPE = 'BONUS_SHAPE';

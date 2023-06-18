@@ -103,19 +103,24 @@ trait ActionTrait {
         $this->DbQuery("INSERT INTO painting (id, player_id) VALUES (".$backgroundCard->id.", ". $activePlayerId .")");
         $backgroundCard = $this->backgroundCardManager->addCardToPainting($backgroundCard->id, 0, $backgroundCard->id);
 
+        $artCards = [];
         foreach ($painting['artCardIds'] as $index => $artCardId) {
             $artCard = $this->artCardManager->getCard($artCardId);
             if ($artCard->location != ZONE_PLAYER_HAND || $artCard->location_arg != $activePlayerId) {
                 throw new BgaUserException("Art card not in your hand");
             }
+            $artCards[] = $artCard;
             $this->artCardManager->addCardToPainting($artCardId, $index, $backgroundCard->id);
         }
 
-        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes a painting and scores ${ribbons}', [
+        $paintingRibbons = $this->scoringCardManager->scorePainting($artCards);
+        $this->ribbonManager->updateRibbons($activePlayerId, $paintingRibbons);
+
+        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes a painting and scores ${paintingRibbons}', [
             'playerId' => $activePlayerId,
             'player_name' => $this->getPlayerName($activePlayerId),
             'painting' => $this->paintingManager->getPainting($backgroundCard->id),
-            'ribbons' => 0
+            'paintingRibbons' => $paintingRibbons
         ]);
 
         $this->gamestate->nextState(ST_NEXT_PLAYER);

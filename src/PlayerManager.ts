@@ -1,5 +1,7 @@
 class PlayerManager  {
 
+    private ribbonCounters: {[playerId: number] : {[ribbonType: string] : Counter}} = {}
+
     constructor(private game: CanvasGame) {
     }
 
@@ -14,8 +16,16 @@ class PlayerManager  {
             } else {
                 playerAreas.push(playerArea);
             }
+
+            this.createPlayerPanels(player);
         }
         playerAreas.forEach(playerArea => dojo.place(playerArea, "player-areas"))
+    }
+
+    public updateRibbonCounters(playerId, ribbons: { [ribbonType: string]: number }) {
+        for (let ribbonType in ribbons) {
+            this.ribbonCounters[playerId][ribbonType].incValue(ribbons[ribbonType]);
+        }
     }
 
     private createPlayerArea(player: CanvasPlayer) {
@@ -39,5 +49,27 @@ class PlayerManager  {
                         </div>
                     </div>
                 </div>`
+    }
+
+    private createPlayerPanels(player: CanvasPlayer) {
+        const playerId = Number(player.id)
+        const html = `<div id="canvas-counters-${player.id}" class="canvas-counters" ></div>`;
+        dojo.place(html, `player_board_${player.id}`);
+
+        this.ribbonCounters[playerId] = {};
+        for (let ribbonType in player.ribbons) {
+            const counterHtml = `<div class="canvas-ribbon-counter">
+                    <div class="canvas-ribbon" data-type="${ribbonType}"></div> 
+                    <span id="canvas-ribbon-counter-${player.id}-${ribbonType}"></span>
+                    <div id="canvas-ribbon-counter-${player.id}-${ribbonType}-stock"></div>
+                </div>`
+            dojo.place(counterHtml, `canvas-counters-${player.id}`);
+
+            const ribbonCounter = new ebg.counter();
+            ribbonCounter.create(`canvas-ribbon-counter-${player.id}-${ribbonType}`);
+            ribbonCounter.setValue(0);
+            this.ribbonCounters[playerId][ribbonType] = ribbonCounter;
+        }
+        this.updateRibbonCounters(playerId, player.ribbons)
     }
 }

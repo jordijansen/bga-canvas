@@ -3,7 +3,7 @@
 class ArtCardManager {
 
     public Deck $cards;
-    public $ART_CARDS;
+    private $ART_CARDS;
 
     public function __construct(Deck $deck, $ART_CARDS) {
         $this->ART_CARDS = $ART_CARDS;

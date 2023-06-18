@@ -74,8 +74,8 @@ class Canvas extends Table
 
         $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"), $this->ART_CARDS);
         $this->backgroundCardManager = new BackgroundCardManager(self::getNew("module.common.deck"));
-        $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"));
-        $this->ribbonManager = new RibbonManager(self::getNew("module.common.deck"));
+        $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"), $this->SCORING_CARDS);
+        $this->ribbonManager = new RibbonManager();
         $this->inspirationTokenManager = new InspirationTokenManager(self::getNew("module.common.deck"));
         $this->paintingManager = new PaintingManager($this);
 
@@ -143,7 +143,7 @@ class Canvas extends Table
         $this->inspirationTokenManager->distributeInitialInspirationTokens($players);
 
         // Initiate the Ribbon Manager
-        $this->ribbonManager->setUp();
+        $this->ribbonManager->setUp($players);
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -176,6 +176,7 @@ class Canvas extends Table
             $player['backgroundCards'] = $this->backgroundCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $playerId);
             $player['inspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId);
             $player['paintings'] = $this->paintingManager->getPaintings($playerId);
+            $player['ribbons'] = $this->ribbonManager->getRibbonsForPlayer($playerId);
         }
 
         $result['scoringCards'] = $this->scoringCardManager->getAllScoringCards();

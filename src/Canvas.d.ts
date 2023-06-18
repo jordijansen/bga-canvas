@@ -31,7 +31,8 @@ interface CanvasPlayer extends Player {
     handCards: Card[],
     backgroundCards: Card[],
     inspirationTokens: Token[],
-    paintings: Painting[]
+    paintings: Painting[],
+    ribbons: {[scoringType: string]: number}
 }
 
 interface CanvasGame extends Game {
@@ -78,5 +79,6 @@ interface NotifPaintingScored {
 interface NotifPaintingCompleted {
     playerId: number,
     player_name: string,
-    painting: Painting
+    painting: Painting,
+    paintingRibbons: {[scoringType: string]: number}
 }

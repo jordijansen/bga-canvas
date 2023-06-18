@@ -2271,11 +2271,11 @@ var ScoringCardManager = /** @class */ (function (_super) {
             },
             setupFrontDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-front");
-                div.dataset.type = '' + card.id;
+                div.dataset.type = '' + card.type_arg;
             },
             setupBackDiv: function (card, div) {
                 div.id = "".concat(_this.getId(card), "-back");
-                div.dataset.type = '' + card.id;
+                div.dataset.type = '' + card.type_arg;
             },
             cardWidth: CARD_WIDTH,
             cardHeight: CARD_HEIGHT,
@@ -2591,6 +2591,7 @@ var PaintingManager = /** @class */ (function () {
 var PlayerManager = /** @class */ (function () {
     function PlayerManager(game) {
         this.game = game;
+        this.ribbonCounters = {};
     }
     PlayerManager.prototype.setUp = function (gameData) {
         var playerAreas = [];
@@ -2603,11 +2604,32 @@ var PlayerManager = /** @class */ (function () {
             else {
                 playerAreas.push(playerArea);
             }
+            this.createPlayerPanels(player);
         }
         playerAreas.forEach(function (playerArea) { return dojo.place(playerArea, "player-areas"); });
     };
+    PlayerManager.prototype.updateRibbonCounters = function (playerId, ribbons) {
+        for (var ribbonType in ribbons) {
+            this.ribbonCounters[playerId][ribbonType].incValue(ribbons[ribbonType]);
+        }
+    };
     PlayerManager.prototype.createPlayerArea = function (player) {
         return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h1 style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h1>\n                    </div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Hand Cards"), "</h1></div></div>\n                    <div id=\"player-hand-").concat(player.id, "\"></div>\n                    <div class=\"player-collection-wrapper\">\n                        <div class=\"player-collection-wrapper-item\">\n                            <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>").concat(_("Background Cards"), "</h1></div></div>\n                            <div id=\"player-background-").concat(player.id, "\"></div>   \n                        </div>  \n                        <div class=\"player-collection-wrapper-item\">\n                            <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>").concat(_("Finished Paintings"), "</h1></div></div>\n                            <div id=\"player-finished-paintings-").concat(player.id, "\" class=\"player-finished-paintings\">\n                                \n                            </div>\n                        </div>\n                    </div>\n                </div>");
+    };
+    PlayerManager.prototype.createPlayerPanels = function (player) {
+        var playerId = Number(player.id);
+        var html = "<div id=\"canvas-counters-".concat(player.id, "\" class=\"canvas-counters\" ></div>");
+        dojo.place(html, "player_board_".concat(player.id));
+        this.ribbonCounters[playerId] = {};
+        for (var ribbonType in player.ribbons) {
+            var counterHtml = "<div class=\"canvas-ribbon-counter\">\n                    <div class=\"canvas-ribbon\" data-type=\"".concat(ribbonType, "\"></div> \n                    <span id=\"canvas-ribbon-counter-").concat(player.id, "-").concat(ribbonType, "\"></span>\n                    <div id=\"canvas-ribbon-counter-").concat(player.id, "-").concat(ribbonType, "-stock\"></div>\n                </div>");
+            dojo.place(counterHtml, "canvas-counters-".concat(player.id));
+            var ribbonCounter = new ebg.counter();
+            ribbonCounter.create("canvas-ribbon-counter-".concat(player.id, "-").concat(ribbonType));
+            ribbonCounter.setValue(0);
+            this.ribbonCounters[playerId][ribbonType] = ribbonCounter;
+        }
+        this.updateRibbonCounters(playerId, player.ribbons);
     };
     return PlayerManager;
 }());
@@ -2836,6 +2858,7 @@ var Canvas = /** @class */ (function () {
     };
     Canvas.prototype.notif_paintingCompleted = function (args) {
         this.paintingManager.createPainting(args.painting);
+        this.playerManager.updateRibbonCounters(args.playerId, args.paintingRibbons);
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
         try {

@@ -287,6 +287,8 @@ class Canvas implements CanvasGame {
 
     notif_paintingCompleted(args: NotifPaintingCompleted) {
         this.paintingManager.createPainting(args.painting);
+
+        this.playerManager.updateRibbonCounters(args.playerId, args.paintingRibbons);
     }
 
 

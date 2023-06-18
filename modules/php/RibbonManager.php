@@ -1,29 +1,27 @@
 <?php
 
-class RibbonManager {
+class RibbonManager extends APP_DbObject {
 
-    protected Deck $cards;
-
-    public function __construct(Deck $deck) {
-        $this->cards = $deck;
-        $this->cards->init('ribbon');
+    public function __construct() {
     }
 
-    public function setUp() {
-        $cards = [];
-
-        $cards[] = array('type'=> TOKEN_RIBBON, 'type_arg' => SCORING_GREEN, 'nbr' => 50);
-        $cards[] = array('type'=> TOKEN_RIBBON, 'type_arg' => SCORING_RED, 'nbr' => 50);
-        $cards[] = array('type'=> TOKEN_RIBBON, 'type_arg' => SCORING_BLUE, 'nbr' => 50);
-        $cards[] = array('type'=> TOKEN_RIBBON, 'type_arg' => SCORING_PURPLE, 'nbr' => 50);
-        $cards[] = array('type'=> TOKEN_RIBBON, 'type_arg' => SCORING_GREY, 'nbr' => 50);
-
-        $this->cards->createCards($cards, ZONE_DECK);
+    public function setUp($players) {
+        foreach( $players as $playerId => $player) {
+            foreach ([SCORING_RED, SCORING_GREEN, SCORING_BLUE, SCORING_PURPLE, SCORING_GREY] as $index => $scoring) {
+                $this->DbQuery("INSERT INTO ribbon (player_id, ribbon_type, number) VALUES (". $playerId .",'".$scoring."', 0)");
+            }
+        }
     }
 
-    public function getTokensInLocation(string $location, int $location_arg = null): array
+    public function getRibbonsForPlayer($playerId) {
+        $dbResults = $this->getCollectionFromDB("SELECT ribbon_type, number FROM ribbon WHERE player_id =".$playerId);
+        return array_combine(array_keys($dbResults), array_map(fn($dbRibbon) => $dbRibbon['number'], array_values($dbResults)));
+    }
+
+    public function updateRibbons(int $playerId, array $paintingRibbons)
     {
-        $dbResults = $this->cards->getCardsInLocation($location, $location_arg, 'id');
-        return array_map(fn($dbCard) => new Token($dbCard), array_values($dbResults));
+        foreach ($paintingRibbons as $ribbonType => $number) {
+            $this->DbQuery("UPDATE ribbon SET number = number + ".$number." WHERE player_id = ". $playerId ." AND ribbon_type = '".$ribbonType."'");
+        }
     }
 }

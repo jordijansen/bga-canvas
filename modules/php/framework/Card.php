@@ -48,7 +48,20 @@ class ArtCard extends ArtCardType {
     }
 }
 
-class ScoringCard {
+class ScocringCardType {
+    public string $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
+
+}
+
+class ScoringCard extends ScocringCardType {
 
     public int $id;
     public string $location;
@@ -56,13 +69,16 @@ class ScoringCard {
     public string $type;
     public string $type_arg;
 
-    public function __construct($dbCard)
+    public function __construct($dbCard, $SCORING_CARDS)
     {
         $this->id = intval($dbCard['card_id'] ?? $dbCard['id']);
         $this->location = $dbCard['card_location'] ?? $dbCard['location'];
         $this->location_arg = intval($dbCard['card_location_arg'] ?? $dbCard['location_arg']);
         $this->type = $dbCard['card_type'] ?? $dbCard['type'];
         $this->type_arg = $dbCard['card_type_arg'] ?? $dbCard['type_arg'];
+
+        $cardType = $SCORING_CARDS[$this->type][$this->type_arg];
+        $this->name = $cardType->name;
     }
 }
 

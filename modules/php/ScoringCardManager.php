@@ -3,8 +3,10 @@
 class ScoringCardManager {
 
     protected Deck $cards;
+    private $SCORING_CARDS;
 
-    public function __construct(Deck $deck) {
+    public function __construct(Deck $deck, $SCORING_CARDS) {
+        $this->SCORING_CARDS = $SCORING_CARDS;
         $this->cards = $deck;
         $this->cards->init('scoring_card');
     }
@@ -12,20 +14,11 @@ class ScoringCardManager {
     public function setUp() {
         $cards = [];
 
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'COMPOSITION', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'CONSISTENCY', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'EMPHASIS', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'HIERARCHY', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'MOVEMENT', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'PROXIMITY', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'PROPORTION', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'REPETITION', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'SPACE', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'STYLE', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'SYMMETRY', 'nbr' => 1);
-        $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => 'VARIETY', 'nbr' => 1);
+        for ($i = 1; $i <= 12; $i++) {
+            $cards[] = array('type'=> 'BASE_GAME', 'type_arg' => $i, 'nbr' => 1);
+        }
 
-        $this->cards->createCards($cards, 'deck');
+        $this->cards->createCards($cards, ZONE_DECK);
     }
 
     public function drawScoringCards() {
@@ -47,7 +40,7 @@ class ScoringCardManager {
     public function getCardsInLocation(string $location, int $location_arg = null): array
     {
         $dbResults = $this->cards->getCardsInLocation($location, $location_arg, 'id');
-        return array_map(fn($dbCard) => new ScoringCard($dbCard), array_values($dbResults));
+        return array_map(fn($dbCard) => new ScoringCard($dbCard, $this->SCORING_CARDS), array_values($dbResults));
     }
     
     public function scorePainting(array $artCards): array {
@@ -73,14 +66,26 @@ class ScoringCardManager {
         $allIcons = [...$redIcons, ...$yellowIcons, ...$greenIcons, ...$blueIcons, ...$purpleIcons];
         $result = [];
         foreach ($this->getAllScoringCards() as $scoringCard) {
-            if ($scoringCard->type_arg == 'VARIETY') {
+            if ($scoringCard->name == 'VARIETY') {
                 $result[$scoringCard->location] = 0;
-                $onlyElements = array_filter($allIcons, fn($arrayValue) => in_array($arrayValue, [TEXTURE, HUE, TONE, SHAPE]));
+                $onlyElements = array_filter($allIcons, fn($arrayValue) => in_array($arrayValue, BASIC_ELEMENTS));
                 if (in_array(TEXTURE, $onlyElements) && in_array(HUE, $onlyElements) && in_array(TONE, $onlyElements) && in_array(SHAPE, $onlyElements))
                 {
                     $elementsByCount = array_count_values($onlyElements);
                     $result[$scoringCard->location] = min(array_values($elementsByCount));
                 }
+            } else if ($scoringCard->name == 'STYLE') {
+                $textureIcons = array_filter($allIcons, fn($arrayValue) => in_array($arrayValue, [TEXTURE]));
+                $result[$scoringCard->location] = floor(sizeof($textureIcons) / 3);
+            } else if ($scoringCard->name == 'SYMMETRY') {
+               $foundPairs = 0;
+               foreach (BASIC_ELEMENTS as $basicElement) {
+                   if ((in_array($basicElement, $redIcons) && in_array($basicElement, $purpleIcons)) ||
+                       (in_array($basicElement, $yellowIcons) && in_array($basicElement, $blueIcons))) {
+                       $foundPairs = $foundPairs + 1;
+                   }
+               }
+               $result[$scoringCard->location] = $foundPairs;
             }
         }
 

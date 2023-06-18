@@ -11,11 +11,11 @@ class ScoringCardManager extends CardManager<Card> {
             },
             setupFrontDiv: (card: Card, div: HTMLElement) => {
                 div.id = `${this.getId(card)}-front`;
-                div.dataset.type = ''+card.id;
+                div.dataset.type = ''+card.type_arg;
             },
             setupBackDiv: (card: Card, div: HTMLElement) => {
                 div.id = `${this.getId(card)}-back`;
-                div.dataset.type = ''+card.id;
+                div.dataset.type = ''+card.type_arg;
             },
 
             cardWidth: CARD_WIDTH,
