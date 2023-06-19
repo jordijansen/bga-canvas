@@ -427,6 +427,13 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   border-radius: 10px;
 }
 
+.player-board {
+  background-image: url("img/canvas-white-background.png");
+  border-style: solid;
+  border-width: 3px;
+  box-sizing: border-box;
+}
+
 .bgabutton.bgabutton_blue, .bgabutton.bgabutton_blue:hover {
   background: #7eced8;
 }
@@ -891,13 +898,31 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   justify-content: center;
 }
 #canvas-table .title-wrapper .title {
-  background-image: url("img/canvas-title-background-primary.png");
-  background-size: 100% 100%;
+  background-image: url("img/canvas-paint-strokes.png");
+  background-size: 100% 700%;
   margin-top: 10px;
   margin-bottom: 10px;
 }
+#canvas-table .title-wrapper .title.primary {
+  background-position: 0 0;
+}
 #canvas-table .title-wrapper .title.secondary {
-  background-image: url("img/canvas-title-background-secondary.png");
+  background-position: 0 16.6666666667%;
+}
+#canvas-table .title-wrapper .title.color-E87885 {
+  background-position: 0 33.3333333333%;
+}
+#canvas-table .title-wrapper .title.color-3BB97D {
+  background-position: 0 50%;
+}
+#canvas-table .title-wrapper .title.color-6FAEDB {
+  background-position: 0 66.6666666667%;
+}
+#canvas-table .title-wrapper .title.color-A18EC2 {
+  background-position: 0 83.3333333333%;
+}
+#canvas-table .title-wrapper .title.color-CEC6C2 {
+  background-position: 0 100%;
 }
 #canvas-table .title-wrapper .title h1 {
   font-family: "Welcome2019", cursive;
@@ -969,9 +994,17 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   justify-content: center;
   padding-bottom: 10px;
 }
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused .canvas-art-card {
+  background-color: white;
+  border-radius: 10px;
+}
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker {
   display: flex;
   position: relative;
+}
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .canvas-art-card {
+  background-color: white;
+  border-radius: 10px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker #art-cards-picker-bottom-text, #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker #art-cards-picker-top-text {
   writing-mode: vertical-rl;
@@ -1039,17 +1072,21 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 #canvas-table #player-areas .player-area {
   width: 1980px;
+  backdrop-filter: blur(10px);
 }
-#canvas-table #player-areas .player-area .player-collection-wrapper {
-  display: flex;
+#canvas-table #player-areas .player-area .player-hand {
+  height: 425px;
 }
-#canvas-table #player-areas .player-area .player-collection-wrapper .player-collection-wrapper-item {
-  flex: 1;
-  text-align: center;
+#canvas-table #player-areas .player-area .player-hand .canvas-art-card {
+  background-color: white;
+  border-radius: 10px;
 }
-#canvas-table #player-areas .player-area .player-collection-wrapper .player-finished-paintings {
+#canvas-table #player-areas .player-area .player-finished-paintings {
+  height: 500px;
   display: flex;
   justify-content: center;
+  gap: 8px;
+  text-align: center;
 }
 
 .canvas-painting {
@@ -1113,15 +1150,31 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-position: 100% 0;
 }
 
+.canvas-inspiration-token-2d {
+  display: inline-block;
+  background-image: url("img/canvas-inspiration-token.png");
+  background-size: cover;
+  width: 35px;
+  height: 35px;
+}
+
 .player-board .canvas-counters {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  font-family: Welcome2019, serif;
+}
+.player-board .canvas-counters .counter-void-stock-wrapper {
+  display: flex;
+  align-items: center;
+  font-size: 35px;
+}
+.player-board .canvas-counters .counter-void-stock-wrapper .counter-void-stock-icon {
+  margin: 5px;
 }
 .player-board .canvas-counters .canvas-ribbon-counter {
-  font-family: Welcome2019, serif;
   display: flex;
   align-items: center;
   font-size: 35px;
@@ -1159,6 +1212,27 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   display: block;
   text-align: center;
   font-size: 40px;
+}
+
+#canvas-show-painting-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  scale: 2;
+}
+#canvas-show-painting-overlay.overlay-visible {
+  visibility: visible;
+  opacity: 1;
 }
 
 /*# sourceMappingURL=canvas.css.map */

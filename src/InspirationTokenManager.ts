@@ -1,6 +1,6 @@
 class InspirationTokenManager extends CardManager<Token> {
 
-    private players: {[playerId: number]: LineStock<Token>} = {}
+    private players: {[playerId: number]: CounterVoidStock<Token>} = {}
     private cards: {[cardId: number]: LineStock<Token>} = {}
 
     constructor(protected canvasGame: CanvasGame) {
@@ -17,24 +17,34 @@ class InspirationTokenManager extends CardManager<Token> {
 
     public setUp(gameData: CanvasGameData) {
         for (const playersKey in gameData.players) {
-            this.players[Number(playersKey)] = new LineStock<Token>(this, $(`player-inspiration-tokens-${playersKey}`), {})
-            gameData.players[playersKey].inspirationTokens.forEach(token => this.players[Number(playersKey)].addCard(token))
+            this.players[Number(playersKey)] = new CounterVoidStock(this, {
+                counter: new ebg.counter(),
+                targetElement: `canvas-counters-${playersKey}`,
+                counterId: `canvas-inspiration-token-counter-${playersKey}`,
+                initialCounterValue: gameData.players[playersKey].inspirationTokens.length,
+                setupIcon: (element) => {element.classList.add("canvas-inspiration-token-2d")}
+            });
         }
         this.placeOnCards(gameData.displayInspirationTokens);
     }
 
-    public placeOnCards(tokens: Token[]) {
+    public placeOnCards(tokens: Token[], playerId?: number) {
         const promises = []
         tokens.forEach(token => {
             if (!this.cards[token.location_arg]) {
                 this.cards[token.location_arg] = new LineStock<Token>(this, $(`inspiration-token-card-stock-${token.location_arg}`), {})
             }
-            promises.push(this.cards[token.location_arg].addCard(token));
+            const animation = playerId ? {fromStock: this.players[playerId]} : {};
+            promises.push(this.cards[token.location_arg].addCard(token, animation));
         })
+        if (playerId) {
+            this.players[playerId].decValue(tokens.length);
+        }
         return Promise.all(promises);
     }
 
     public moveToPlayer(playerId: number, tokens: Token[]) {
+        this.players[playerId].incValue(tokens.length);
         return this.players[playerId].addCards(tokens);
     }
 }

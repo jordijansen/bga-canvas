@@ -38,10 +38,12 @@
     "node_modules/bga-cards/src/sort.ts",
 
     "src/AutoZoomManager.ts",
+    "src/CounterVoidStock.ts",
     "src/ArtCardManager.ts",
     "src/BackgroundCardManager.ts",
     "src/ScoringCardManager.ts",
     "src/InspirationTokenManager.ts",
+    "src/RibbonManager.ts",
     "src/PaintingManager.ts",
     "src/PlayerManager.ts",
     "src/Canvas.ts"

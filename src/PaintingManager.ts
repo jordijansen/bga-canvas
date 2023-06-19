@@ -23,25 +23,41 @@ class PaintingManager {
 
         for (const playersKey in gameData.players) {
             const player = gameData.players[playersKey];
-            player.paintings.forEach(painting => this.createPainting(painting))
+            player.paintings.forEach(painting => this.createPainting(painting, false))
         }
 
     }
 
-    public createPainting(painting: Painting) {
+    public createPainting(painting: Painting, showAnimation: boolean) {
+        const targetElementId = `player-finished-paintings-${painting.playerId}`;
         const paintingElementId = `player-finished-painting-${painting.id}`;
         const cardsWrapperId = `${paintingElementId}-cards-wrapper`;
         dojo.place(`<div id="${paintingElementId}" class="canvas-painting">
                             <div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>
-                            <a id="save-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-heart" aria-hidden="true"></i></a>
-                         </div>`, `player-finished-paintings-${painting.playerId}`);
+                         </div>`, showAnimation ? 'canvas-table' : targetElementId);
 
         this.canvasGame.backgroundCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.backgroundCard);
         this.canvasGame.artCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.artCards);
 
-        dojo.connect($(`save-painting-${painting.id}`), 'onclick', () => this.paintingToPng(painting));
+        const element = $(paintingElementId);
+        if (showAnimation) {
+            return this.canvasGame.animationManager.play(new BgaCumulatedAnimation({animations: [
+                    new BgaAttachWithAnimation({
+                        animation: new BgaSlideAnimation({ element, transitionTimingFunction: 'ease-out' }),
+                        attachElement: document.getElementById('canvas-show-painting-overlay')
+                    }),
+                    new BgaPauseAnimation({ element}),
+                ]}))
+        } else {
+            this.addPaintingToPngButton(painting, paintingElementId)
+            return Promise.resolve();
+        }
     }
 
+    public addPaintingToPngButton(painting: Painting, paintingElementId: string) {
+        dojo.place(`<a id="save-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-heart" aria-hidden="true"></i></a>`, paintingElementId)
+        dojo.connect($(`save-painting-${painting.id}`), 'onclick', () => this.paintingToPng(painting));
+    }
 
     public enterCompletePaintingMode(backgroundCards: Card[], artCards: Card[]) {
         this.completePaintingMode = {
@@ -125,6 +141,18 @@ class PaintingManager {
         dojo.empty('complete-painting');
     }
 
+    public enterHighlightPaintingMode(player: CanvasPlayer) {
+        const overlayId = $('canvas-show-painting-overlay');
+        dojo.addClass(overlayId, 'overlay-visible')
+
+        dojo.place(`<div class="title-wrapper"><div class="title color-${player.color}"><h1>${player.name}${_("'s Completed Painting")}</h1></div></div>`, overlayId)
+    }
+
+    public exitHighlightPaintingMode() {
+        const overlayId = $('canvas-show-painting-overlay');
+        dojo.removeClass(overlayId, 'overlay-visible')
+    }
+
     private createCompletePaintingPickerElement() {
         return `
             <div id="complete-painting-picker-wrapper">
@@ -174,7 +202,7 @@ class PaintingManager {
     }
 
     private createBackgroundElement(card: Card, postfix: string = 'clone') {
-        const clone = this.canvasGame.backgroundCardManager.getCardElement(card).cloneNode(true) as any;
+        const clone = this.canvasGame.backgroundCardManager.createCardElement(card) as any;
         clone.id = `${clone.id}-${postfix}`;
         return clone;
     }

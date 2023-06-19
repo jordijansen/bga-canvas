@@ -10,13 +10,15 @@ declare const g_archive_mode;
 const ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
 
 const BOARD_WIDTH = 2000;
-const ANIMATION_MS = 500;
+const ANIMATION_MS = 800;
 const TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 const LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
 const CARD_WIDTH = 250;
 const CARD_HEIGHT = 425;
 const INSPIRATION_TOKEN_WIDTH = 60;
 const INSPIRATION_TOKEN_HEIGHT = 52;
+const RIBBON_TOKEN_WIDTH = 22;
+const RIBBON_TOKEN_HEIGHT = 35;
 
 class Canvas implements CanvasGame {
 
@@ -25,12 +27,14 @@ class Canvas implements CanvasGame {
     inspirationTokenManager: InspirationTokenManager;
     artCardManager: ArtCardManager;
     backgroundCardManager: BackgroundCardManager;
+    animationManager: AnimationManager;
 
     public gamedatas: CanvasGameData;
     private zoomManager: ZoomManager;
     private playerManager: PlayerManager;
     private paintingManager: PaintingManager;
     private scoringCardManager: ScoringCardManager;
+    private ribbonManager: RibbonManager;
 
     constructor() {
 
@@ -54,12 +58,14 @@ class Canvas implements CanvasGame {
         log('gamedatas', gamedatas);
 
         this.zoomManager = new AutoZoomManager('canvas-table');
+        this.animationManager = new AnimationManager(this, {duration: ANIMATION_MS});
         this.playerManager = new PlayerManager(this);
         this.artCardManager = new ArtCardManager(this);
         this.backgroundCardManager = new BackgroundCardManager(this);
         this.scoringCardManager = new ScoringCardManager(this);
         this.inspirationTokenManager = new InspirationTokenManager(this);
         this.paintingManager = new PaintingManager(this);
+        this.ribbonManager = new RibbonManager(this);
 
         this.scoringCardManager.setUp(gamedatas);
         this.playerManager.setUp(gamedatas);
@@ -67,6 +73,7 @@ class Canvas implements CanvasGame {
         this.artCardManager.setUp(gamedatas);
         this.inspirationTokenManager.setUp(gamedatas);
         this.paintingManager.setUp(gamedatas);
+        this.ribbonManager.setUp(gamedatas);
 
         this.setupNotifications();
         log( "Ending game setup" );
@@ -253,7 +260,7 @@ class Canvas implements CanvasGame {
             ['artCardTaken', undefined],
             ['displayRefilled', undefined],
             ['paintingScored', 1],
-            ['paintingCompleted', ANIMATION_MS]
+            ['paintingCompleted', undefined]
         ];
 
         notifs.forEach((notif) => {
@@ -272,7 +279,7 @@ class Canvas implements CanvasGame {
 
     notif_artCardTaken(args: NotifArtCardTaken) {
         this.artCardManager.exitDisplaySelectMode();
-        return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced)
+        return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced, args.playerId)
             .then(() => this.inspirationTokenManager.moveToPlayer(args.playerId, args.inspirationTokensTaken))
             .then(() => this.artCardManager.takeCard(args.playerId, args.cardTaken));
     }
@@ -286,9 +293,17 @@ class Canvas implements CanvasGame {
     }
 
     notif_paintingCompleted(args: NotifPaintingCompleted) {
-        this.paintingManager.createPainting(args.painting);
+        this.paintingManager.exitCompletePaintingMode();
+        this.paintingManager.enterHighlightPaintingMode(this.getPlayer(args.playerId));
 
-        this.playerManager.updateRibbonCounters(args.playerId, args.paintingRibbons);
+        return this.paintingManager.createPainting(args.painting, true)
+            .then(() => this.ribbonManager.updateRibbonCounters(args.playerId, args.painting, args.paintingRibbons))
+            .then(() => this.paintingManager.exitHighlightPaintingMode())
+            .then(() => this.animationManager.play( new BgaAttachWithAnimation({
+                     animation: new BgaSlideAnimation({ element: $(`player-finished-painting-${args.painting.id}`), transitionTimingFunction: 'ease-out' }),
+                     attachElement: document.getElementById(`player-finished-paintings-${args.playerId}`)
+                 })))
+            .then(() => this.paintingManager.addPaintingToPngButton(args.painting, `player-finished-painting-${args.painting.id}`))
     }
 
 

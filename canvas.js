@@ -2118,6 +2118,55 @@ var AutoZoomManager = /** @class */ (function (_super) {
     }
     return AutoZoomManager;
 }(ZoomManager));
+var CounterVoidStock = /** @class */ (function (_super) {
+    __extends(CounterVoidStock, _super);
+    function CounterVoidStock(manager, setting) {
+        var _this = _super.call(this, manager, document.createElement("div")) || this;
+        _this.manager = manager;
+        _this.setting = setting;
+        var targetElement = document.getElementById(setting.targetElement);
+        if (!targetElement) {
+            console.warn('targetElement not found');
+            return _this;
+        }
+        var wrapperElement = document.createElement("div");
+        wrapperElement.classList.add("counter-void-stock-wrapper");
+        if (setting.setupWrapper) {
+            setting.setupWrapper(wrapperElement);
+        }
+        var iconElement = document.createElement("div");
+        iconElement.classList.add("counter-void-stock-icon");
+        if (setting.setupIcon) {
+            setting.setupIcon(iconElement);
+        }
+        wrapperElement.appendChild(iconElement);
+        var counterElement = document.createElement("div");
+        counterElement.classList.add("counter-void-stock-counter");
+        counterElement.id = setting.counterId;
+        if (setting.setupCounter) {
+            setting.setupCounter(counterElement);
+        }
+        wrapperElement.appendChild(counterElement);
+        _this.element.classList.add("counter-void-stock-stock");
+        if (setting.setupStock) {
+            setting.setupStock(_this.element);
+        }
+        wrapperElement.appendChild(_this.element);
+        targetElement.appendChild(wrapperElement);
+        _this.counter = setting.counter;
+        _this.counter.create(setting.counterId);
+        _this.counter.setValue(setting.initialCounterValue);
+        return _this;
+    }
+    CounterVoidStock.prototype.create = function (nodeId) { };
+    CounterVoidStock.prototype.getValue = function () { return this.counter.getValue(); };
+    CounterVoidStock.prototype.incValue = function (by) { this.counter.incValue(by); };
+    CounterVoidStock.prototype.decValue = function (by) { this.counter.setValue(this.counter.getValue() - by); };
+    CounterVoidStock.prototype.setValue = function (value) { this.counter.setValue(value); };
+    CounterVoidStock.prototype.toValue = function (value) { this.counter.toValue(value); };
+    CounterVoidStock.prototype.disable = function () { this.counter.disable(); };
+    return CounterVoidStock;
+}(VoidStock));
 var ArtCardManager = /** @class */ (function (_super) {
     __extends(ArtCardManager, _super);
     function ArtCardManager(canvasGame) {
@@ -2239,16 +2288,13 @@ var BackgroundCardManager = /** @class */ (function (_super) {
         return _this;
     }
     BackgroundCardManager.prototype.setUp = function (gameData) {
-        var _this = this;
-        var _loop_3 = function (playersKey) {
-            var player = gameData.players[playersKey];
-            this_1.players[Number(playersKey)] = new LineStock(this_1, $("player-background-".concat(playersKey)), {});
-            player.backgroundCards.forEach(function (card) { return _this.moveCardToPlayerHand(Number(playersKey), card); });
-        };
-        var this_1 = this;
-        for (var playersKey in gameData.players) {
-            _loop_3(playersKey);
-        }
+        // for (const playersKey in gameData.players) {
+        //     const player = gameData.players[playersKey];
+        //
+        //     this.players[Number(playersKey)] = new LineStock<Card>(this, $(`player-background-${playersKey}`), {})
+        //     player.backgroundCards.forEach(card => this.moveCardToPlayerHand(Number(playersKey), card))
+        //
+        // }
     };
     BackgroundCardManager.prototype.moveCardToPlayerHand = function (playerId, card) {
         return this.players[playerId].addCard(card);
@@ -2288,7 +2334,7 @@ var ScoringCardManager = /** @class */ (function (_super) {
         this.display = new SlotStock(this, $('scoring-card-display'), {
             mapCardToSlot: function (card) { return "scoring-card-display-slot-".concat(card.location); },
             slotClasses: ['scoring-card-display-slot'],
-            slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple'],
+            slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple', 'scoring-card-display-slot-grey'],
         });
         this.display.onCardClick = function (card) { return _this.flipCard(card); };
         gameData.scoringCards.forEach(function (card) { return _this.display.addCard(card); });
@@ -2313,32 +2359,118 @@ var InspirationTokenManager = /** @class */ (function (_super) {
         return _this;
     }
     InspirationTokenManager.prototype.setUp = function (gameData) {
-        var _this = this;
-        var _loop_4 = function (playersKey) {
-            this_2.players[Number(playersKey)] = new LineStock(this_2, $("player-inspiration-tokens-".concat(playersKey)), {});
-            gameData.players[playersKey].inspirationTokens.forEach(function (token) { return _this.players[Number(playersKey)].addCard(token); });
-        };
-        var this_2 = this;
         for (var playersKey in gameData.players) {
-            _loop_4(playersKey);
+            this.players[Number(playersKey)] = new CounterVoidStock(this, {
+                counter: new ebg.counter(),
+                targetElement: "canvas-counters-".concat(playersKey),
+                counterId: "canvas-inspiration-token-counter-".concat(playersKey),
+                initialCounterValue: gameData.players[playersKey].inspirationTokens.length,
+                setupIcon: function (element) { element.classList.add("canvas-inspiration-token-2d"); }
+            });
         }
         this.placeOnCards(gameData.displayInspirationTokens);
     };
-    InspirationTokenManager.prototype.placeOnCards = function (tokens) {
+    InspirationTokenManager.prototype.placeOnCards = function (tokens, playerId) {
         var _this = this;
         var promises = [];
         tokens.forEach(function (token) {
             if (!_this.cards[token.location_arg]) {
                 _this.cards[token.location_arg] = new LineStock(_this, $("inspiration-token-card-stock-".concat(token.location_arg)), {});
             }
-            promises.push(_this.cards[token.location_arg].addCard(token));
+            var animation = playerId ? { fromStock: _this.players[playerId] } : {};
+            promises.push(_this.cards[token.location_arg].addCard(token, animation));
         });
+        if (playerId) {
+            this.players[playerId].decValue(tokens.length);
+        }
         return Promise.all(promises);
     };
     InspirationTokenManager.prototype.moveToPlayer = function (playerId, tokens) {
+        this.players[playerId].incValue(tokens.length);
         return this.players[playerId].addCards(tokens);
     };
     return InspirationTokenManager;
+}(CardManager));
+var RibbonManager = /** @class */ (function (_super) {
+    __extends(RibbonManager, _super);
+    function RibbonManager(canvasGame) {
+        var _this = _super.call(this, canvasGame, {
+            getId: function (token) { return "canvas-ribbon-token-".concat(token.id); },
+            setupDiv: function (token, div) {
+                div.classList.add('canvas-ribbon');
+                div.dataset.type = '' + token.type;
+            },
+            cardWidth: RIBBON_TOKEN_WIDTH,
+            cardHeight: RIBBON_TOKEN_HEIGHT,
+        }) || this;
+        _this.canvasGame = canvasGame;
+        _this.players = {};
+        return _this;
+    }
+    RibbonManager.prototype.setUp = function (gameData) {
+        for (var playersKey in gameData.players) {
+            var player = gameData.players[playersKey];
+            this.players[Number(playersKey)] = {};
+            this.createRibbonCounterVoidStock(player, 'red');
+            this.createRibbonCounterVoidStock(player, 'green');
+            this.createRibbonCounterVoidStock(player, 'blue');
+            this.createRibbonCounterVoidStock(player, 'purple');
+            this.createRibbonCounterVoidStock(player, 'grey');
+        }
+    };
+    RibbonManager.prototype.updateRibbonCounters = function (playerId, painting, paintingRibbons) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, _b, _c, _i, ribbonType, nrOfRibbons, tokens, i, element;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _a = paintingRibbons;
+                        _b = [];
+                        for (_c in _a)
+                            _b.push(_c);
+                        _i = 0;
+                        _d.label = 1;
+                    case 1:
+                        if (!(_i < _b.length)) return [3 /*break*/, 4];
+                        _c = _b[_i];
+                        if (!(_c in _a)) return [3 /*break*/, 3];
+                        ribbonType = _c;
+                        nrOfRibbons = paintingRibbons[ribbonType];
+                        this.players[playerId][ribbonType].incValue(paintingRibbons[ribbonType]);
+                        tokens = [];
+                        for (i = 0; i < nrOfRibbons; i++) {
+                            tokens.push(this.mockRibbonToken(ribbonType));
+                        }
+                        element = document.querySelector("#player-finished-painting-".concat(painting.id));
+                        return [4 /*yield*/, this.players[playerId][ribbonType].addCards(tokens, { fromElement: element })];
+                    case 2:
+                        _d.sent();
+                        _d.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    RibbonManager.prototype.mockRibbonToken = function (type) {
+        return { id: RibbonManager.ribbonTokenId++, type: type };
+    };
+    RibbonManager.prototype.createRibbonCounterVoidStock = function (player, ribbonType) {
+        this.players[player.id][ribbonType] = new CounterVoidStock(this, {
+            counter: new ebg.counter(),
+            targetElement: "canvas-counters-".concat(player.id),
+            counterId: "canvas-ribbon-counter-".concat(player.id, "-").concat(ribbonType),
+            initialCounterValue: player.ribbons[ribbonType],
+            setupIcon: function (element) {
+                element.classList.add("canvas-ribbon");
+                element.dataset.type = ribbonType;
+            }
+        });
+    };
+    RibbonManager.ribbonTokenId = 0;
+    return RibbonManager;
 }(CardManager));
 var PaintingManager = /** @class */ (function () {
     function PaintingManager(canvasGame) {
@@ -2356,16 +2488,34 @@ var PaintingManager = /** @class */ (function () {
         var _this = this;
         for (var playersKey in gameData.players) {
             var player = gameData.players[playersKey];
-            player.paintings.forEach(function (painting) { return _this.createPainting(painting); });
+            player.paintings.forEach(function (painting) { return _this.createPainting(painting, false); });
         }
     };
-    PaintingManager.prototype.createPainting = function (painting) {
-        var _this = this;
+    PaintingManager.prototype.createPainting = function (painting, showAnimation) {
+        var targetElementId = "player-finished-paintings-".concat(painting.playerId);
         var paintingElementId = "player-finished-painting-".concat(painting.id);
         var cardsWrapperId = "".concat(paintingElementId, "-cards-wrapper");
-        dojo.place("<div id=\"".concat(paintingElementId, "\" class=\"canvas-painting\">\n                            <div id=\"").concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>\n                            <a id=\"save-painting-").concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-heart\" aria-hidden=\"true\"></i></a>\n                         </div>"), "player-finished-paintings-".concat(painting.playerId));
+        dojo.place("<div id=\"".concat(paintingElementId, "\" class=\"canvas-painting\">\n                            <div id=\"").concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>\n                         </div>"), showAnimation ? 'canvas-table' : targetElementId);
         this.canvasGame.backgroundCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.backgroundCard);
         this.canvasGame.artCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.artCards);
+        var element = $(paintingElementId);
+        if (showAnimation) {
+            return this.canvasGame.animationManager.play(new BgaCumulatedAnimation({ animations: [
+                    new BgaAttachWithAnimation({
+                        animation: new BgaSlideAnimation({ element: element, transitionTimingFunction: 'ease-out' }),
+                        attachElement: document.getElementById('canvas-show-painting-overlay')
+                    }),
+                    new BgaPauseAnimation({ element: element }),
+                ] }));
+        }
+        else {
+            this.addPaintingToPngButton(painting, paintingElementId);
+            return Promise.resolve();
+        }
+    };
+    PaintingManager.prototype.addPaintingToPngButton = function (painting, paintingElementId) {
+        var _this = this;
+        dojo.place("<a id=\"save-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-heart\" aria-hidden=\"true\"></i></a>"), paintingElementId);
         dojo.connect($("save-painting-".concat(painting.id)), 'onclick', function () { return _this.paintingToPng(painting); });
     };
     PaintingManager.prototype.enterCompletePaintingMode = function (backgroundCards, artCards) {
@@ -2383,16 +2533,16 @@ var PaintingManager = /** @class */ (function () {
         dojo.place(this.createBackgroundSlot(this.completePaintingMode.backgroundCards.length), 'art-cards-picker-top-text', 'before');
         dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard), 'complete-painting-background-card-slot');
         dojo.connect($('change-background-button'), 'onclick', function () { return _this.changeBackgroundCard(); });
-        var _loop_5 = function (i) {
-            dojo.place(this_3.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
-            dojo.place(this_3.createArtCardElement(this_3.completePaintingMode.painting.artCards[i - 1]), "complete-painting-art-card-slot-".concat(i));
+        var _loop_3 = function (i) {
+            dojo.place(this_1.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
+            dojo.place(this_1.createArtCardElement(this_1.completePaintingMode.painting.artCards[i - 1]), "complete-painting-art-card-slot-".concat(i));
             dojo.connect($("art-card-move-left-".concat(i)), 'onclick', function () { return _this.moveArtCard('left', i); });
             dojo.connect($("art-card-move-right-".concat(i)), 'onclick', function () { return _this.moveArtCard('right', i); });
             dojo.connect($("art-card-change-".concat(i)), 'onclick', function () { return _this.changeArtCard(i); });
         };
-        var this_3 = this;
+        var this_1 = this;
         for (var i = 1; i <= 3; i++) {
-            _loop_5(i);
+            _loop_3(i);
         }
         this.updateUnusedCards();
         this.updatePreview();
@@ -2441,6 +2591,15 @@ var PaintingManager = /** @class */ (function () {
     PaintingManager.prototype.exitCompletePaintingMode = function () {
         dojo.empty('complete-painting');
     };
+    PaintingManager.prototype.enterHighlightPaintingMode = function (player) {
+        var overlayId = $('canvas-show-painting-overlay');
+        dojo.addClass(overlayId, 'overlay-visible');
+        dojo.place("<div class=\"title-wrapper\"><div class=\"title color-".concat(player.color, "\"><h1>").concat(player.name).concat(_("'s Completed Painting"), "</h1></div></div>"), overlayId);
+    };
+    PaintingManager.prototype.exitHighlightPaintingMode = function () {
+        var overlayId = $('canvas-show-painting-overlay');
+        dojo.removeClass(overlayId, 'overlay-visible');
+    };
     PaintingManager.prototype.createCompletePaintingPickerElement = function () {
         return "\n            <div id=\"complete-painting-picker-wrapper\">\n                <div class=\"title-wrapper\"><div class=\"title\"><h1>".concat(_("Art Picker"), "</h1></div></div>\n                <div id=\"art-cards-picker\">\n                    <div id=\"art-cards-picker-bottom-text\"><h1>").concat(_("Bottom"), "</h1></div>\n                    <div id=\"art-cards-picker-top-text\"><h1>").concat(_("Top"), "</h1></div>\n                </div> \n                <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Unused Cards"), "</h1></div></div>\n                <div id=\"art-cards-picker-unused\">\n                    \n                </div> \n            </div>\n        ");
     };
@@ -2455,7 +2614,7 @@ var PaintingManager = /** @class */ (function () {
     };
     PaintingManager.prototype.createBackgroundElement = function (card, postfix) {
         if (postfix === void 0) { postfix = 'clone'; }
-        var clone = this.canvasGame.backgroundCardManager.getCardElement(card).cloneNode(true);
+        var clone = this.canvasGame.backgroundCardManager.createCardElement(card);
         clone.id = "".concat(clone.id, "-").concat(postfix);
         return clone;
     };
@@ -2608,40 +2767,26 @@ var PlayerManager = /** @class */ (function () {
         }
         playerAreas.forEach(function (playerArea) { return dojo.place(playerArea, "player-areas"); });
     };
-    PlayerManager.prototype.updateRibbonCounters = function (playerId, ribbons) {
-        for (var ribbonType in ribbons) {
-            this.ribbonCounters[playerId][ribbonType].incValue(ribbons[ribbonType]);
-        }
-    };
     PlayerManager.prototype.createPlayerArea = function (player) {
-        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"canvas-title-wrapper\">\n                        <h1 style=\"background-color: #").concat(player.color, ";\">").concat(player.name).concat(_("'s Art Collection"), "</h1>\n                    </div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Hand Cards"), "</h1></div></div>\n                    <div id=\"player-hand-").concat(player.id, "\"></div>\n                    <div class=\"player-collection-wrapper\">\n                        <div class=\"player-collection-wrapper-item\">\n                            <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>").concat(_("Background Cards"), "</h1></div></div>\n                            <div id=\"player-background-").concat(player.id, "\"></div>   \n                        </div>  \n                        <div class=\"player-collection-wrapper-item\">\n                            <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>").concat(_("Finished Paintings"), "</h1></div></div>\n                            <div id=\"player-finished-paintings-").concat(player.id, "\" class=\"player-finished-paintings\">\n                                \n                            </div>\n                        </div>\n                    </div>\n                </div>");
+        return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(player.name).concat(_("'s Art Collection"), "</h1></div></div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(_("Hand Cards"), "</h1></div></div>\n                    <div id=\"player-hand-").concat(player.id, "\" class=\"player-hand\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(_("Finished Paintings"), "</h1></div></div>\n                    <div id=\"player-finished-paintings-").concat(player.id, "\" class=\"player-finished-paintings\"></div>\n                </div>");
     };
     PlayerManager.prototype.createPlayerPanels = function (player) {
-        var playerId = Number(player.id);
         var html = "<div id=\"canvas-counters-".concat(player.id, "\" class=\"canvas-counters\" ></div>");
         dojo.place(html, "player_board_".concat(player.id));
-        this.ribbonCounters[playerId] = {};
-        for (var ribbonType in player.ribbons) {
-            var counterHtml = "<div class=\"canvas-ribbon-counter\">\n                    <div class=\"canvas-ribbon\" data-type=\"".concat(ribbonType, "\"></div> \n                    <span id=\"canvas-ribbon-counter-").concat(player.id, "-").concat(ribbonType, "\"></span>\n                    <div id=\"canvas-ribbon-counter-").concat(player.id, "-").concat(ribbonType, "-stock\"></div>\n                </div>");
-            dojo.place(counterHtml, "canvas-counters-".concat(player.id));
-            var ribbonCounter = new ebg.counter();
-            ribbonCounter.create("canvas-ribbon-counter-".concat(player.id, "-").concat(ribbonType));
-            ribbonCounter.setValue(0);
-            this.ribbonCounters[playerId][ribbonType] = ribbonCounter;
-        }
-        this.updateRibbonCounters(playerId, player.ribbons);
     };
     return PlayerManager;
 }());
 var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
 var BOARD_WIDTH = 2000;
-var ANIMATION_MS = 500;
+var ANIMATION_MS = 800;
 var TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 var LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
 var CARD_WIDTH = 250;
 var CARD_HEIGHT = 425;
 var INSPIRATION_TOKEN_WIDTH = 60;
 var INSPIRATION_TOKEN_HEIGHT = 52;
+var RIBBON_TOKEN_WIDTH = 22;
+var RIBBON_TOKEN_HEIGHT = 35;
 var Canvas = /** @class */ (function () {
     function Canvas() {
     }
@@ -2661,18 +2806,21 @@ var Canvas = /** @class */ (function () {
         log("Starting game setup");
         log('gamedatas', gamedatas);
         this.zoomManager = new AutoZoomManager('canvas-table');
+        this.animationManager = new AnimationManager(this, { duration: ANIMATION_MS });
         this.playerManager = new PlayerManager(this);
         this.artCardManager = new ArtCardManager(this);
         this.backgroundCardManager = new BackgroundCardManager(this);
         this.scoringCardManager = new ScoringCardManager(this);
         this.inspirationTokenManager = new InspirationTokenManager(this);
         this.paintingManager = new PaintingManager(this);
+        this.ribbonManager = new RibbonManager(this);
         this.scoringCardManager.setUp(gamedatas);
         this.playerManager.setUp(gamedatas);
         this.backgroundCardManager.setUp(gamedatas);
         this.artCardManager.setUp(gamedatas);
         this.inspirationTokenManager.setUp(gamedatas);
         this.paintingManager.setUp(gamedatas);
+        this.ribbonManager.setUp(gamedatas);
         this.setupNotifications();
         log("Ending game setup");
     };
@@ -2830,7 +2978,7 @@ var Canvas = /** @class */ (function () {
             ['artCardTaken', undefined],
             ['displayRefilled', undefined],
             ['paintingScored', 1],
-            ['paintingCompleted', ANIMATION_MS]
+            ['paintingCompleted', undefined]
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -2846,7 +2994,7 @@ var Canvas = /** @class */ (function () {
     Canvas.prototype.notif_artCardTaken = function (args) {
         var _this = this;
         this.artCardManager.exitDisplaySelectMode();
-        return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced)
+        return this.inspirationTokenManager.placeOnCards(args.inspirationTokensPlaced, args.playerId)
             .then(function () { return _this.inspirationTokenManager.moveToPlayer(args.playerId, args.inspirationTokensTaken); })
             .then(function () { return _this.artCardManager.takeCard(args.playerId, args.cardTaken); });
     };
@@ -2857,8 +3005,17 @@ var Canvas = /** @class */ (function () {
         this.paintingManager.updatePreviewScore(args);
     };
     Canvas.prototype.notif_paintingCompleted = function (args) {
-        this.paintingManager.createPainting(args.painting);
-        this.playerManager.updateRibbonCounters(args.playerId, args.paintingRibbons);
+        var _this = this;
+        this.paintingManager.exitCompletePaintingMode();
+        this.paintingManager.enterHighlightPaintingMode(this.getPlayer(args.playerId));
+        return this.paintingManager.createPainting(args.painting, true)
+            .then(function () { return _this.ribbonManager.updateRibbonCounters(args.playerId, args.painting, args.paintingRibbons); })
+            .then(function () { return _this.paintingManager.exitHighlightPaintingMode(); })
+            .then(function () { return _this.animationManager.play(new BgaAttachWithAnimation({
+            animation: new BgaSlideAnimation({ element: $("player-finished-painting-".concat(args.painting.id)), transitionTimingFunction: 'ease-out' }),
+            attachElement: document.getElementById("player-finished-paintings-".concat(args.playerId))
+        })); })
+            .then(function () { return _this.paintingManager.addPaintingToPngButton(args.painting, "player-finished-painting-".concat(args.painting.id)); });
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
         try {

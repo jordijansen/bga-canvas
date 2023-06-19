@@ -41,6 +41,7 @@
         </div>
     </div>
     <div id="player-areas"></div>
+    <div id="canvas-show-painting-overlay"></div>
 </div>
 
 <div id="canvas-overall"></div>
