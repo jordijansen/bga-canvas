@@ -126,7 +126,8 @@ $gameGameStates = [
         "type" => "game",
         "action" => "stNextPlayer",
         "transitions" => [
-            'nextPlayer' => ST_PLAYER_TURN_ID,
+            ST_PLAYER_TURN => ST_PLAYER_TURN_ID,
+            ST_GAME_END => ST_GAME_END_ID
         ],
         "updateGameProgression" => true
     ],

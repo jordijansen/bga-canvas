@@ -14,6 +14,11 @@ class PaintingManager  extends APP_DbObject {
         $this->DbQuery("INSERT INTO painting (id, player_id) VALUES (".$backgroundCardId.", ". $playerId .")");
     }
 
+    public function countAllPaintings(): int
+    {
+        return $this->getUniqueValueFromDB("SELECT COUNT(1) FROM painting");
+    }
+
     public function getPaintings($playerId): array
     {
         $paintings = $this->getCollectionFromDB("SELECT * FROM painting WHERE player_id = ".$playerId);

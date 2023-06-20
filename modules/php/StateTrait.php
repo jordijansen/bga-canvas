@@ -12,9 +12,19 @@ trait StateTrait {
 
     function stNextPlayer()
     {
-        $this->activeNextPlayer();
-        $this->gamestate->nextState( "nextPlayer");
+        // If all players have created 3 paintings the game ends
+        $totalPaintingCount = $this->paintingManager->countAllPaintings();
+        if (intval($totalPaintingCount) == ($this->getPlayersNumber() * 3)) {
+            $this->gamestate->nextState( ST_GAME_END);
+        } else {
+            // Find the next player, a player is skipped if they've created 3 paintings already.
+            $skipPlayer = true;
+            while ($skipPlayer) {
+                $this->activeNextPlayer();
+                $playerId = $this->getActivePlayerId();
+                $skipPlayer = sizeof($this->paintingManager->getPaintings($playerId)) == 3;
+            }
+            $this->gamestate->nextState( ST_PLAYER_TURN);
+        }
     }
-
-
 }
