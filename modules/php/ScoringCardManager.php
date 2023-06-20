@@ -81,6 +81,7 @@ class ScoringCardManager {
         $allIcons = [$redIcons, $yellowIcons, $greenIcons, $blueIcons, $purpleIcons];
         $allIconsFlat = [...$redIcons, ...$yellowIcons, ...$greenIcons, ...$blueIcons, ...$purpleIcons];
         $allBasicElements = array_filter($allIconsFlat, fn($arrayValue) => in_array($arrayValue, BASIC_ELEMENTS));
+        $elementsByCount = array_count_values($allBasicElements);
         $result = [];
         foreach ($this->getAllScoringCards() as $scoringCard) {
             $result[$scoringCard->location] = 0;
@@ -97,7 +98,6 @@ class ScoringCardManager {
             } else if ($scoringCard->name == 'HIERARCHY') {
                 // The number of tone elements should be bigger or equal to the count of all other basic elements
                 if (in_array(TONE, $allBasicElements)) {
-                    $elementsByCount = array_count_values($allBasicElements);
                     $toneCount = $elementsByCount[TONE];
                     $maxElementCount = max(array_values($elementsByCount));
                     $result[$scoringCard->location] = $maxElementCount <= $toneCount ? 1 : 0;
@@ -132,7 +132,6 @@ class ScoringCardManager {
                 }
             } else if ($scoringCard->name == 'PROPORTION') {
                 // Score sets of at least 3 of the same icons and 2 of the same icon. Can be 5 of the same icon as well.
-                $elementsByCount = array_count_values($allBasicElements);
                 $elementsWith5OrMoreCount = sizeof(array_filter($elementsByCount, fn($arrayValue) => $arrayValue >= 5));
                 $elementsWith3Or4Count = sizeof(array_filter($elementsByCount, fn($arrayValue) => $arrayValue == 3 || $arrayValue == 4));
                 $elementsWith2Count = sizeof(array_filter($elementsByCount, fn($arrayValue) => $arrayValue == 2));
@@ -186,11 +185,30 @@ class ScoringCardManager {
             } else if ($scoringCard->name == 'VARIETY') {
                 if (in_array(TEXTURE, $allBasicElements) && in_array(HUE, $allBasicElements) && in_array(TONE, $allBasicElements) && in_array(SHAPE, $allBasicElements))
                 {
-                    $elementsByCount = array_count_values($allBasicElements);
                     $result[$scoringCard->location] = min(array_values($elementsByCount));
                 }
             }
         }
+
+        $allBonusIcons = array_filter($allIconsFlat, fn($arrayValue) => in_array($arrayValue, BONUS_ICONS));
+        $result[SCORING_GREY] = 0;
+        foreach ($allBonusIcons as $bonusIcon) {
+            switch ($bonusIcon) {
+                case BONUS_HUE:
+                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[HUE];
+                    break;
+                case BONUS_SHAPE:
+                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[SHAPE];
+                    break;
+                case BONUS_TEXTURE:
+                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[TEXTURE];
+                    break;
+                case BONUS_TONE:
+                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[TONE];
+                    break;
+            }
+        }
+
 
         return $result;
     }

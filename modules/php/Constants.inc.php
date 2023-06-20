@@ -78,6 +78,9 @@ const BONUS_SHAPE = 'BONUS_SHAPE';
 const BONUS_TEXTURE = 'BONUS_TEXTURE';
 const BONUS_TONE = 'BONUS_TONE';
 
+const BONUS_ICONS = [BONUS_HUE, BONUS_SHAPE, BONUS_TEXTURE, BONUS_TONE];
+
+
 /**
  * Global variables
  */

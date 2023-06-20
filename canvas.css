@@ -1214,20 +1214,22 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 
 #canvas-show-painting-overlay {
-  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  bottom: 0;
+  right: 0;
   height: 100%;
+  width: 100%;
+  position: absolute;
   background-color: rgba(0, 0, 0, 0.6);
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s, opacity 0.5s linear;
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
-  scale: 2;
+  transform-origin: top center;
+  transform: scale(1.5);
 }
 #canvas-show-painting-overlay.overlay-visible {
   visibility: visible;
