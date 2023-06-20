@@ -2398,6 +2398,7 @@ var RibbonManager = /** @class */ (function (_super) {
             getId: function (token) { return "canvas-ribbon-token-".concat(token.id); },
             setupDiv: function (token, div) {
                 div.classList.add('canvas-ribbon');
+                div.classList.add('large');
                 div.dataset.type = '' + token.type;
             },
             cardWidth: RIBBON_TOKEN_WIDTH,
@@ -2786,8 +2787,8 @@ var CARD_WIDTH = 250;
 var CARD_HEIGHT = 425;
 var INSPIRATION_TOKEN_WIDTH = 60;
 var INSPIRATION_TOKEN_HEIGHT = 52;
-var RIBBON_TOKEN_WIDTH = 22;
-var RIBBON_TOKEN_HEIGHT = 35;
+var RIBBON_TOKEN_WIDTH = 88;
+var RIBBON_TOKEN_HEIGHT = 140;
 var Canvas = /** @class */ (function () {
     function Canvas() {
     }
@@ -3019,10 +3020,19 @@ var Canvas = /** @class */ (function () {
             .then(function () { return _this.paintingManager.addPaintingToPngButton(args.painting, "player-finished-painting-".concat(args.painting.id)); });
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
+        var _this = this;
         try {
             if (log && args && !args.processed) {
                 Object.keys(args).forEach(function (argKey) {
-                    // TODO
+                    if (argKey.startsWith('ribbonIcons')) {
+                        var ribbons_1 = [];
+                        Object.keys(args[argKey]).forEach(function (key) {
+                            for (var i = 0; i < args[argKey][key]; i++) {
+                                ribbons_1.push(_this.getRibbonIcon(key));
+                            }
+                        });
+                        args[argKey] = ribbons_1.join('');
+                    }
                 });
             }
         }
@@ -3030,6 +3040,9 @@ var Canvas = /** @class */ (function () {
             console.error(log, args, "Exception thrown", e.stack);
         }
         return this.inherited(arguments);
+    };
+    Canvas.prototype.getRibbonIcon = function (type) {
+        return "<span class=\"canvas-ribbon small\" data-type=\"".concat(type, "\" style=\"margin: 0 2px\"></span>");
     };
     return Canvas;
 }());

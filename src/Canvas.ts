@@ -17,8 +17,8 @@ const CARD_WIDTH = 250;
 const CARD_HEIGHT = 425;
 const INSPIRATION_TOKEN_WIDTH = 60;
 const INSPIRATION_TOKEN_HEIGHT = 52;
-const RIBBON_TOKEN_WIDTH = 22;
-const RIBBON_TOKEN_HEIGHT = 35;
+const RIBBON_TOKEN_WIDTH = 88;
+const RIBBON_TOKEN_HEIGHT = 140;
 
 class Canvas implements CanvasGame {
 
@@ -311,12 +311,24 @@ class Canvas implements CanvasGame {
         try {
             if (log && args && !args.processed) {
                 Object.keys(args).forEach(argKey => {
-                    // TODO
+                    if (argKey.startsWith('ribbonIcons')) {
+                        const ribbons = [];
+                        Object.keys(args[argKey]).forEach(key => {
+                            for (let i = 0; i < args[argKey][key]; i++) {
+                                ribbons.push(this.getRibbonIcon(key));
+                            }
+                        })
+                        args[argKey] = ribbons.join('');
+                    }
                 })
             }
         } catch (e) {
             console.error(log, args, "Exception thrown", e.stack);
         }
         return (this as any).inherited(arguments);
+    }
+
+    private getRibbonIcon(type: string) {
+        return `<span class="canvas-ribbon small" data-type="${type}" style="margin: 0 2px"></span>`
     }
 }

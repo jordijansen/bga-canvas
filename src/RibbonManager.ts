@@ -9,6 +9,7 @@ class RibbonManager extends CardManager<Token> {
             getId: (token) => `canvas-ribbon-token-${token.id}`,
             setupDiv: (token: Token, div: HTMLElement) => {
                 div.classList.add('canvas-ribbon');
+                div.classList.add('large');
                 div.dataset.type = ''+token.type;
             },
             cardWidth: RIBBON_TOKEN_WIDTH,

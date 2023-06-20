@@ -195,16 +195,16 @@ class ScoringCardManager {
         foreach ($allBonusIcons as $bonusIcon) {
             switch ($bonusIcon) {
                 case BONUS_HUE:
-                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[HUE];
+                    if (in_array(HUE, array_keys($elementsByCount))) { $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[HUE]; }
                     break;
                 case BONUS_SHAPE:
-                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[SHAPE];
+                    if (in_array(SHAPE, array_keys($elementsByCount))) { $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[SHAPE]; }
                     break;
                 case BONUS_TEXTURE:
-                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[TEXTURE];
+                    if (in_array(TEXTURE, array_keys($elementsByCount))) { $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[TEXTURE]; }
                     break;
                 case BONUS_TONE:
-                    $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[TONE];
+                    if (in_array(TONE, array_keys($elementsByCount))) { $result[SCORING_GREY] = $result[SCORING_GREY] + $elementsByCount[TONE]; }
                     break;
             }
         }

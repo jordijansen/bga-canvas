@@ -1132,6 +1132,15 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-size: cover;
   width: 44px;
   height: 70px;
+  vertical-align: middle;
+}
+.canvas-ribbon.small {
+  width: 22px;
+  height: 35px;
+}
+.canvas-ribbon.large {
+  width: 88px;
+  height: 140px;
 }
 .canvas-ribbon[data-type=green] {
   background-position: 0 0;

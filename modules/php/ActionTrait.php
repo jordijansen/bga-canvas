@@ -116,11 +116,17 @@ trait ActionTrait {
         $paintingRibbons = $this->scoringCardManager->scorePainting($artCards);
         $this->ribbonManager->updateRibbons($activePlayerId, $paintingRibbons);
 
-        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes a painting and scores ${paintingRibbons}', [
+        $paintingName = $this->paintingManager->getPaintingName($backgroundCard->id);
+
+        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes painting <b>${paintingNameLeft} ${paintingNameRight}</b> and scores ${ribbonIcons}', [
+            'i18n' => ['paintingNameLeft', 'paintingNameRight'],
             'playerId' => $activePlayerId,
             'player_name' => $this->getPlayerName($activePlayerId),
             'painting' => $this->paintingManager->getPainting($backgroundCard->id),
-            'paintingRibbons' => $paintingRibbons
+            'paintingNameLeft' => $paintingName['left'],
+            'paintingNameRight' => $paintingName['right'],
+            'paintingRibbons' => $paintingRibbons,
+            'ribbonIcons' => $paintingRibbons
         ]);
 
         $this->gamestate->nextState(ST_NEXT_PLAYER);

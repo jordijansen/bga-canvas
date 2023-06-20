@@ -632,6 +632,17 @@ html, .mode_3d #game_play_area_background {
   background-size: cover;
   width: 44px;
   height: 70px;
+  vertical-align: middle;
+
+  &.small {
+    width: 22px;
+    height: 35px;
+  }
+
+  &.large {
+    width: 88px;
+    height: 140px;
+  }
 
   &[data-type="green"] {
     background-position: 0 0;

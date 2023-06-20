@@ -38,5 +38,19 @@ class PaintingManager  extends APP_DbObject {
         return new Painting($dbPainting, reset($backgroundCards), $artCards);
     }
 
-
+    public function getPaintingName($paintingId): array
+    {
+        $artCards = $this->game->artCardManager->getCardsInLocation(ZONE_PAINTING.'_'.$paintingId);
+        $leftName = '';
+        $rightName = '';
+        foreach ($artCards as $artCard) {
+            if ($artCard->namePosition == 'left') {
+                $leftName = $artCard->name;
+            }
+            if ($artCard->namePosition == 'right') {
+                $rightName = $artCard->name;
+            }
+        }
+        return ['left' => $leftName, 'right' => $rightName];
+    }
 }
