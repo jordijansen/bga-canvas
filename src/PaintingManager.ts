@@ -143,7 +143,8 @@ class PaintingManager {
 
     public enterHighlightPaintingMode(player: CanvasPlayer) {
         const overlayId = $('canvas-show-painting-overlay');
-        dojo.addClass(overlayId, 'overlay-visible')
+        dojo.empty(overlayId);
+        dojo.addClass(overlayId, 'overlay-visible');
 
         dojo.place(`<div class="title-wrapper"><div class="title color-${player.color}"><h1>${player.name}${_("'s Completed Painting")}</h1></div></div>`, overlayId)
     }

@@ -2593,6 +2593,7 @@ var PaintingManager = /** @class */ (function () {
     };
     PaintingManager.prototype.enterHighlightPaintingMode = function (player) {
         var overlayId = $('canvas-show-painting-overlay');
+        dojo.empty(overlayId);
         dojo.addClass(overlayId, 'overlay-visible');
         dojo.place("<div class=\"title-wrapper\"><div class=\"title color-".concat(player.color, "\"><h1>").concat(player.name).concat(_("'s Completed Painting"), "</h1></div></div>"), overlayId);
     };

@@ -10,10 +10,21 @@ const SCORING_BLUE = 'blue';
 const SCORING_PURPLE = 'purple';
 const SCORING_GREY = 'grey';
 
-
-
-const TOKEN_INSPIRATION = 'INSPIRATION';
-const TOKEN_RIBBON = 'RIBBON';
+/**
+ * Options
+ */
+const SCORING_CARDS_OPTION_ID = 100;
+const SCORING_CARDS_OPTION = 'scoring_cards_option';
+const SCORING_CARDS_STANDARD = 1;
+const SCORING_CARDS_SIMPLIFIED_FAMILY_GAME = 10;
+const SCORING_CARDS_SIMPLIFIED_CHILL_MODE = 11;
+const SCORING_CARDS_SIMPLIFIED_SYNERGY = 12;
+const SCORING_CARDS_STANDARD_FIRST_TIME_PLAYING = 20;
+const SCORING_CARDS_STANDARD_BALANCED = 21;
+const SCORING_CARDS_STANDARD_NO_ELEMENTS = 22;
+const SCORING_CARDS_COMPLEX_ALL_ELEMENTS = 30;
+const SCORING_CARDS_COMPLEX_SPATIAL = 31;
+const SCORING_CARDS_COMPLEX_BONUS = 32;
 
 /**
  * State
@@ -36,7 +47,6 @@ const ST_NEXT_PLAYER_ID = 80;
 const ST_GAME_END = 'gameEnd';
 const ST_GAME_END_ID = 99;
 
-
 /**
  * Actions
  */
@@ -50,7 +60,6 @@ const ACT_CANCEL_ACTION = 'cancelAction';
  */
 const ZONE_DECK = 'deck';
 const ZONE_DISPLAY = 'display';
-const ZONE_DISCARD = 'discard';
 const ZONE_PLAYER_HAND = 'hand';
 const ZONE_PAINTING = 'painting';
 const ZONE_CARD = 'card';

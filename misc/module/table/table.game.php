@@ -387,7 +387,7 @@ class Deck {
     {
     }
 
-    public function moveCard(int $cardId, string $location, int $location_arg)
+    public function moveCard(int $cardId, string $location, ?int $location_arg)
     {
     }
 

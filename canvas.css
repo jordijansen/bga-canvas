@@ -354,7 +354,7 @@ body > .card {
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #fff;
+  background: #000;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
@@ -718,6 +718,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   position: relative;
   width: 250px;
   height: 425px;
+  background-color: white;
+  border-radius: 10px;
 }
 .canvas-art-card.bga-cards_selectable-card .card-side {
   outline: 8px rgba(80, 200, 255, 0.75) solid;
@@ -993,14 +995,12 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   display: flex;
   justify-content: center;
   padding-bottom: 10px;
-}
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused .canvas-art-card {
-  background-color: white;
-  border-radius: 10px;
+  gap: 8px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker {
   display: flex;
   position: relative;
+  gap: 8px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .canvas-art-card {
   background-color: white;
@@ -1077,10 +1077,6 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 #canvas-table #player-areas .player-area .player-hand {
   height: 425px;
 }
-#canvas-table #player-areas .player-area .player-hand .canvas-art-card {
-  background-color: white;
-  border-radius: 10px;
-}
 #canvas-table #player-areas .player-area .player-finished-paintings {
   height: 500px;
   display: flex;
@@ -1096,6 +1092,9 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   width: 250px;
   height: 425px;
   position: relative;
+}
+.canvas-painting .canvas-painting-cards-wrapper .canvas-art-card {
+  background: none !important;
 }
 .canvas-painting .canvas-painting-cards-wrapper .art-card, .canvas-painting .canvas-painting-cards-wrapper .background-card, .canvas-painting .canvas-painting-cards-wrapper .card {
   position: absolute;

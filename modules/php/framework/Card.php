@@ -48,7 +48,7 @@ class ArtCard extends ArtCardType {
     }
 }
 
-class ScocringCardType {
+class ScoringCardType {
     public string $name;
 
     /**
@@ -61,7 +61,7 @@ class ScocringCardType {
 
 }
 
-class ScoringCard extends ScocringCardType {
+class ScoringCard extends ScoringCardType {
 
     public int $id;
     public string $location;

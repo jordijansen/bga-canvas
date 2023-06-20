@@ -63,18 +63,13 @@ class Canvas extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         
-        self::initGameStateLabels( array( 
-            //    "my_first_global_variable" => 10,
-            //    "my_second_global_variable" => 11,
-            //      ...
-            //    "my_first_game_variant" => 100,
-            //    "my_second_game_variant" => 101,
-            //      ...
-        ) );
+        self::initGameStateLabels( array(
+            SCORING_CARDS_OPTION => SCORING_CARDS_OPTION_ID
+        ));
 
         $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"), $this->ART_CARDS);
         $this->backgroundCardManager = new BackgroundCardManager(self::getNew("module.common.deck"));
-        $this->scoringCardManager = new ScoringCardManager(self::getNew("module.common.deck"), $this->SCORING_CARDS);
+        $this->scoringCardManager = new ScoringCardManager($this, self::getNew("module.common.deck"), $this->SCORING_CARDS);
         $this->ribbonManager = new RibbonManager();
         $this->inspirationTokenManager = new InspirationTokenManager(self::getNew("module.common.deck"));
         $this->paintingManager = new PaintingManager($this);

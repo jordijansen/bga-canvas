@@ -17,8 +17,8 @@ class ArtCardManager {
         for ($i = 1; $i <= 60; $i++) {
             $cards[] = array('type' => 'BASE_GAME', 'type_arg' => $i, 'nbr' => 1);
         }
-        $this->cards->createCards($cards, 'deck');
-        $this->cards->shuffle('deck');
+        $this->cards->createCards($cards, ZONE_DECK);
+        $this->cards->shuffle(ZONE_DECK);
     }
 
     public function fillDisplay() {

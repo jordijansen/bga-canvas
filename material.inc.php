@@ -95,22 +95,18 @@ $this->ART_CARDS = [
 
 $this->SCORING_CARDS = [
     "BASE_GAME" => [
-        1 =>  new ScocringCardType('COMPOSITION'),
-        2 =>  new ScocringCardType('CONSISTENCY'),
-        3 =>  new ScocringCardType('EMPHASIS'),
-        4 =>  new ScocringCardType('HIERARCHY'),
-        5 =>  new ScocringCardType('MOVEMENT'),
-        6 =>  new ScocringCardType('PROXIMITY'),
-        7 =>  new ScocringCardType('PROPORTION'),
-        8 =>  new ScocringCardType('REPETITION'),
-        9 =>  new ScocringCardType('SPACE'),
-        10 => new ScocringCardType('STYLE'),
-        11 => new ScocringCardType('SYMMETRY'),
-        12 => new ScocringCardType('VARIETY')
+        1 =>  new ScoringCardType('COMPOSITION'),
+        2 =>  new ScoringCardType('CONSISTENCY'),
+        3 =>  new ScoringCardType('EMPHASIS'),
+        4 =>  new ScoringCardType('HIERARCHY'),
+        5 =>  new ScoringCardType('MOVEMENT'),
+        6 =>  new ScoringCardType('PROXIMITY'),
+        7 =>  new ScoringCardType('PROPORTION'),
+        8 =>  new ScoringCardType('REPETITION'),
+        9 =>  new ScoringCardType('SPACE'),
+        10 => new ScoringCardType('STYLE'),
+        11 => new ScoringCardType('SYMMETRY'),
+        12 => new ScoringCardType('VARIETY')
     ]
 ];
-
-
-
-
 
