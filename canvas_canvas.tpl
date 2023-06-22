@@ -45,7 +45,7 @@
 </div>
 
 <div id="canvas-overall"></div>
-<div id="html2canvas-result"></div>
+<div id="html2canvas-result" class="canvas-painting-frame"></div>
 
 <script type="text/javascript">
 

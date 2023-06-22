@@ -50,6 +50,10 @@ trait UtilsTrait {
         return self::getUniqueValueFromDB("SELECT player_name FROM player WHERE player_id = $playerId");
     }
 
+    function getPlayers() {
+        return $this->getCollectionFromDB("SELECT * FROM player");
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Canvas Utility functions
     ////////////

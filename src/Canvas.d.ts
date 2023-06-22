@@ -79,6 +79,7 @@ interface NotifPaintingScored {
 interface NotifPaintingCompleted {
     playerId: number,
     player_name: string,
+    playerScore: number,
     painting: Painting,
     paintingRibbons: {[scoringType: string]: number}
 }

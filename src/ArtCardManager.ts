@@ -47,6 +47,7 @@ class ArtCardManager extends CardManager<Card> {
     }
 
     takeCard(playerId: number, card: Card) {
+        this.updateCardInformations(card);
         return this.playerHand[playerId].addCard(card);
     }
 
@@ -85,7 +86,16 @@ class ArtCardManager extends CardManager<Card> {
     }
 
     updateDisplayCards(displayCards: Card[]) {
-        return this.display.addCards(displayCards.slice(0, -1))
+        displayCards.forEach(card => this.updateCardInformations(card));
+        const promises = [];
+        displayCards.slice(0, -1).forEach(card => {
+            promises.push(this.animationManager.play(new BgaAttachWithAnimation({
+                animation: new BgaSlideAnimation({ element: $(this.getId(card)), transitionTimingFunction: 'ease-out' }),
+                attachElement: document.querySelector(`[data-slot-id="art-card-display-slot-${card.location_arg}"]`)
+            })));
+        })
+
+       return Promise.all(promises)
             .then(() => {
                 const card = displayCards[displayCards.length - 1];
                 const promise = this.display.addCard(card, {fromStock: this.deck})

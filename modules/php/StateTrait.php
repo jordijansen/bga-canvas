@@ -14,7 +14,8 @@ trait StateTrait {
     {
         // If all players have created 3 paintings the game ends
         $totalPaintingCount = $this->paintingManager->countAllPaintings();
-        if (intval($totalPaintingCount) == ($this->getPlayersNumber() * 3)) {
+
+        if (intval($totalPaintingCount) == ($this->getPlayersNumber() * NR_OF_PAINTINGS_PER_PLAYER)) {
             $this->gamestate->nextState( ST_GAME_END);
         } else {
             // Find the next player, a player is skipped if they've created 3 paintings already.

@@ -303,7 +303,10 @@ class Canvas implements CanvasGame {
                      animation: new BgaSlideAnimation({ element: $(`player-finished-painting-${args.painting.id}`), transitionTimingFunction: 'ease-out' }),
                      attachElement: document.getElementById(`player-finished-paintings-${args.playerId}`)
                  })))
-            .then(() => this.paintingManager.addPaintingToPngButton(args.painting, `player-finished-painting-${args.painting.id}`))
+            .then(() => {
+                this.paintingManager.addPaintingToPngButton(args.painting, `player-finished-painting-${args.painting.id}`);
+                this.setScore(args.playerId, args.playerScore);
+            })
     }
 
 
@@ -319,6 +322,8 @@ class Canvas implements CanvasGame {
                             }
                         })
                         args[argKey] = ribbons.join('');
+                    } else if (argKey.startsWith('inspiration_tokens') && typeof args[argKey] == 'number') {
+                        args[argKey] = this.getInspirationTokenIcon(args[argKey]);
                     }
                 })
             }
@@ -330,5 +335,9 @@ class Canvas implements CanvasGame {
 
     private getRibbonIcon(type: string) {
         return `<span class="canvas-ribbon small" data-type="${type}" style="margin: 0 2px"></span>`
+    }
+
+    private getInspirationTokenIcon(number: number) {
+        return `${number}<span class="canvas-inspiration-token-2d" style="margin-left: 4px; margin-right: 2px;"></span>`
     }
 }

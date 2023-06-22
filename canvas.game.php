@@ -48,9 +48,9 @@ class Canvas extends Table
 
     public ArtCardManager $artCardManager;
     public BackgroundCardManager $backgroundCardManager;
-    private ScoringCardManager $scoringCardManager;
-    private RibbonManager $ribbonManager;
-    private InspirationTokenManager $inspirationTokenManager;
+    public RibbonManager $ribbonManager;
+    public ScoringCardManager $scoringCardManager;
+    public InspirationTokenManager $inspirationTokenManager;
     private PaintingManager $paintingManager;
 
     function __construct( )
@@ -172,6 +172,7 @@ class Canvas extends Table
             $player['inspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId);
             $player['paintings'] = $this->paintingManager->getPaintings($playerId);
             $player['ribbons'] = $this->ribbonManager->getRibbonsForPlayer($playerId);
+            $player['scoreBreakDown'] = $this->scoringCardManager->getScoreBreakDown($playerId);
         }
 
         $result['scoringCards'] = $this->scoringCardManager->getAllScoringCards();
@@ -195,9 +196,9 @@ class Canvas extends Table
     */
     function getGameProgression()
     {
-        // TODO: compute and return the game progression
-
-        return 0;
+        $currentPaintingCount = $this->paintingManager->countAllPaintings();
+        $maxPaintingCount = $this->getPlayersNumber() * NR_OF_PAINTINGS_PER_PLAYER;
+        return (100 / $maxPaintingCount) * $currentPaintingCount;
     }
 
 
@@ -315,22 +316,15 @@ class Canvas extends Table
 
     function zombieTurn( $state, $active_player )
     {
-    	$statename = $state['name'];
-    	
+        $statename = $state['name'];
+
         if ($state['type'] === "activeplayer") {
             switch ($statename) {
                 default:
-                    $this->gamestate->nextState( "zombiePass" );
-                	break;
+                    $this->gamestate->jumpToState(ST_NEXT_PLAYER_ID);
+                    break;
             }
 
-            return;
-        }
-
-        if ($state['type'] === "multipleactiveplayer") {
-            // Make sure player is in a non blocking status for role turn
-            $this->gamestate->setPlayerNonMultiactive( $active_player, '' );
-            
             return;
         }
 

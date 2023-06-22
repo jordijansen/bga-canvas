@@ -429,9 +429,6 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 
 .player-board {
   background-image: url("img/canvas-white-background.png");
-  border-style: solid;
-  border-width: 3px;
-  box-sizing: border-box;
 }
 
 .bgabutton.bgabutton_blue, .bgabutton.bgabutton_blue:hover {
@@ -895,38 +892,38 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   margin-top: 5px;
 }
 
-#canvas-table .title-wrapper {
+.title-wrapper {
   display: flex;
   justify-content: center;
 }
-#canvas-table .title-wrapper .title {
+.title-wrapper .title {
   background-image: url("img/canvas-paint-strokes.png");
   background-size: 100% 700%;
   margin-top: 10px;
   margin-bottom: 10px;
 }
-#canvas-table .title-wrapper .title.primary {
+.title-wrapper .title.primary {
   background-position: 0 0;
 }
-#canvas-table .title-wrapper .title.secondary {
+.title-wrapper .title.secondary {
   background-position: 0 16.6666666667%;
 }
-#canvas-table .title-wrapper .title.color-E87885 {
+.title-wrapper .title.color-E87885 {
   background-position: 0 33.3333333333%;
 }
-#canvas-table .title-wrapper .title.color-3BB97D {
+.title-wrapper .title.color-3BB97D {
   background-position: 0 50%;
 }
-#canvas-table .title-wrapper .title.color-6FAEDB {
+.title-wrapper .title.color-6FAEDB {
   background-position: 0 66.6666666667%;
 }
-#canvas-table .title-wrapper .title.color-A18EC2 {
+.title-wrapper .title.color-A18EC2 {
   background-position: 0 83.3333333333%;
 }
-#canvas-table .title-wrapper .title.color-CEC6C2 {
+.title-wrapper .title.color-CEC6C2 {
   background-position: 0 100%;
 }
-#canvas-table .title-wrapper .title h1 {
+.title-wrapper .title h1 {
   font-family: "Welcome2019", cursive;
   text-align: center;
   font-size: 35px;
@@ -934,6 +931,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   padding-left: 50px;
   padding-right: 50px;
 }
+
 #canvas-table #canvas-board-wrapper {
   display: flex;
   justify-content: center;
@@ -1085,6 +1083,16 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   text-align: center;
 }
 
+.canvas-painting-frame {
+  background-image: url("img/canvas-painting-frame.png");
+  background-size: cover;
+  width: 545px;
+  height: 810px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .canvas-painting {
   display: inline-block;
 }
@@ -1102,12 +1110,6 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   left: 0;
   width: 250px;
   height: 425px;
-}
-.canvas-painting #canvas-copyright {
-  width: 250px;
-  text-align: center;
-  background-color: white;
-  padding: 10px 0;
 }
 .canvas-painting .bgabutton {
   width: 170px;
@@ -1164,6 +1166,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-size: cover;
   width: 35px;
   height: 35px;
+  vertical-align: middle;
 }
 
 .player-board .canvas-counters {
@@ -1206,10 +1209,22 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   left: -1000px;
   top: 0;
 }
+#html2canvas-result .canvas-copyright {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 2px;
+  font-style: italic;
+}
+#html2canvas-result .art-card, #html2canvas-result .background-card {
+  border-radius: 10px;
+}
 
 .share-painting-dialog-content {
-  width: 375px;
-  min-height: 800px;
+  width: 545px;
+  min-height: 915px;
 }
 .share-painting-dialog-content span {
   display: block;

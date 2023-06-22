@@ -155,9 +155,6 @@ html, .mode_3d #game_play_area_background {
 
 .player-board {
   background-image: url('img/canvas-white-background.png');
-  border-style: solid;
-  border-width: 3px;
-  box-sizing: border-box;
 }
 
 .bgabutton.bgabutton_blue, .bgabutton.bgabutton_blue:hover {
@@ -348,53 +345,51 @@ html, .mode_3d #game_play_area_background {
   margin-top: 5px;
 }
 
-#canvas-table {
+.title-wrapper {
+  display: flex;
+  justify-content: center;
 
-  .title-wrapper {
-    display: flex;
-    justify-content: center;
+  .title {
+    background-image: url('img/canvas-paint-strokes.png');
+    background-size: 100% 700%;
 
-    .title {
-      background-image: url('img/canvas-paint-strokes.png');
-      background-size: 100% 700%;
-
-      &.primary {
-        background-position: 0 0;
-      }
-      &.secondary {
-        background-position: 0 16.666666666666667%;
-      }
-      &.color-E87885 {
-        background-position: 0 33.333333333333333%;
-      }
-      &.color-3BB97D {
-        background-position: 0 50%;
-      }
-      &.color-6FAEDB {
-        background-position: 0 66.6666666667%;
-      }
-      &.color-A18EC2 {
-        background-position: 0 83.3333333333%;
-      }
-      &.color-CEC6C2 {
-        background-position: 0 100%;
-      }
-
-      h1 {
-        font-family: 'Welcome2019', cursive;
-        text-align: center;
-        font-size: 35px;
-        padding-top: 10px;
-        padding-left: 50px;
-        padding-right: 50px;
-      }
-
-      margin-top: 10px;
-      margin-bottom: 10px;
+    &.primary {
+      background-position: 0 0;
+    }
+    &.secondary {
+      background-position: 0 16.666666666666667%;
+    }
+    &.color-E87885 {
+      background-position: 0 33.333333333333333%;
+    }
+    &.color-3BB97D {
+      background-position: 0 50%;
+    }
+    &.color-6FAEDB {
+      background-position: 0 66.6666666667%;
+    }
+    &.color-A18EC2 {
+      background-position: 0 83.3333333333%;
+    }
+    &.color-CEC6C2 {
+      background-position: 0 100%;
     }
 
-  }
+    h1 {
+      font-family: 'Welcome2019', cursive;
+      text-align: center;
+      font-size: 35px;
+      padding-top: 10px;
+      padding-left: 50px;
+      padding-right: 50px;
+    }
 
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+#canvas-table {
 
   #canvas-board-wrapper {
     display: flex;
@@ -574,31 +569,35 @@ html, .mode_3d #game_play_area_background {
   }
 }
 
+.canvas-painting-frame {
+  background-image: url('img/canvas-painting-frame.png');
+  background-size: cover;
+  width: 545px;
+  height: 810px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .canvas-painting {
   display: inline-block;
-  .canvas-painting-cards-wrapper {
-    width: $portrait-card-width;
-    height: $portrait-card-height;
-    position: relative;
 
-    .canvas-art-card {
-      background: none !important;
-    }
-
-    .art-card, .background-card, .card {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .canvas-painting-cards-wrapper {
       width: $portrait-card-width;
       height: $portrait-card-height;
-    }
-  }
+      position: relative;
 
-  #canvas-copyright {
-    width: $portrait-card-width;
-    text-align: center;
-    background-color: white;
-    padding: 10px 0;
+      .canvas-art-card {
+        background: none !important;
+      }
+
+      .art-card, .background-card, .card {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: $portrait-card-width;
+        height: $portrait-card-height;
+      }
   }
 
   .bgabutton {
@@ -667,6 +666,7 @@ html, .mode_3d #game_play_area_background {
   background-size: cover;
   width: 35px;
   height: 35px;
+  vertical-align: middle;
 }
 
 .player-board {
@@ -714,11 +714,25 @@ html, .mode_3d #game_play_area_background {
   position: fixed;
   left: -1000px;
   top: 0;
+
+  .canvas-copyright {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width:100%;
+    text-align: center;
+    padding-bottom: 2px;
+    font-style: italic;
+  }
+
+  .art-card, .background-card {
+    border-radius: 10px;
+  }
 }
 
 .share-painting-dialog-content {
-  width: $large-portrait-card-width;
-  min-height: 800px;
+  width: 545px;
+  min-height: 915px;
   span {
     display: block;
     text-align: center;

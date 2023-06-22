@@ -196,7 +196,7 @@ class PaintingManager {
     private createBackgroundSlot(nrOfBackgroundCards: number) {
         return `
             <div>
-                <div class="top-button-wrapper button-wrapper"><a id="change-background-button" class="bgabutton bgabutton_blue ${nrOfBackgroundCards <= 1 ? 'disabled' : ''}"><i class="fa fa-refresh" aria-hidden="true"></i></a></div>
+                <div class="top-button-wrapper button-wrapper"><a id="change-background-button" class="bgabutton bgabutton_blue" style="visibility: ${nrOfBackgroundCards <= 1 ? 'hidden' : 'visible'};"><i class="fa fa-refresh" aria-hidden="true"></i></a></div>
                 <div id="complete-painting-background-card-slot" class="complete-painting-art-card-slot"></div>
             </div>
         `
@@ -251,16 +251,13 @@ class PaintingManager {
         })
     }
 
-    public createPaintingElement(backgroundCard: Card, artCards: Card[], node: string, size: string = 'normal', copyright: boolean = false) {
+    public createPaintingElement(backgroundCard: Card, artCards: Card[], node: string, size: string = 'normal') {
         const paintingId = `canvas-painting-${backgroundCard.id}-preview`;
         dojo.place(`<div id="${paintingId}" class="canvas-painting ${size}"></div>`, node, 'only')
         const cardsWrapperId = `${paintingId}-cards-wrapper`;
         dojo.place(`<div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>`, paintingId)
         dojo.place(`<div class="background-card background-card-${backgroundCard.type}"></div>`, cardsWrapperId);
         artCards.forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}"></div>`, cardsWrapperId);})
-        if (copyright) {
-            dojo.place('<div id="canvas-copyright">#CanvasPainting<br/>&#169; Road To Infamy Games<br/>Play Canvas on BoardGameArena.com</div>', paintingId);
-        }
         return paintingId;
     }
 
@@ -273,8 +270,10 @@ class PaintingManager {
         myDlg.setContent(`<div id="${dialogContentId}" class="share-painting-dialog-content"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>`);
         myDlg.show();
 
-        const elementId = this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large', true);
-        const el = document.getElementById(elementId)
+        dojo.empty('html2canvas-result')
+        this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large');
+        dojo.place('<div class="canvas-copyright">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>', 'html2canvas-result');
+        const el = document.getElementById('html2canvas-result')
 
         // @ts-ignore
         domtoimage

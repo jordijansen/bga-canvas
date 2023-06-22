@@ -2212,6 +2212,7 @@ var ArtCardManager = /** @class */ (function (_super) {
         });
     };
     ArtCardManager.prototype.takeCard = function (playerId, card) {
+        this.updateCardInformations(card);
         return this.playerHand[playerId].addCard(card);
     };
     ArtCardManager.prototype.enterDisplaySelectMode = function (availableCards) {
@@ -2248,7 +2249,15 @@ var ArtCardManager = /** @class */ (function (_super) {
     };
     ArtCardManager.prototype.updateDisplayCards = function (displayCards) {
         var _this = this;
-        return this.display.addCards(displayCards.slice(0, -1))
+        displayCards.forEach(function (card) { return _this.updateCardInformations(card); });
+        var promises = [];
+        displayCards.slice(0, -1).forEach(function (card) {
+            promises.push(_this.animationManager.play(new BgaAttachWithAnimation({
+                animation: new BgaSlideAnimation({ element: $(_this.getId(card)), transitionTimingFunction: 'ease-out' }),
+                attachElement: document.querySelector("[data-slot-id=\"art-card-display-slot-".concat(card.location_arg, "\"]"))
+            })));
+        });
+        return Promise.all(promises)
             .then(function () {
             var card = displayCards[displayCards.length - 1];
             var promise = _this.display.addCard(card, { fromStock: _this.deck });
@@ -2612,7 +2621,7 @@ var PaintingManager = /** @class */ (function () {
         return "\n            <div>\n                <div class=\"top-button-wrapper button-wrapper\"><a id=\"art-card-move-left-".concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ").concat(id === 1 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-arrow-left\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-art-card-slot-").concat(id, "\" class=\"complete-painting-art-card-slot\"></div>\n                <div class=\"center-button-wrapper button-wrapper\"><a id=\"art-card-change-").concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ").concat(this.completePaintingMode.artCards.length <= 3 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div class=\"bottom-button-wrapper button-wrapper\"><a id=\"art-card-move-right-").concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ").concat(id === 3 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-arrow-right\" aria-hidden=\"true\"></i></a></div>\n            </div>\n        ");
     };
     PaintingManager.prototype.createBackgroundSlot = function (nrOfBackgroundCards) {
-        return "\n            <div>\n                <div class=\"top-button-wrapper button-wrapper\"><a id=\"change-background-button\" class=\"bgabutton bgabutton_blue ".concat(nrOfBackgroundCards <= 1 ? 'disabled' : '', "\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-background-card-slot\" class=\"complete-painting-art-card-slot\"></div>\n            </div>\n        ");
+        return "\n            <div>\n                <div class=\"top-button-wrapper button-wrapper\"><a id=\"change-background-button\" class=\"bgabutton bgabutton_blue\" style=\"visibility: ".concat(nrOfBackgroundCards <= 1 ? 'hidden' : 'visible', ";\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-background-card-slot\" class=\"complete-painting-art-card-slot\"></div>\n            </div>\n        ");
     };
     PaintingManager.prototype.createBackgroundElement = function (card, postfix) {
         if (postfix === void 0) { postfix = 'clone'; }
@@ -2660,18 +2669,14 @@ var PaintingManager = /** @class */ (function () {
             })
         });
     };
-    PaintingManager.prototype.createPaintingElement = function (backgroundCard, artCards, node, size, copyright) {
+    PaintingManager.prototype.createPaintingElement = function (backgroundCard, artCards, node, size) {
         if (size === void 0) { size = 'normal'; }
-        if (copyright === void 0) { copyright = false; }
         var paintingId = "canvas-painting-".concat(backgroundCard.id, "-preview");
         dojo.place("<div id=\"".concat(paintingId, "\" class=\"canvas-painting ").concat(size, "\"></div>"), node, 'only');
         var cardsWrapperId = "".concat(paintingId, "-cards-wrapper");
         dojo.place("<div id=\"".concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>"), paintingId);
         dojo.place("<div class=\"background-card background-card-".concat(backgroundCard.type, "\"></div>"), cardsWrapperId);
         artCards.forEach(function (card) { dojo.place("<div class=\"art-card art-card-".concat(card.type_arg, "\"></div>"), cardsWrapperId); });
-        if (copyright) {
-            dojo.place('<div id="canvas-copyright">#CanvasPainting<br/>&#169; Road To Infamy Games<br/>Play Canvas on BoardGameArena.com</div>', paintingId);
-        }
         return paintingId;
     };
     PaintingManager.prototype.paintingToPng = function (painting) {
@@ -2682,8 +2687,10 @@ var PaintingManager = /** @class */ (function () {
         myDlg.setTitle(_("Share your painting!"));
         myDlg.setContent("<div id=\"".concat(dialogContentId, "\" class=\"share-painting-dialog-content\"><div class=\"lds-ellipsis\"><div></div><div></div><div></div><div></div></div></div>"));
         myDlg.show();
-        var elementId = this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large', true);
-        var el = document.getElementById(elementId);
+        dojo.empty('html2canvas-result');
+        this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large');
+        dojo.place('<div class="canvas-copyright">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>', 'html2canvas-result');
+        var el = document.getElementById('html2canvas-result');
         // @ts-ignore
         domtoimage
             .toPng(el)
@@ -3017,7 +3024,10 @@ var Canvas = /** @class */ (function () {
             animation: new BgaSlideAnimation({ element: $("player-finished-painting-".concat(args.painting.id)), transitionTimingFunction: 'ease-out' }),
             attachElement: document.getElementById("player-finished-paintings-".concat(args.playerId))
         })); })
-            .then(function () { return _this.paintingManager.addPaintingToPngButton(args.painting, "player-finished-painting-".concat(args.painting.id)); });
+            .then(function () {
+            _this.paintingManager.addPaintingToPngButton(args.painting, "player-finished-painting-".concat(args.painting.id));
+            _this.setScore(args.playerId, args.playerScore);
+        });
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
         var _this = this;
@@ -3033,6 +3043,9 @@ var Canvas = /** @class */ (function () {
                         });
                         args[argKey] = ribbons_1.join('');
                     }
+                    else if (argKey.startsWith('inspiration_tokens') && typeof args[argKey] == 'number') {
+                        args[argKey] = _this.getInspirationTokenIcon(args[argKey]);
+                    }
                 });
             }
         }
@@ -3043,6 +3056,9 @@ var Canvas = /** @class */ (function () {
     };
     Canvas.prototype.getRibbonIcon = function (type) {
         return "<span class=\"canvas-ribbon small\" data-type=\"".concat(type, "\" style=\"margin: 0 2px\"></span>");
+    };
+    Canvas.prototype.getInspirationTokenIcon = function (number) {
+        return "".concat(number, "<span class=\"canvas-inspiration-token-2d\" style=\"margin-left: 4px; margin-right: 2px;\"></span>");
     };
     return Canvas;
 }());

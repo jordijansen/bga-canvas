@@ -1,6 +1,6 @@
 <?php
 
-class ScoringCardManager {
+class ScoringCardManager extends APP_DbObject{
 
     private Canvas $game;
     protected Deck $cards;
@@ -36,7 +36,7 @@ class ScoringCardManager {
                 $this->cards->pickCardsForLocation(1, ZONE_DECK, $scoringCardLocations[$index]);
             } else {
                 foreach ($allScoringCards as $scoringCard) {
-                    if ($scoringCard->name == $scoringCardType) {
+                    if ($scoringCard->type == $scoringCardType) {
                         $this->cards->moveCard($scoringCard->id, $scoringCardLocations[$index]);
                     }
                 }
@@ -78,31 +78,33 @@ class ScoringCardManager {
                 $purpleIcons = $artCard->purpleIcons;
         }
 
+        $ribbonsForPlayer = $this->game->ribbonManager->getRibbonsForPlayer($this->game->getActivePlayerId());
         $allIcons = [$redIcons, $yellowIcons, $greenIcons, $blueIcons, $purpleIcons];
         $allIconsFlat = [...$redIcons, ...$yellowIcons, ...$greenIcons, ...$blueIcons, ...$purpleIcons];
         $allBasicElements = array_filter($allIconsFlat, fn($arrayValue) => in_array($arrayValue, BASIC_ELEMENTS));
         $elementsByCount = array_count_values($allBasicElements);
         $result = [];
+        /** @var ScoringCard $scoringCard */
         foreach ($this->getAllScoringCards() as $scoringCard) {
             $result[$scoringCard->location] = 0;
-            if ($scoringCard->name == 'COMPOSITION') {
+            if ($scoringCard->type == 'COMPOSITION') {
                 // Scores if each swatch has at least 1 icon
                 $result[$scoringCard->location] = sizeof($redIcons) > 0 && sizeof($yellowIcons) > 0 && sizeof($greenIcons) > 0 && sizeof($blueIcons) > 0 && sizeof($purpleIcons) > 0 ? 1 : 0;
-            } else if ($scoringCard->name == 'CONSISTENCY') {
+            } else if ($scoringCard->type == 'CONSISTENCY') {
                 // Scores if the painting has exactly 6 elements
                 $result[$scoringCard->location] = sizeof($allBasicElements) == 6 ? 1 : 0;
-            } else if ($scoringCard->name == 'EMPHASIS') {
+            } else if ($scoringCard->type == 'EMPHASIS') {
                 // Scores if exactly 1 HUE element is visible
                 $hueIcons = array_filter($allIconsFlat, fn($arrayValue) => $arrayValue == HUE);
                 $result[$scoringCard->location] = sizeof($hueIcons) == 1 ? 1 : 0;
-            } else if ($scoringCard->name == 'HIERARCHY') {
+            } else if ($scoringCard->type == 'HIERARCHY') {
                 // The number of tone elements should be bigger or equal to the count of all other basic elements
                 if (in_array(TONE, $allBasicElements)) {
                     $toneCount = $elementsByCount[TONE];
                     $maxElementCount = max(array_values($elementsByCount));
                     $result[$scoringCard->location] = $maxElementCount <= $toneCount ? 1 : 0;
                 }
-            } else if ($scoringCard->name == 'MOVEMENT') {
+            } else if ($scoringCard->type == 'MOVEMENT') {
                 // Scores if there are 3 basic elements in adjacent swatches
                 foreach (BASIC_ELEMENTS as $basicElement) {
                     $elementsInARowCount = 0;
@@ -115,7 +117,7 @@ class ScoringCardManager {
                         }
                     }
                 }
-            } else if ($scoringCard->name == 'PROXIMITY') {
+            } else if ($scoringCard->type == 'PROXIMITY') {
                 // Scores for each set of TEXTURE and TONE elements in adjacent swatches.
                 $foundTexture = false;
                 $foundTone = false;
@@ -125,12 +127,19 @@ class ScoringCardManager {
                     }
                     if (in_array(TONE, $swatch) && $foundTexture) {
                         $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
+                        $foundTone = false;
+                    } else {
+                        $foundTone = in_array(TONE, $swatch);
+
                     }
 
-                    $foundTexture = in_array(TEXTURE, $swatch);
-                    $foundTone = in_array(TONE, $swatch);
+                    if (in_array(TEXTURE, $swatch) && $foundTone) {
+                        $foundTexture = false;
+                    } else {
+                        $foundTexture = in_array(TEXTURE, $swatch);
+                    }
                 }
-            } else if ($scoringCard->name == 'PROPORTION') {
+            } else if ($scoringCard->type == 'PROPORTION') {
                 // Score sets of at least 3 of the same icons and 2 of the same icon. Can be 5 of the same icon as well.
                 $elementsWith5OrMoreCount = sizeof(array_filter($elementsByCount, fn($arrayValue) => $arrayValue >= 5));
                 $elementsWith3Or4Count = sizeof(array_filter($elementsByCount, fn($arrayValue) => $arrayValue == 3 || $arrayValue == 4));
@@ -148,11 +157,11 @@ class ScoringCardManager {
                         $result[$scoringCard->location] = $result[$scoringCard->location] + floor($elementsWith3Or4CountRemaining / 2);
                     }
                 }
-            }  else if ($scoringCard->name == 'REPETITION') {
+            }  else if ($scoringCard->type == 'REPETITION') {
                 // Scores for each pair of shapes
                 $shapeIcons = array_filter($allIconsFlat, fn($arrayValue) => $arrayValue == SHAPE);
                 $result[$scoringCard->location] = floor(sizeof($shapeIcons) / 2);
-            } else if ($scoringCard->name == 'SPACE') {
+            } else if ($scoringCard->type == 'SPACE') {
                 foreach ($allIcons as $index => $swatch) {
                     $foundHue[$index] = in_array(HUE, $swatch);
                     $foundShape[$index] = in_array(SHAPE, $swatch);
@@ -170,10 +179,10 @@ class ScoringCardManager {
                         }
                     }
                 }
-            } else if ($scoringCard->name == 'STYLE') {
+            } else if ($scoringCard->type == 'STYLE') {
                 $textureIcons = array_filter($allIconsFlat, fn($arrayValue) => $arrayValue == TEXTURE);
                 $result[$scoringCard->location] = floor(sizeof($textureIcons) / 3);
-            } else if ($scoringCard->name == 'SYMMETRY') {
+            } else if ($scoringCard->type == 'SYMMETRY') {
                $foundPairs = 0;
                foreach (BASIC_ELEMENTS as $basicElement) {
                    if ((in_array($basicElement, $redIcons) && in_array($basicElement, $purpleIcons)) ||
@@ -182,11 +191,18 @@ class ScoringCardManager {
                    }
                }
                $result[$scoringCard->location] = $foundPairs;
-            } else if ($scoringCard->name == 'VARIETY') {
+            } else if ($scoringCard->type == 'VARIETY') {
                 if (in_array(TEXTURE, $allBasicElements) && in_array(HUE, $allBasicElements) && in_array(TONE, $allBasicElements) && in_array(SHAPE, $allBasicElements))
                 {
                     $result[$scoringCard->location] = min(array_values($elementsByCount));
                 }
+            }
+
+            // Players can't gain more tokens of a type than the max allowed by the scoring card
+            $maxTokens = max(array_keys($scoringCard->scoring));
+            if (($ribbonsForPlayer[$scoringCard->location] + $result[$scoringCard->location]) > $maxTokens) {
+                $tokensOverMax = ($ribbonsForPlayer[$scoringCard->location] + $result[$scoringCard->location]) - $maxTokens;
+                $result[$scoringCard->location] = $result[$scoringCard->location] - $tokensOverMax;
             }
         }
 
@@ -208,9 +224,32 @@ class ScoringCardManager {
                     break;
             }
         }
-
-
         return $result;
+    }
+
+    public function getScoreBreakDown($playerId) {
+        $result = [];
+        $ribbons = $this->game->ribbonManager->getRibbonsForPlayer($playerId);
+
+        /** @var ScoringCard $scoringCard */
+        foreach ($this->getAllScoringCards() as $scoringCard) {
+            $nrOfRibbons = $ribbons[$scoringCard->location];
+            if ($nrOfRibbons == 0) {
+                $result[$scoringCard->location] = 0;
+            } else {
+                $result[$scoringCard->location] = $scoringCard->scoring[$nrOfRibbons];
+            }
+        }
+        $result[SCORING_GREY] = $ribbons[SCORING_GREY] * 2;
+        return $result;
+    }
+
+    public function updatePlayerScore($playerId) {
+        $scoreBreakdown = $this->getScoreBreakDown($playerId);
+        $playerScore = array_sum(array_values($scoreBreakdown));
+        $playerScoreAux = sizeof($this->game->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId));
+        $this->DbQuery("UPDATE player SET player_score = ".$playerScore.", player_score_aux = ".$playerScoreAux." WHERE player_id = ". $playerId);
+        return $playerScore;
     }
 
     private function determineScoringCards() {

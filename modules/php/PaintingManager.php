@@ -2,7 +2,7 @@
 
 use objects\Painting;
 
-class PaintingManager  extends APP_DbObject {
+class PaintingManager extends APP_DbObject {
 
     private Canvas $game;
 
@@ -16,7 +16,15 @@ class PaintingManager  extends APP_DbObject {
 
     public function countAllPaintings(): int
     {
-        return $this->getUniqueValueFromDB("SELECT COUNT(1) FROM painting");
+        $totalPaintingCount = 0;
+        foreach ($this->game->getPlayers() as $player) {
+            if (intval($player['player_zombie']) == 1) {
+                $totalPaintingCount = $totalPaintingCount + NR_OF_PAINTINGS_PER_PLAYER;
+            } else {
+                $totalPaintingCount = $totalPaintingCount + sizeof($this->getPaintings($player['player_id']));
+            }
+        }
+        return $totalPaintingCount;
     }
 
     public function getPaintings($playerId): array

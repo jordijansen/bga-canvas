@@ -25,7 +25,6 @@ trait ActionTrait {
     public function takeArtCard($cardId) {
         self::checkAction(ACT_TAKE_ART_CARD);
 
-
         if (!isset($cardId)) {
             throw new BgaUserException(clienttranslate("You must select an Art Card to take"));
         }
@@ -53,9 +52,11 @@ trait ActionTrait {
         // Take Art Card
         $cardTaken = $this->artCardManager->takeCard($activePlayerId, $cardId);
 
-        self::notifyAllPlayers('artCardTaken', '${player_name} places ${inspiration_tokens_1} to take an Art Card and ${inspiration_tokens_2}', [
+        self::notifyAllPlayers('artCardTaken', '${player_name} places ${inspiration_tokens_1} to take <b>${artCardName}</b> and ${inspiration_tokens_2}', [
+            'i18n' => ['artCardName'],
             'playerId' => $activePlayerId,
             'player_name' => $this->getPlayerName($activePlayerId),
+            'artCardName' => $cardTaken->name,
             'inspirationTokensPlaced' => $inspirationTokensPlaced,
             'inspirationTokensTaken' => $inspirationTokensTaken,
             'cardTaken' => $cardTaken,
@@ -65,7 +66,7 @@ trait ActionTrait {
         ]);
 
         $this->artCardManager->refillDisplay();
-        self::notifyAllPlayers('displayRefilled', 'Display refilled', [
+        self::notifyAllPlayers('displayRefilled', '', [
             'displayCards' => $this->artCardManager->getCardsInLocation(ZONE_DISPLAY)
         ]);
 
@@ -85,7 +86,6 @@ trait ActionTrait {
 
         $result = $this->scoringCardManager->scorePainting($artCards);
 
-        // TODO implement scoring
         self::notifyPlayer($this->getActivePlayerId(), 'paintingScored', '', $result);
     }
 
@@ -118,14 +118,18 @@ trait ActionTrait {
 
         $paintingName = $this->paintingManager->getPaintingName($backgroundCard->id);
 
-        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes painting <b>${paintingNameLeft} ${paintingNameRight}</b> and scores ${ribbonIcons}', [
+        $playerScore = $this->scoringCardManager->updatePlayerScore($activePlayerId);
+
+        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes <b>${paintingNameLeft} ${paintingNameRight}</b> and gains ${ribbonIcons}', [
             'i18n' => ['paintingNameLeft', 'paintingNameRight'],
             'playerId' => $activePlayerId,
             'player_name' => $this->getPlayerName($activePlayerId),
+            'playerScore' => $playerScore,
             'painting' => $this->paintingManager->getPainting($backgroundCard->id),
             'paintingNameLeft' => $paintingName['left'],
             'paintingNameRight' => $paintingName['right'],
             'paintingRibbons' => $paintingRibbons,
+            // ICONS
             'ribbonIcons' => $paintingRibbons
         ]);
 

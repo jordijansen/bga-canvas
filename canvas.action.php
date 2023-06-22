@@ -50,7 +50,7 @@ class action_canvas extends APP_GameAction
     {
         self::setAjaxMode();
 
-        $cardId = self::getArg("cardId", AT_posint, true);
+        $cardId = self::getArg("cardId", AT_posint, false);
         $this->game->takeArtCard($cardId);
 
         self::ajaxResponse();
