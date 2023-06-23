@@ -253,11 +253,12 @@ class PaintingManager {
 
     public createPaintingElement(backgroundCard: Card, artCards: Card[], node: string, size: string = 'normal') {
         const paintingId = `canvas-painting-${backgroundCard.id}-preview`;
+        let zIndex = 100;
         dojo.place(`<div id="${paintingId}" class="canvas-painting ${size}"></div>`, node, 'only')
         const cardsWrapperId = `${paintingId}-cards-wrapper`;
         dojo.place(`<div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>`, paintingId)
-        dojo.place(`<div class="background-card background-card-${backgroundCard.type}"></div>`, cardsWrapperId);
-        artCards.forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}"></div>`, cardsWrapperId);})
+        dojo.place(`<div class="background-card background-card-${backgroundCard.type}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);
+        artCards.forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);})
         return paintingId;
     }
 
@@ -270,56 +271,55 @@ class PaintingManager {
         myDlg.setContent(`<div id="${dialogContentId}" class="share-painting-dialog-content"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>`);
         myDlg.show();
 
-        dojo.empty('html2canvas-result')
         this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large');
         dojo.place('<div class="canvas-copyright">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>', 'html2canvas-result');
-        const el = document.getElementById('html2canvas-result')
-
         // @ts-ignore
-        domtoimage
-            .toPng(el)
-            .then(function (dataUrl) {
-                // dojo.empty('html2canvas-result')
-                dojo.place(`<img src="${dataUrl}" />`, dialogContentId, 'only')
-                dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking the button below")}</span>`, dialogContentId)
-                dojo.place(`<a id="share-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-share" aria-hidden="true"></i></a>`, dialogContentId)
-                dojo.connect($(`share-painting-${painting.id}`), 'onclick', () => {
-                    // @ts-ignore
-                    domtoimage
-                        .toBlob(el)
-                        .then(async function (blob) {
-                            const fileName = `my-canvas-painting-${new Date().getTime()}.png`;
-                            const data = {
-                                files: [
-                                    new File([blob], fileName, {
-                                        type: blob.type,
-                                    }),
-                                ],
-                                title: 'Canvas Painting'
-                            };
-                            try {
-                                if (navigator.canShare && navigator.canShare(data)) {
-                                    await navigator.share(data);
-                                } else {
-                                    const a = document.createElement('a');
-                                    const url = window.URL.createObjectURL(blob);
-                                    a.href = url;
-                                    a.download = fileName;
-                                    a.click();
-                                    window.URL.revokeObjectURL(url);
-                                    a.remove();
-                                }
-                            } catch (err) {
-                                console.error(err.name, err.message);
-                            }
-                        })
-                        .catch(function (error) {
-                            console.error('oops, something went wrong!', error);
-                        })
-                });
-            })
-            .catch(function (error) {
-                console.error('oops, something went wrong!', error);
+        html2canvas(document.querySelector("#html2canvas-result"), {scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true}).then(canvas => {
+            const fileName = `my-canvas-painting-${new Date().getTime()}.png`;
+            const dataUrl = canvas.toDataURL("image/png");
+            dojo.place(`<img src="${dataUrl}" crossorigin="anonymous" />`, dialogContentId, 'only')
+            dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking download or share button below")}</span>`, dialogContentId)
+            dojo.place(`<a id="download-painting-${painting.id}" class="bgabutton bgabutton_blue" href="${dataUrl}" download="${fileName}"><i class="fa fa-download" aria-hidden="true"></i></a>`, dialogContentId)
+            dojo.place(`<a id="share-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-share" aria-hidden="true"></i></a>`, dialogContentId)
+            dojo.connect($(`share-painting-${painting.id}`), 'onclick', async () => {
+                const blob = await this.asBlob(dataUrl);
+                const data = {
+                    files: [
+                        new File([blob], fileName, {
+                            type: blob.type,
+                        }),
+                    ],
+                    title: 'Canvas Painting',
+                    text: 'Look at my #CanvasPainting. Play Canvas on BoardGameArena.com'
+                };
+                try {
+                    if (navigator.canShare && navigator.canShare(data)) {
+                        await navigator.share(data);
+                    } else {
+                        document.getElementById(`download-painting-${painting.id}`).click();
+                    }
+                } catch (err) {
+                    console.error(err.name, err.message);
+                }
             });
+        });
+    }
+
+    private asBlob(dataUrl) : Promise<Blob> {
+        return new Promise(function (resolve) {
+            const binaryString = atob(dataUrl.split(',')[1]);
+            const length = binaryString.length;
+            const binaryArray = new Uint8Array(length);
+
+            for (let i = 0; i < length; i++) {
+                binaryArray[i] = binaryString.charCodeAt(i);
+            }
+
+            resolve(
+                new Blob([binaryArray], {
+                    type: 'image/png',
+                })
+            );
+        });
     }
 }

@@ -1117,15 +1117,15 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   font-size: 40px;
 }
 .canvas-painting.large #canvas-copyright {
-  width: 375px;
+  width: 363px;
 }
 .canvas-painting.large .canvas-painting-cards-wrapper {
-  width: 375px;
-  height: 637.5px;
+  width: 363px;
+  height: 617px;
 }
 .canvas-painting.large .canvas-painting-cards-wrapper .art-card, .canvas-painting.large .canvas-painting-cards-wrapper .background-card, .canvas-painting.large .canvas-painting-cards-wrapper .card {
-  width: 375px;
-  height: 637.5px;
+  width: 363px;
+  height: 617px;
 }
 
 .canvas-ribbon {
