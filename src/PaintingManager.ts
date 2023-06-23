@@ -278,7 +278,7 @@ class PaintingManager {
             const fileName = `my-canvas-painting-${new Date().getTime()}.png`;
             const dataUrl = canvas.toDataURL("image/png");
             dojo.place(`<img src="${dataUrl}" crossorigin="anonymous" />`, dialogContentId, 'only')
-            dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking download or share button below")}</span>`, dialogContentId)
+            dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking the buttons below")}</span>`, dialogContentId)
             dojo.place(`<a id="download-painting-${painting.id}" class="bgabutton bgabutton_blue" href="${dataUrl}" download="${fileName}"><i class="fa fa-download" aria-hidden="true"></i></a>`, dialogContentId)
             dojo.place(`<a id="share-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-share" aria-hidden="true"></i></a>`, dialogContentId)
             dojo.connect($(`share-painting-${painting.id}`), 'onclick', async () => {

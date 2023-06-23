@@ -154,11 +154,15 @@ class Canvas implements CanvasGame {
                     break;
                 case 'takeArtCard':
                     (this as any).addActionButton('confirmTakeArtCard', _("Confirm"), () => this.confirmTakeArtCard());
-                    (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    if (args.availableActions.length > 1) {
+                        (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    }
                     break;
                 case 'completePainting':
                     (this as any).addActionButton('confirmCompletePainting', _("Confirm"), () => this.confirmCompletePainting());
-                    (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    if (args.availableActions.length > 1) {
+                        (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
+                    }
                     break;
 
             }

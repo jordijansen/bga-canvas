@@ -19,8 +19,11 @@ class BackgroundCardManager {
     }
 
     public function dealBackgroundCardsToPlayers(array $players) {
+        $totalNrOfBgCards = $this->cards->countCardInLocation('deck');
+        $playerNumber = sizeof($players);
+        $nrOfBgCardsPerPlayer = floor($totalNrOfBgCards / $playerNumber);
         foreach( $players as $playerId => $player) {
-            $this->cards->pickCardsForLocation(NR_OF_BACKGROUND_CARDS_PER_PLAYER, ZONE_DECK, ZONE_PLAYER_HAND, $playerId);
+            $this->cards->pickCardsForLocation($nrOfBgCardsPerPlayer, ZONE_DECK, ZONE_PLAYER_HAND, $playerId);
         }
     }
 

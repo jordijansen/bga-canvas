@@ -3983,7 +3983,7 @@ var PaintingManager = /** @class */ (function () {
             var fileName = "my-canvas-painting-".concat(new Date().getTime(), ".png");
             var dataUrl = canvas.toDataURL("image/png");
             dojo.place("<img src=\"".concat(dataUrl, "\" crossorigin=\"anonymous\" />"), dialogContentId, 'only');
-            dojo.place("<span>".concat(_("Share your #CanvasPainting with the world by clicking download or share button below"), "</span>"), dialogContentId);
+            dojo.place("<span>".concat(_("Share your #CanvasPainting with the world by clicking the buttons below"), "</span>"), dialogContentId);
             dojo.place("<a id=\"download-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\" href=\"").concat(dataUrl, "\" download=\"").concat(fileName, "\"><i class=\"fa fa-download\" aria-hidden=\"true\"></i></a>"), dialogContentId);
             dojo.place("<a id=\"share-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>"), dialogContentId);
             dojo.connect($("share-painting-".concat(painting.id)), 'onclick', function () { return __awaiter(_this, void 0, void 0, function () {
@@ -4180,11 +4180,15 @@ var Canvas = /** @class */ (function () {
                     break;
                 case 'takeArtCard':
                     this.addActionButton('confirmTakeArtCard', _("Confirm"), function () { return _this.confirmTakeArtCard(); });
-                    this.addActionButton('cancelAction', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    if (args.availableActions.length > 1) {
+                        this.addActionButton('cancelAction', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    }
                     break;
                 case 'completePainting':
                     this.addActionButton('confirmCompletePainting', _("Confirm"), function () { return _this.confirmCompletePainting(); });
-                    this.addActionButton('cancelAction', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    if (args.availableActions.length > 1) {
+                        this.addActionButton('cancelAction', _("Cancel"), function () { return _this.cancelAction(); }, null, null, 'gray');
+                    }
                     break;
             }
             if ([].includes(stateName) && args.canCancelMoves) {

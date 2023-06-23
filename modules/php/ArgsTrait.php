@@ -24,6 +24,7 @@ trait ArgsTrait
         $availableCards = $this->artCardManager->getAvailableCardsForTake(sizeof($inspirationTokens));
 
         return [
+            'availableActions' => $this->getAvailableActions(),
             'inspirationTokens' => $inspirationTokens,
             'availableCards' => $availableCards
         ];
@@ -35,6 +36,7 @@ trait ArgsTrait
         $artCards = $this->artCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
 
         return [
+            'availableActions' => $this->getAvailableActions(),
             'backgroundCards' => $backgroundCards,
             'artCards' => $artCards
         ];
