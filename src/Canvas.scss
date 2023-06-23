@@ -451,23 +451,40 @@ html, .mode_3d #game_play_area_background {
       background-size: cover;
       display: flex;
       border-radius: 25px;
+      justify-content: center;
 
       #complete-painting-picker-wrapper {
         display: flex;
         flex: 1;
         flex-direction: column;
+        justify-content: center;
 
         #art-cards-picker-unused {
           display: flex;
           justify-content: center;
           padding-bottom: 10px;
           gap: 8px;
+          height: $portrait-card-height;
+          .art-card.card-side {
+            -webkit-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
+            -moz-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
+            box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
+            cursor: pointer;
+          }
         }
 
         #art-cards-picker {
           display: flex;
           position: relative;
           gap: 8px;
+          justify-content: center;
+
+          .art-card.card-side {
+            -webkit-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
+            -moz-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
+            box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
+            cursor: pointer;
+          }
 
           .canvas-art-card {
             background-color: white;
@@ -485,7 +502,7 @@ html, .mode_3d #game_play_area_background {
 
           .center-button-wrapper {
             position: absolute;
-            top: math.div($portrait-card-height, 2);
+            top: math.div($portrait-card-height, 2) - 40px;
             z-index: 15; // Card animations have z-index of 10, we want this button on top of the card
           }
 
@@ -505,6 +522,15 @@ html, .mode_3d #game_play_area_background {
           .complete-painting-art-card-slot {
             width: $portrait-card-width;
             height: $portrait-card-height;
+            border: 3px solid lightgrey;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-family: 'Welcome2019', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            color: lightgrey;
           }
         }
       }
@@ -512,10 +538,11 @@ html, .mode_3d #game_play_area_background {
       #complete-painting-preview {
         display: flex;
         flex-direction: column;
-        flex: 1;
         justify-content: center;
         align-items: center;
-        padding-bottom: 10px;
+        padding-bottom: 50px;
+        padding-top: 50px;
+        padding-right: 50px;
 
         #complete-painting-preview-slot-wrapper {
           background-image: url('img/canvas-painting-frame.png');

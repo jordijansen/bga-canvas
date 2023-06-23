@@ -30,6 +30,7 @@ class PlayerManager  {
                     <div id="player-hand-${player.id}" class="player-hand"></div>
                     <div class="title-wrapper"><div class="title color-${player.color}"><h1>${_("Finished Paintings")}</h1></div></div>
                     <div id="player-finished-paintings-${player.id}" class="player-finished-paintings"></div>
+                    <div id="player-background-${player.id}" style="display: none;"></div>
                 </div>`
     }
 

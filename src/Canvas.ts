@@ -106,7 +106,9 @@ class Canvas implements CanvasGame {
 
     private onEnteringCompletePainting(args: CompletePaintingArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.paintingManager.enterCompletePaintingMode(args.backgroundCards, args.artCards);
+            if (!this.paintingManager.isCompletePaintingMode) {
+                this.toggleCompletePaintingTool();
+            }
         }
     }
 
@@ -127,6 +129,7 @@ class Canvas implements CanvasGame {
     private onLeavingTakeArtCard() {
         if ((this as any).isCurrentPlayerActive()) {
             this.artCardManager.exitDisplaySelectMode();
+            this.paintingManager.exitCompletePaintingMode();
         }
     }
 
@@ -135,7 +138,6 @@ class Canvas implements CanvasGame {
             this.paintingManager.exitCompletePaintingMode();
         }
     }
-
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -164,12 +166,15 @@ class Canvas implements CanvasGame {
                         (this as any).addActionButton('cancelAction', _("Cancel"), () => this.cancelAction(), null, null, 'gray');
                     }
                     break;
-
             }
 
             if ([].includes(stateName) && args.canCancelMoves) {
                 (this as any).addActionButton('undoLastMoves', _("Undo last moves"), () => this.undoLastMoves(), null, null, 'gray');
             }
+        }
+
+        if (!this.isReadOnly() && !((this as any).isCurrentPlayerActive() && stateName == 'completePainting')) {
+            (this as any).addActionButton('toggleCompletePaintingTool', _("Show/Hide Complete Painting Tool"), () => this.toggleCompletePaintingTool(), null, null, 'gray');
         }
     }
 
@@ -193,6 +198,15 @@ class Canvas implements CanvasGame {
     private undoLastMoves() {
         this.takeAction('undoLastMoves');
     }
+
+    private toggleCompletePaintingTool() {
+        if (this.paintingManager.isCompletePaintingMode) {
+            this.paintingManager.exitCompletePaintingMode();
+        } else {
+            this.paintingManager.enterCompletePaintingMode(this.backgroundCardManager.getPlayerCards(this.getPlayerId()), this.artCardManager.getPlayerCards(this.getPlayerId()));
+        }
+    }
+
 
     private wrapInConfirm(runnable: () => void) {
         if (this.isAskForConfirmation()) {
@@ -220,14 +234,14 @@ class Canvas implements CanvasGame {
         return Object.values(this.gamedatas.players).find(player => Number(player.id) == playerId);
     }
 
-    public takeAction(action: string, data?: any) {
+    public takeAction(action: string, data?: any, onComplete: () => void = () => {}) {
         data = data || {};
         data.lock = true;
-        (this as any).ajaxcall(`/canvas/canvas/${action}.html`, data, this, () => {});
+        (this as any).ajaxcall(`/canvas/canvas/${action}.html`, data, this, onComplete);
     }
-    public takeNoLockAction(action: string, data?: any) {
+    public takeNoLockAction(action: string, data?: any, onComplete: () => void = () => {}) {
         data = data || {};
-        (this as any).ajaxcall(`/canvas/canvas/${action}.html`, data, this, () => {});
+        (this as any).ajaxcall(`/canvas/canvas/${action}.html`, data, this, onComplete);
     }
 
     public setTooltip(id: string, html: string) {

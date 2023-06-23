@@ -58,7 +58,7 @@ class ScoringCardManager extends APP_DbObject{
         return array_map(fn($dbCard) => new ScoringCard($dbCard, $this->SCORING_CARDS), array_values($dbResults));
     }
     
-    public function scorePainting(array $artCards): array {
+    public function scorePainting(array $artCards, int $playerId): array {
         $redIcons = [];
         $yellowIcons = [];
         $greenIcons = [];
@@ -78,7 +78,7 @@ class ScoringCardManager extends APP_DbObject{
                 $purpleIcons = $artCard->purpleIcons;
         }
 
-        $ribbonsForPlayer = $this->game->ribbonManager->getRibbonsForPlayer($this->game->getActivePlayerId());
+        $ribbonsForPlayer = $this->game->ribbonManager->getRibbonsForPlayer($playerId);
         $allIcons = [$redIcons, $yellowIcons, $greenIcons, $blueIcons, $purpleIcons];
         $allIconsFlat = [...$redIcons, ...$yellowIcons, ...$greenIcons, ...$blueIcons, ...$purpleIcons];
         $allBasicElements = array_filter($allIconsFlat, fn($arrayValue) => in_array($arrayValue, BASIC_ELEMENTS));
@@ -227,7 +227,7 @@ class ScoringCardManager extends APP_DbObject{
         return $result;
     }
 
-    public function getScoreBreakDown($playerId) {
+    public function getScoreBreakDown($playerId): array {
         $result = [];
         $ribbons = $this->game->ribbonManager->getRibbonsForPlayer($playerId);
 

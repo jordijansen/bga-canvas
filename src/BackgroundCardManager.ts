@@ -23,17 +23,16 @@ class BackgroundCardManager extends CardManager<Card> {
     }
 
     public setUp(gameData: CanvasGameData) {
-        // for (const playersKey in gameData.players) {
-        //     const player = gameData.players[playersKey];
-        //
-        //     this.players[Number(playersKey)] = new LineStock<Card>(this, $(`player-background-${playersKey}`), {})
-        //     player.backgroundCards.forEach(card => this.moveCardToPlayerHand(Number(playersKey), card))
-        //
-        // }
+        for (const playersKey in gameData.players) {
+            const player = gameData.players[playersKey];
+
+            this.players[Number(playersKey)] = new LineStock<Card>(this, $(`player-background-${playersKey}`))
+            this.players[Number(playersKey)].addCards(player.backgroundCards);
+        }
     }
 
-    public moveCardToPlayerHand(playerId: number, card: Card) {
-        return this.players[playerId].addCard(card)
+    public getPlayerCards(playerId: number) {
+        return this.players[playerId].getCards();
     }
 
     public createPaintingStock(id: number, elementId: string, card: Card) {

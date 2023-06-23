@@ -109,4 +109,8 @@ class ArtCardManager extends CardManager<Card> {
         this.paintings[id] = new LineStock<Card>(this, $(elementId + "-art"), {})
         this.paintings[id].addCards(cards);
     }
+
+    getPlayerCards(playerId: number) {
+        return this.playerHand[playerId].getCards();
+    }
 }

@@ -84,9 +84,10 @@ trait ActionTrait {
             $artCards[] = $this->artCardManager->getCard($artCardId);
         }
 
-        $result = $this->scoringCardManager->scorePainting($artCards);
+        // Current player, this can be called off turn
+        $result = $this->scoringCardManager->scorePainting($artCards, $this->getCurrentPlayerId());
 
-        self::notifyPlayer($this->getActivePlayerId(), 'paintingScored', '', $result);
+        self::notifyPlayer($this->getCurrentPlayerId(), 'paintingScored', '', $result);
     }
 
     public function completePainting($painting) {
@@ -113,7 +114,11 @@ trait ActionTrait {
             $this->artCardManager->addCardToPainting($artCardId, $index, $backgroundCard->id);
         }
 
-        $paintingRibbons = $this->scoringCardManager->scorePainting($artCards);
+        if (sizeof($artCards) != 3) {
+            throw new BgaUserException("Not enough art cards provided");
+        }
+
+        $paintingRibbons = $this->scoringCardManager->scorePainting($artCards, $this->getActivePlayerId());
         $this->ribbonManager->updateRibbons($activePlayerId, $paintingRibbons);
 
         $paintingName = $this->paintingManager->getPaintingName($backgroundCard->id);

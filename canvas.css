@@ -983,22 +983,38 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-size: cover;
   display: flex;
   border-radius: 25px;
+  justify-content: center;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
+  justify-content: center;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused {
   display: flex;
   justify-content: center;
   padding-bottom: 10px;
   gap: 8px;
+  height: 425px;
+}
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused .art-card.card-side {
+  -webkit-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
+  -moz-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
+  box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
+  cursor: pointer;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker {
   display: flex;
   position: relative;
   gap: 8px;
+  justify-content: center;
+}
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .art-card.card-side {
+  -webkit-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
+  -moz-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
+  box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
+  cursor: pointer;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .canvas-art-card {
   background-color: white;
@@ -1014,7 +1030,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .center-button-wrapper {
   position: absolute;
-  top: 212.5px;
+  top: 172.5px;
   z-index: 15;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .button-wrapper {
@@ -1031,14 +1047,24 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .complete-painting-art-card-slot {
   width: 250px;
   height: 425px;
+  border: 3px solid lightgrey;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-family: "Welcome2019", cursive;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 80px;
+  color: lightgrey;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-preview {
   display: flex;
   flex-direction: column;
-  flex: 1;
   justify-content: center;
   align-items: center;
-  padding-bottom: 10px;
+  padding-bottom: 50px;
+  padding-top: 50px;
+  padding-right: 50px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-preview #complete-painting-preview-slot-wrapper {
   background-image: url("img/canvas-painting-frame.png");

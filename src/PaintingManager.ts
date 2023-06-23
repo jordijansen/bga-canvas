@@ -1,5 +1,6 @@
 class PaintingManager {
 
+    public isCompletePaintingMode = false;
     private completePaintingMode: {
         backgroundCards: Card[],
         artCards: Card[],
@@ -12,7 +13,7 @@ class PaintingManager {
         artCards: [],
         painting: {
             backgroundCard: undefined,
-            artCards: []
+            artCards: [undefined, undefined, undefined]
         },
     }
     constructor(protected canvasGame: Canvas) {
@@ -60,28 +61,23 @@ class PaintingManager {
     }
 
     public enterCompletePaintingMode(backgroundCards: Card[], artCards: Card[]) {
-        this.completePaintingMode = {
-            backgroundCards,
-            artCards,
-            painting: {
-                backgroundCard: backgroundCards[0],
-                artCards: artCards.slice(0, 3)
-            }
-        }
+        this.isCompletePaintingMode = true;
+        this.completePaintingMode.backgroundCards = backgroundCards;
+        this.completePaintingMode.artCards = artCards;
+        this.completePaintingMode.painting.backgroundCard = this.completePaintingMode.painting.backgroundCard ? this.completePaintingMode.painting.backgroundCard : backgroundCards[0];
+
         dojo.place(this.createCompletePaintingPickerElement(), 'complete-painting')
         dojo.place(this.createCompletePaintingPreviewElement(), 'complete-painting')
 
-        dojo.place(this.createBackgroundSlot(this.completePaintingMode.backgroundCards.length), 'art-cards-picker-top-text', 'before');
+        dojo.place(this.createBackgroundSlot(), 'art-cards-picker-top-text', 'before');
         dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard),'complete-painting-background-card-slot')
         dojo.connect($('change-background-button'), 'onclick', () => this.changeBackgroundCard());
 
-        for (let i = 1; i <= 3; i++) {
+        for (let i = 0; i < 3; i++) {
             dojo.place(this.createArtCardSlot(i), 'art-cards-picker-top-text', 'before')
-            dojo.place(this.createArtCardElement(this.completePaintingMode.painting.artCards[i - 1]),`complete-painting-art-card-slot-${i}`)
-
-            dojo.connect($(`art-card-move-left-${i}`), 'onclick', () => this.moveArtCard('left', i));
-            dojo.connect($(`art-card-move-right-${i}`), 'onclick', () => this.moveArtCard('right', i));
-            dojo.connect($(`art-card-change-${i}`), 'onclick', () => this.changeArtCard(i));
+            if (this.completePaintingMode.painting.artCards[i]) {
+                this.addCardToPaintingAtPosition(this.completePaintingMode.painting.artCards[i], i)
+            }
         }
 
         this.updateUnusedCards();
@@ -101,43 +97,8 @@ class PaintingManager {
         this.updatePreview();
     }
 
-    private moveArtCard(direction, i) {
-        const newIndex = direction === 'left' ? i -1 : i + 1;
-        const newPositionCard = this.completePaintingMode.painting.artCards[newIndex - 1];
-        const oldPositionCard = this.completePaintingMode.painting.artCards[i - 1];
-
-        dojo.place(this.createArtCardElement(newPositionCard), `complete-painting-art-card-slot-${i}`, 'only')
-        this.completePaintingMode.painting.artCards[i - 1] = newPositionCard;
-
-        dojo.place(this.createArtCardElement(oldPositionCard), `complete-painting-art-card-slot-${newIndex}`, 'only')
-        this.completePaintingMode.painting.artCards[newIndex - 1] = oldPositionCard;
-        this.updatePreview();
-    }
-
-    private changeArtCard(i) {
-        const currentCard = this.completePaintingMode.painting.artCards[i - 1];
-        const currentCardIndex = this.completePaintingMode.artCards.indexOf(currentCard);
-
-        let searchIndex = currentCardIndex + 1;
-        let newCard = undefined;
-        while (!newCard) {
-            if (this.completePaintingMode.artCards.length === searchIndex) {
-                searchIndex = 0;
-            }
-            if (!this.completePaintingMode.painting.artCards.includes(this.completePaintingMode.artCards[searchIndex])) {
-                newCard = this.completePaintingMode.artCards[searchIndex];
-            }
-            searchIndex = searchIndex + 1;
-        }
-
-        dojo.place(this.createArtCardElement(newCard), `complete-painting-art-card-slot-${i}`, 'only')
-        this.completePaintingMode.painting.artCards[i - 1] = newCard;
-
-        this.updateUnusedCards();
-        this.updatePreview();
-    }
-
     public exitCompletePaintingMode() {
+        this.isCompletePaintingMode = false;
         dojo.empty('complete-painting');
     }
 
@@ -159,8 +120,8 @@ class PaintingManager {
             <div id="complete-painting-picker-wrapper">
                 <div class="title-wrapper"><div class="title"><h1>${_("Art Picker")}</h1></div></div>
                 <div id="art-cards-picker">
-                    <div id="art-cards-picker-bottom-text"><h1>${_("Bottom")}</h1></div>
-                    <div id="art-cards-picker-top-text"><h1>${_("Top")}</h1></div>
+                    <div id="art-cards-picker-bottom-text"><h1>${_("Back")}</h1></div>
+                    <div id="art-cards-picker-top-text"><h1>${_("Front")}</h1></div>
                 </div> 
                 <div class="title-wrapper"><div class="title"><h1>${_("Unused Cards")}</h1></div></div>
                 <div id="art-cards-picker-unused">
@@ -185,26 +146,25 @@ class PaintingManager {
     private createArtCardSlot(id: number) {
         return `
             <div>
-                <div class="top-button-wrapper button-wrapper"><a id="art-card-move-left-${id}" class="bgabutton bgabutton_blue" style="visibility: ${id === 1 ? 'hidden' : 'visible'};"><i class="fa fa-arrow-left" aria-hidden="true"></i></a></div>
-                <div id="complete-painting-art-card-slot-${id}" class="complete-painting-art-card-slot"></div>
-                <div class="center-button-wrapper button-wrapper"><a id="art-card-change-${id}" class="bgabutton bgabutton_blue" style="visibility: ${this.completePaintingMode.artCards.length <= 3 ? 'hidden' : 'visible'};"><i class="fa fa-refresh" aria-hidden="true"></i></a></div>
-                <div class="bottom-button-wrapper button-wrapper"><a id="art-card-move-right-${id}" class="bgabutton bgabutton_blue" style="visibility: ${id === 3 ? 'hidden' : 'visible'};"><i class="fa fa-arrow-right" aria-hidden="true"></i></a></div>
+                <div id="complete-painting-art-card-slot-${id}" class="complete-painting-art-card-slot"><span>${id + 1}</span></div>
             </div>
         `
     }
 
-    private createBackgroundSlot(nrOfBackgroundCards: number) {
+    private createBackgroundSlot() {
         return `
             <div>
-                <div class="top-button-wrapper button-wrapper"><a id="change-background-button" class="bgabutton bgabutton_blue" style="visibility: ${nrOfBackgroundCards <= 1 ? 'hidden' : 'visible'};"><i class="fa fa-refresh" aria-hidden="true"></i></a></div>
+                <div class="center-button-wrapper button-wrapper"><a id="change-background-button" class="bgabutton bgabutton_blue"><i class="fa fa-refresh" aria-hidden="true"></i></a></div>
                 <div id="complete-painting-background-card-slot" class="complete-painting-art-card-slot"></div>
             </div>
         `
     }
 
     private createBackgroundElement(card: Card, postfix: string = 'clone') {
-        const clone = this.canvasGame.backgroundCardManager.createCardElement(card) as any;
+        console.log(card);
+        const clone = this.canvasGame.backgroundCardManager.getCardElement(card).cloneNode(true) as any;
         clone.id = `${clone.id}-${postfix}`;
+        clone.style = '';
         return clone;
     }
 
@@ -219,17 +179,50 @@ class PaintingManager {
         this.completePaintingMode.artCards
             .filter(card => !this.completePaintingMode.painting.artCards.includes(card))
             .forEach(card => {
-                dojo.place(this.createArtCardElement(card),`art-cards-picker-unused`)
+                const cardElement = this.createArtCardElement(card);
+                dojo.place(cardElement,`art-cards-picker-unused`)
+                dojo.connect($(cardElement.id), 'onclick', () => this.addCardToPainting(card));
             })
+    }
+
+    private addCardToPaintingAtPosition(card, index) {
+        this.completePaintingMode.painting.artCards[index] = card;
+        const cardElement = this.createArtCardElement(card);
+        dojo.place(cardElement, `complete-painting-art-card-slot-${index}`, 'only')
+        dojo.connect($(cardElement.id), 'onclick', () => this.removeCardFromPainting(card));
+
+        this.updateUnusedCards();
+        this.updatePreview();
+    }
+
+    private addCardToPainting(card) {
+        let index = 0;
+        for (let i = 0; i < this.completePaintingMode.painting.artCards.length; i++) {
+            if (!this.completePaintingMode.painting.artCards[i]) {
+                index = i;
+                break;
+            }
+        }
+        this.addCardToPaintingAtPosition(card, index);
+    }
+
+    private removeCardFromPainting(card) {
+        const index = this.completePaintingMode.painting.artCards.indexOf(card);
+        this.completePaintingMode.painting.artCards[index] = undefined;
+        dojo.place(`<span>${index + 1}</span>`, `complete-painting-art-card-slot-${index}`, 'only')
+
+        this.updateUnusedCards();
+        this.updatePreview();
     }
 
     private updatePreview() {
         this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large')
 
+        const artCardIds = this.completePaintingMode.painting.artCards.filter(card => !!card).map(card => card.id);
         this.canvasGame.takeNoLockAction('scorePainting', {
             painting: JSON.stringify({
                 backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
-                artCardIds: this.completePaintingMode.painting.artCards.map(card => card.id)
+                artCardIds
             })
         })
     }
@@ -242,13 +235,22 @@ class PaintingManager {
     }
 
     public confirmPainting() {
-        dojo.destroy('complete-painting-picker-wrapper');
-        this.canvasGame.takeAction('completePainting', {
-            painting: JSON.stringify({
-                backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
-                artCardIds: this.completePaintingMode.painting.artCards.map(card => card.id)
-            })
-        })
+        const artCardIds = this.completePaintingMode.painting.artCards.filter(card => !!card).map(card => card.id);
+
+        if (artCardIds.length === 3) {
+            dojo.destroy('complete-painting-picker-wrapper');
+            this.canvasGame.takeAction('completePainting', {
+                painting: JSON.stringify({
+                    backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
+                    artCardIds
+                })
+            }, () => this.completePaintingMode.painting = {
+                backgroundCard: undefined,
+                artCards: [undefined, undefined, undefined]
+            });
+        } else {
+            (this.canvasGame as any).showMessage(_("You need to add 3 Art Cards to your painting"), 'error')
+        }
     }
 
     public createPaintingElement(backgroundCard: Card, artCards: Card[], node: string, size: string = 'normal') {
@@ -258,7 +260,7 @@ class PaintingManager {
         const cardsWrapperId = `${paintingId}-cards-wrapper`;
         dojo.place(`<div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>`, paintingId)
         dojo.place(`<div class="background-card background-card-${backgroundCard.type}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);
-        artCards.forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);})
+        artCards.filter(card => !!card).forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);})
         return paintingId;
     }
 

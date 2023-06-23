@@ -32,13 +32,8 @@ trait ArgsTrait
 
     function argCompletePainting(): array
     {
-        $backgroundCards = $this->backgroundCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
-        $artCards = $this->artCardManager->getCardsInLocation(ZONE_PLAYER_HAND, $this->getActivePlayerId());
-
         return [
-            'availableActions' => $this->getAvailableActions(),
-            'backgroundCards' => $backgroundCards,
-            'artCards' => $artCards
+            'availableActions' => $this->getAvailableActions()
         ];
     }
 
