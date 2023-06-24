@@ -17,7 +17,7 @@ class InspirationTokenManager extends CardManager<Token> {
 
     public setUp(gameData: CanvasGameData) {
         for (const playersKey in gameData.players) {
-            this.players[Number(playersKey)] = new CounterVoidStock(this, {
+            this.players[Number(playersKey)] = new CounterVoidStock(this.canvasGame, this, {
                 counter: new ebg.counter(),
                 targetElement: `canvas-counters-${playersKey}`,
                 counterId: `canvas-inspiration-token-counter-${playersKey}`,

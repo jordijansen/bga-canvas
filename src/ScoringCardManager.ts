@@ -1,6 +1,6 @@
-class ScoringCardManager extends CardManager<Card> {
+class ScoringCardManager extends CardManager<ScoringCard> {
 
-    private display: SlotStock<Card>
+    private display: SlotStock<ScoringCard>
 
     constructor(protected canvasGame: CanvasGame) {
         super(canvasGame, {
@@ -9,11 +9,11 @@ class ScoringCardManager extends CardManager<Card> {
                 div.classList.add('canvas-scoring-card');
                 div.dataset.id = ''+card.id;
             },
-            setupFrontDiv: (card: Card, div: HTMLElement) => {
+            setupFrontDiv: (card: ScoringCard, div: HTMLElement) => {
                 div.id = `${this.getId(card)}-front`;
                 div.dataset.type = ''+card.type_arg;
             },
-            setupBackDiv: (card: Card, div: HTMLElement) => {
+            setupBackDiv: (card: ScoringCard, div: HTMLElement) => {
                 div.id = `${this.getId(card)}-back`;
                 div.dataset.type = ''+card.type_arg;
             },
@@ -24,7 +24,7 @@ class ScoringCardManager extends CardManager<Card> {
     }
 
     public setUp(gameData: CanvasGameData) {
-        this.display = new SlotStock<Card>(this, $('scoring-card-display'), {
+        this.display = new SlotStock<ScoringCard>(this, $('scoring-card-display'), {
             mapCardToSlot: (card) => `scoring-card-display-slot-${card.location}`,
 
             slotClasses: ['scoring-card-display-slot'],
@@ -33,7 +33,10 @@ class ScoringCardManager extends CardManager<Card> {
 
         this.display.onCardClick = (card) => this.flipCard(card);
 
-
         gameData.scoringCards.forEach(card => this.display.addCard(card))
+    }
+
+    public getCardForType(type) {
+        return this.display.getCards().find(card => card.location === type);
     }
 }

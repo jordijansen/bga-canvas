@@ -1,7 +1,5 @@
 class PlayerManager  {
 
-    private ribbonCounters: {[playerId: number] : {[ribbonType: string] : Counter}} = {}
-
     constructor(private game: CanvasGame) {
     }
 

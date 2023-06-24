@@ -1109,6 +1109,25 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   text-align: center;
 }
 
+.canvas-frame {
+  background-image: url("img/canvas-frames.png");
+  background-size: cover;
+  width: 498px;
+  height: 750px;
+}
+.canvas-frame[data-type="1"] {
+  background-position: 0 0;
+}
+.canvas-frame[data-type="2"] {
+  background-position: 33.3333333333% 0;
+}
+.canvas-frame[data-type="3"] {
+  background-position: 66.6666666667% 0;
+}
+.canvas-frame[data-type="4"] {
+  background-position: 100% 0;
+}
+
 .canvas-painting-frame {
   background-image: url("img/canvas-painting-frame.png");
   background-size: cover;
@@ -1152,6 +1171,16 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .canvas-painting.large .canvas-painting-cards-wrapper .art-card, .canvas-painting.large .canvas-painting-cards-wrapper .background-card, .canvas-painting.large .canvas-painting-cards-wrapper .card {
   width: 363px;
   height: 617px;
+}
+
+.current-player-ribbon-counter {
+  position: relative;
+  top: -315px;
+  font-family: "Welcome2019", cursive;
+  font-size: 50px;
+  color: white;
+  width: 100%;
+  text-align: center;
 }
 
 .canvas-ribbon {
@@ -1234,6 +1263,11 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   position: fixed;
   left: -1000px;
   top: 0;
+  width: 498px;
+  height: 750px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #html2canvas-result .canvas-copyright {
   position: absolute;
@@ -1244,12 +1278,26 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   padding-bottom: 2px;
   font-style: italic;
 }
+#html2canvas-result .canvas-frame-author {
+  position: absolute;
+  bottom: 30px;
+  color: white;
+  font-family: "Welcome2019", cursive;
+  font-size: 25px;
+}
 #html2canvas-result .art-card, #html2canvas-result .background-card {
   border-radius: 10px;
 }
+#html2canvas-result .canvas-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 498px;
+  height: 750px;
+}
 
 .share-painting-dialog-content {
-  width: 545px;
+  width: 498px;
   min-height: 915px;
 }
 .share-painting-dialog-content span {

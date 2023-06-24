@@ -596,6 +596,26 @@ html, .mode_3d #game_play_area_background {
   }
 }
 
+.canvas-frame {
+  background-image: url('img/canvas-frames.png');
+  background-size: cover;
+  width: 498px;
+  height: 750px;
+
+  &[data-type="1"] {
+    background-position: 0 0;
+  }
+  &[data-type="2"] {
+    background-position: 33.333333333333333% 0;
+  }
+  &[data-type="3"] {
+    background-position: 66.666666666666666% 0;
+  }
+  &[data-type="4"] {
+    background-position: 100% 0;
+  }
+}
+
 .canvas-painting-frame {
   background-image: url('img/canvas-painting-frame.png');
   background-size: cover;
@@ -648,8 +668,16 @@ html, .mode_3d #game_play_area_background {
       }
     }
   }
+}
 
-
+.current-player-ribbon-counter {
+  position: relative;
+  top: -$landscape-card-height - 65px;
+  font-family: 'Welcome2019', cursive;
+  font-size: 50px;
+  color: white;
+  width: 100%;
+  text-align: center;
 }
 
 .canvas-ribbon {
@@ -741,6 +769,11 @@ html, .mode_3d #game_play_area_background {
   position: fixed;
   left: -1000px;
   top: 0;
+  width: 498px;
+  height: 750px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .canvas-copyright {
     position: absolute;
@@ -752,13 +785,29 @@ html, .mode_3d #game_play_area_background {
     font-style: italic;
   }
 
+  .canvas-frame-author {
+    position: absolute;
+    bottom: 30px;
+    color: white;
+    font-family: "Welcome2019", cursive;
+    font-size: 25px;
+  }
+
   .art-card, .background-card {
     border-radius: 10px;
+  }
+
+  .canvas-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 498px;
+    height: 750px;
   }
 }
 
 .share-painting-dialog-content {
-  width: 545px;
+  width: 498px;
   min-height: 915px;
   span {
     display: block;

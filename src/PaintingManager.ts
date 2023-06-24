@@ -57,7 +57,7 @@ class PaintingManager {
 
     public addPaintingToPngButton(painting: Painting, paintingElementId: string) {
         dojo.place(`<a id="save-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-heart" aria-hidden="true"></i></a>`, paintingElementId)
-        dojo.connect($(`save-painting-${painting.id}`), 'onclick', () => this.paintingToPng(painting));
+        dojo.connect($(`save-painting-${painting.id}`), 'onclick', () => this.paintingToPng(painting, 4));
     }
 
     public enterCompletePaintingMode(backgroundCards: Card[], artCards: Card[]) {
@@ -253,18 +253,27 @@ class PaintingManager {
         }
     }
 
-    public createPaintingElement(backgroundCard: Card, artCards: Card[], node: string, size: string = 'normal') {
+    public createPaintingElement(backgroundCard: Card, artCards: Card[], node: string, size: string = 'normal', frame: number = null, includeCopyright: boolean = true, author: string = null) {
         const paintingId = `canvas-painting-${backgroundCard.id}-preview`;
         let zIndex = 100;
         dojo.place(`<div id="${paintingId}" class="canvas-painting ${size}"></div>`, node, 'only')
         const cardsWrapperId = `${paintingId}-cards-wrapper`;
-        dojo.place(`<div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>`, paintingId)
+        dojo.place(`<div class="flex-wrapper" style="padding-right: ${frame === 3 ? '16px' : '0'};"><div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div></div>`, paintingId)
         dojo.place(`<div class="background-card background-card-${backgroundCard.type}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);
         artCards.filter(card => !!card).forEach(card => { dojo.place(`<div class="art-card art-card-${card.type_arg}" style="z-index: ${zIndex++};"></div>`, cardsWrapperId);})
+        if (frame) {
+            dojo.place(`<div class="canvas-frame" data-type="${frame}" style="z-index: ${zIndex++};"></div>`, node)
+        }
+        if (author) {
+            dojo.place(`<div class="canvas-frame-author" style="z-index: ${zIndex++};">${author}</div>`, 'html2canvas-result');
+        }
+        if (includeCopyright) {
+            dojo.place(`<div class="canvas-copyright" style="z-index: ${zIndex++}; color: ${frame === 3 ? 'black' : 'white'};">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>`, 'html2canvas-result');
+        }
         return paintingId;
     }
 
-    private paintingToPng(painting) {
+    private paintingToPng(painting, frame) {
         const dialogId =  'share-painting-' + painting.id;
         const dialogContentId = 'share-painting-' + painting.id + '-content';
         const myDlg = new ebg.popindialog();
@@ -273,16 +282,25 @@ class PaintingManager {
         myDlg.setContent(`<div id="${dialogContentId}" class="share-painting-dialog-content"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>`);
         myDlg.show();
 
-        this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large');
-        dojo.place('<div class="canvas-copyright">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>', 'html2canvas-result');
+        this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large', frame, true, this.canvasGame.getPlayer(painting.playerId).name);
         // @ts-ignore
-        html2canvas(document.querySelector("#html2canvas-result"), {scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true}).then(canvas => {
+        html2canvas(document.querySelector("#html2canvas-result"), {scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true, backgroundColor: null}).then(canvas => {
             const fileName = `my-canvas-painting-${new Date().getTime()}.png`;
             const dataUrl = canvas.toDataURL("image/png");
-            dojo.place(`<img src="${dataUrl}" crossorigin="anonymous" />`, dialogContentId, 'only')
+            dojo.empty(dialogContentId);
+            dojo.place(`<a id="change-frame-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-refresh" aria-hidden="true"></i></a>`, dialogContentId)
+            dojo.place(`<img src="${dataUrl}" crossorigin="anonymous" />`, dialogContentId)
             dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking the buttons below")}</span>`, dialogContentId)
             dojo.place(`<a id="download-painting-${painting.id}" class="bgabutton bgabutton_blue" href="${dataUrl}" download="${fileName}"><i class="fa fa-download" aria-hidden="true"></i></a>`, dialogContentId)
             dojo.place(`<a id="share-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-share" aria-hidden="true"></i></a>`, dialogContentId)
+            dojo.connect($(`change-frame-${painting.id}`), 'onclick', async () => {
+                let nextFrameIndex = frame + 1;
+                nextFrameIndex = nextFrameIndex > 4 ? 1 : nextFrameIndex;
+                this.paintingToPng(painting, nextFrameIndex)
+            });
+
+
+            // Share Button
             dojo.connect($(`share-painting-${painting.id}`), 'onclick', async () => {
                 const blob = await this.asBlob(dataUrl);
                 const data = {

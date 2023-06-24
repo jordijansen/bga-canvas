@@ -6,6 +6,10 @@ interface Card {
     location_arg?: number
 }
 
+interface ScoringCard extends Card {
+    scoring: {[nrOfRibbons: number]: number}
+}
+
 interface Token {
     id: number,
     type?: string,
@@ -24,7 +28,7 @@ interface Painting {
 interface CanvasGameData extends GameData {
     displayCards: Card[],
     displayInspirationTokens: Token[],
-    scoringCards: Card[]
+    scoringCards: ScoringCard[]
 }
 
 interface CanvasPlayer extends Player {
@@ -39,6 +43,7 @@ interface CanvasGame extends Game {
     inspirationTokenManager: InspirationTokenManager;
     artCardManager: ArtCardManager;
     backgroundCardManager: BackgroundCardManager;
+    scoringCardManager: ScoringCardManager;
     gamedatas: CanvasGameData;
     getPlayerId(): number;
     getPlayer(playerId: number): CanvasPlayer;

@@ -1,5 +1,5 @@
 interface CounterVoidStockSettings {
-    counter: Counter,
+    counter: any,
     targetElement: string,
     counterId: string,
     initialCounterValue?: number,
@@ -10,9 +10,11 @@ interface CounterVoidStockSettings {
 }
 class CounterVoidStock<T> extends VoidStock<T> implements Counter{
 
-    private counter: Counter;
+    public counter: Numbers;
 
-    constructor(protected manager: CardManager<T>, protected setting: CounterVoidStockSettings) {
+    constructor(protected game: Game,
+                protected manager: CardManager<T>,
+                protected setting: CounterVoidStockSettings) {
         super(manager, document.createElement("div"))
         const targetElement = document.getElementById(setting.targetElement);
         if (!targetElement) {
@@ -49,15 +51,15 @@ class CounterVoidStock<T> extends VoidStock<T> implements Counter{
         wrapperElement.appendChild(this.element);
         targetElement.appendChild(wrapperElement);
 
-        this.counter = setting.counter;
-        this.counter.create(setting.counterId);
+        this.counter = new Numbers(game);
+        this.counter.addTarget(setting.counterId);
         this.counter.setValue(setting.initialCounterValue);
     }
     public create(nodeId: string) {}
     public getValue() {return this.counter.getValue()}
-    public incValue (by: number) {this.counter.incValue(by)}
+    public incValue (by: number) {this.counter.setValue(this.counter.getValue() + by)}
     public decValue (by: number) {this.counter.setValue(this.counter.getValue() - by)}
     public setValue (value: number) {this.counter.setValue(value)}
     public toValue(value: number) {this.counter.toValue(value)}
-    public disable(){this.counter.disable()}
+    public disable(){}
 }

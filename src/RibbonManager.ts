@@ -48,7 +48,7 @@ class RibbonManager extends CardManager<Token> {
         return {id: RibbonManager.ribbonTokenId++, type};
     }
     private createRibbonCounterVoidStock( player: CanvasPlayer, ribbonType: string) {
-        this.players[player.id][ribbonType] = new CounterVoidStock(this, {
+        this.players[Number(player.id)][ribbonType] = new CounterVoidStock(this.canvasGame, this, {
             counter: new ebg.counter(),
             targetElement: `canvas-counters-${player.id}`,
             counterId: `canvas-ribbon-counter-${player.id}-${ribbonType}`,
@@ -58,5 +58,15 @@ class RibbonManager extends CardManager<Token> {
                 element.dataset.type = ribbonType
             }
         });
+
+        if (Number(player.id) === this.canvasGame.getPlayerId()) {
+            const scoringCard = this.canvasGame.scoringCardManager.getCardForType(ribbonType);
+            if (scoringCard) {
+                const maxRibbonsForScoringCard = Math.max(...Object.keys(scoringCard.scoring).map(k => Number(k)));
+                const id = `current-player-ribbon-counter-${ribbonType}`;
+                dojo.place(`<div class="current-player-ribbon-counter"><span id="${id}"></span>/<span>${maxRibbonsForScoringCard}</span></div>`, dojo.query(`[data-slot-id="scoring-card-display-slot-${ribbonType}"]`)[0]);
+                this.players[Number(player.id)][ribbonType].counter.addTarget(id)
+            }
+        }
     }
 }

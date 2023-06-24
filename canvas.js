@@ -3365,6 +3365,180 @@ function sortFunction() {
         return 0;
     };
 }
+/**
+ *------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * earth implementation : © Guillaume Benny bennygui@gmail.com
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ */
+var Numbers = /** @class */ (function () {
+    function Numbers(game, initialValue, targetIdsOrElements) {
+        if (initialValue === void 0) { initialValue = 0; }
+        if (targetIdsOrElements === void 0) { targetIdsOrElements = []; }
+        this.game = game;
+        this.targetIdsOrElements = targetIdsOrElements;
+        this.currentValue = initialValue;
+        this.targetValue = initialValue;
+        this.onFinishStepValues = [];
+        this.ensureNumbers();
+        this.update();
+    }
+    Numbers.prototype.addTarget = function (targetIdOrElement) {
+        if (this.targetIdsOrElements instanceof Array) {
+            this.targetIdsOrElements.push(targetIdOrElement);
+        }
+        else {
+            this.targetIdsOrElements = [this.targetIdsOrElements, targetIdOrElement];
+        }
+        this.update();
+    };
+    Numbers.prototype.registerOnFinishStepValues = function (callback) {
+        this.onFinishStepValues.push(callback);
+    };
+    Numbers.prototype.getValue = function () {
+        return this.currentValue;
+    };
+    Numbers.prototype.setValue = function (value) {
+        this.currentValue = value;
+        this.targetValue = value;
+        this.ensureNumbers();
+        this.update();
+    };
+    Numbers.prototype.toValue = function (value, isInstantaneous) {
+        if (isInstantaneous === void 0) { isInstantaneous = false; }
+        if (isInstantaneous || this.game.instantaneousMode) {
+            this.setValue(value);
+        }
+        else {
+            this.targetValue = value;
+            this.ensureNumbers();
+            this.stepValues(true);
+        }
+    };
+    Numbers.prototype.stepValues = function (firstCall) {
+        var _this = this;
+        if (firstCall === void 0) { firstCall = false; }
+        if (this.currentAtTarget()) {
+            this.update();
+            if (!firstCall) {
+                for (var _i = 0, _a = this.onFinishStepValues; _i < _a.length; _i++) {
+                    var callback = _a[_i];
+                    callback(this);
+                }
+            }
+            return;
+        }
+        if (this.currentValue instanceof Array) {
+            var newValues = [];
+            for (var i = 0; i < this.currentValue.length; ++i) {
+                newValues.push(this.stepOneValue(this.currentValue[i], this.targetValue[i]));
+            }
+            this.currentValue = newValues;
+        }
+        else {
+            this.currentValue = this.stepOneValue(this.currentValue, this.targetValue);
+        }
+        this.update();
+        setTimeout(function () { return _this.stepValues(); }, this.DELAY);
+    };
+    Numbers.prototype.stepOneValue = function (current, target) {
+        if (current === null) {
+            current = 0;
+        }
+        if (target === null) {
+            return null;
+        }
+        var step = Math.ceil(Math.abs(current - target) / this.STEPS);
+        return (current + (current < target ? 1 : -1) * step);
+    };
+    Numbers.prototype.update = function () {
+        if (this.targetIdsOrElements instanceof Array) {
+            for (var _i = 0, _a = this.targetIdsOrElements; _i < _a.length; _i++) {
+                var target = _a[_i];
+                this.updateOne(target);
+            }
+        }
+        else {
+            this.updateOne(this.targetIdsOrElements);
+        }
+    };
+    Numbers.prototype.updateOne = function (targetIdOrElement) {
+        var elem = this.getElement(targetIdOrElement);
+        elem.innerHTML = this.format();
+    };
+    Numbers.prototype.getTargetElements = function () {
+        var _this = this;
+        if (this.targetIdsOrElements instanceof Array) {
+            return this.targetIdsOrElements.map(function (id) { return _this.getElement(id); });
+        }
+        else {
+            return [this.getElement(this.targetIdsOrElements)];
+        }
+    };
+    Numbers.prototype.getTargetElement = function () {
+        var elems = this.getTargetElements();
+        if (elems.length == 0) {
+            return null;
+        }
+        return elems[0];
+    };
+    Numbers.prototype.format = function () {
+        if (this.currentValue instanceof Array) {
+            var formatted = [];
+            for (var i = 0; i < this.currentValue.length; ++i) {
+                formatted.push(this.formatOne(this.currentValue[i], this.targetValue[i]));
+            }
+            return this.formatMultiple(formatted);
+        }
+        else {
+            return this.formatOne(this.currentValue, this.targetValue);
+        }
+    };
+    Numbers.prototype.formatOne = function (currentValue, targetValue) {
+        var span = document.createElement('span');
+        if (currentValue != targetValue) {
+            span.classList.add('bx-counter-in-progress');
+        }
+        span.innerText = (currentValue === null ? '-' : currentValue);
+        return span.outerHTML;
+    };
+    Numbers.prototype.formatMultiple = function (formattedValues) {
+        return formattedValues.join('/');
+    };
+    Numbers.prototype.ensureNumbers = function () {
+        var _this = this;
+        if (this.currentValue instanceof Array) {
+            this.currentValue = this.currentValue.map(function (v) { return _this.ensureOneNumber(v); });
+            this.targetValue = this.targetValue.map(function (v) { return _this.ensureOneNumber(v); });
+        }
+        else {
+            this.currentValue = this.ensureOneNumber(this.currentValue);
+            this.targetValue = this.ensureOneNumber(this.targetValue);
+        }
+    };
+    Numbers.prototype.ensureOneNumber = function (value) {
+        return (value === null ? null : parseInt(value));
+    };
+    Numbers.prototype.currentAtTarget = function () {
+        var _this = this;
+        if (this.currentValue instanceof Array) {
+            return this.currentValue.every(function (v, i) { return v == _this.targetValue[i]; });
+        }
+        else {
+            return (this.currentValue == this.targetValue);
+        }
+    };
+    Numbers.prototype.getElement = function (targetIdOrElement) {
+        if (typeof targetIdOrElement == "string") {
+            return document.getElementById(targetIdOrElement);
+        }
+        return targetIdOrElement;
+    };
+    return Numbers;
+}());
 var determineMaxZoomLevel = function () {
     var bodycoords = dojo.marginBox("canvas-overall");
     var contentWidth = bodycoords.w;
@@ -3407,8 +3581,9 @@ var AutoZoomManager = /** @class */ (function (_super) {
 }(ZoomManager));
 var CounterVoidStock = /** @class */ (function (_super) {
     __extends(CounterVoidStock, _super);
-    function CounterVoidStock(manager, setting) {
+    function CounterVoidStock(game, manager, setting) {
         var _this = _super.call(this, manager, document.createElement("div")) || this;
+        _this.game = game;
         _this.manager = manager;
         _this.setting = setting;
         var targetElement = document.getElementById(setting.targetElement);
@@ -3440,18 +3615,18 @@ var CounterVoidStock = /** @class */ (function (_super) {
         }
         wrapperElement.appendChild(_this.element);
         targetElement.appendChild(wrapperElement);
-        _this.counter = setting.counter;
-        _this.counter.create(setting.counterId);
+        _this.counter = new Numbers(game);
+        _this.counter.addTarget(setting.counterId);
         _this.counter.setValue(setting.initialCounterValue);
         return _this;
     }
     CounterVoidStock.prototype.create = function (nodeId) { };
     CounterVoidStock.prototype.getValue = function () { return this.counter.getValue(); };
-    CounterVoidStock.prototype.incValue = function (by) { this.counter.incValue(by); };
+    CounterVoidStock.prototype.incValue = function (by) { this.counter.setValue(this.counter.getValue() + by); };
     CounterVoidStock.prototype.decValue = function (by) { this.counter.setValue(this.counter.getValue() - by); };
     CounterVoidStock.prototype.setValue = function (value) { this.counter.setValue(value); };
     CounterVoidStock.prototype.toValue = function (value) { this.counter.toValue(value); };
-    CounterVoidStock.prototype.disable = function () { this.counter.disable(); };
+    CounterVoidStock.prototype.disable = function () { };
     return CounterVoidStock;
 }(VoidStock));
 var ArtCardManager = /** @class */ (function (_super) {
@@ -3636,6 +3811,9 @@ var ScoringCardManager = /** @class */ (function (_super) {
         this.display.onCardClick = function (card) { return _this.flipCard(card); };
         gameData.scoringCards.forEach(function (card) { return _this.display.addCard(card); });
     };
+    ScoringCardManager.prototype.getCardForType = function (type) {
+        return this.display.getCards().find(function (card) { return card.location === type; });
+    };
     return ScoringCardManager;
 }(CardManager));
 var InspirationTokenManager = /** @class */ (function (_super) {
@@ -3657,7 +3835,7 @@ var InspirationTokenManager = /** @class */ (function (_super) {
     }
     InspirationTokenManager.prototype.setUp = function (gameData) {
         for (var playersKey in gameData.players) {
-            this.players[Number(playersKey)] = new CounterVoidStock(this, {
+            this.players[Number(playersKey)] = new CounterVoidStock(this.canvasGame, this, {
                 counter: new ebg.counter(),
                 targetElement: "canvas-counters-".concat(playersKey),
                 counterId: "canvas-inspiration-token-counter-".concat(playersKey),
@@ -3756,7 +3934,7 @@ var RibbonManager = /** @class */ (function (_super) {
         return { id: RibbonManager.ribbonTokenId++, type: type };
     };
     RibbonManager.prototype.createRibbonCounterVoidStock = function (player, ribbonType) {
-        this.players[player.id][ribbonType] = new CounterVoidStock(this, {
+        this.players[Number(player.id)][ribbonType] = new CounterVoidStock(this.canvasGame, this, {
             counter: new ebg.counter(),
             targetElement: "canvas-counters-".concat(player.id),
             counterId: "canvas-ribbon-counter-".concat(player.id, "-").concat(ribbonType),
@@ -3766,6 +3944,15 @@ var RibbonManager = /** @class */ (function (_super) {
                 element.dataset.type = ribbonType;
             }
         });
+        if (Number(player.id) === this.canvasGame.getPlayerId()) {
+            var scoringCard = this.canvasGame.scoringCardManager.getCardForType(ribbonType);
+            if (scoringCard) {
+                var maxRibbonsForScoringCard = Math.max.apply(Math, Object.keys(scoringCard.scoring).map(function (k) { return Number(k); }));
+                var id = "current-player-ribbon-counter-".concat(ribbonType);
+                dojo.place("<div class=\"current-player-ribbon-counter\"><span id=\"".concat(id, "\"></span>/<span>").concat(maxRibbonsForScoringCard, "</span></div>"), dojo.query("[data-slot-id=\"scoring-card-display-slot-".concat(ribbonType, "\"]"))[0]);
+                this.players[Number(player.id)][ribbonType].counter.addTarget(id);
+            }
+        }
     };
     RibbonManager.ribbonTokenId = 0;
     return RibbonManager;
@@ -3815,7 +4002,7 @@ var PaintingManager = /** @class */ (function () {
     PaintingManager.prototype.addPaintingToPngButton = function (painting, paintingElementId) {
         var _this = this;
         dojo.place("<a id=\"save-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-heart\" aria-hidden=\"true\"></i></a>"), paintingElementId);
-        dojo.connect($("save-painting-".concat(painting.id)), 'onclick', function () { return _this.paintingToPng(painting); });
+        dojo.connect($("save-painting-".concat(painting.id)), 'onclick', function () { return _this.paintingToPng(painting, 4); });
     };
     PaintingManager.prototype.enterCompletePaintingMode = function (backgroundCards, artCards) {
         var _this = this;
@@ -3962,18 +4149,30 @@ var PaintingManager = /** @class */ (function () {
             this.canvasGame.showMessage(_("You need to add 3 Art Cards to your painting"), 'error');
         }
     };
-    PaintingManager.prototype.createPaintingElement = function (backgroundCard, artCards, node, size) {
+    PaintingManager.prototype.createPaintingElement = function (backgroundCard, artCards, node, size, frame, includeCopyright, author) {
         if (size === void 0) { size = 'normal'; }
+        if (frame === void 0) { frame = null; }
+        if (includeCopyright === void 0) { includeCopyright = true; }
+        if (author === void 0) { author = null; }
         var paintingId = "canvas-painting-".concat(backgroundCard.id, "-preview");
         var zIndex = 100;
         dojo.place("<div id=\"".concat(paintingId, "\" class=\"canvas-painting ").concat(size, "\"></div>"), node, 'only');
         var cardsWrapperId = "".concat(paintingId, "-cards-wrapper");
-        dojo.place("<div id=\"".concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>"), paintingId);
+        dojo.place("<div class=\"flex-wrapper\" style=\"padding-right: ".concat(frame === 3 ? '16px' : '0', ";\"><div id=\"").concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div></div>"), paintingId);
         dojo.place("<div class=\"background-card background-card-".concat(backgroundCard.type, "\" style=\"z-index: ").concat(zIndex++, ";\"></div>"), cardsWrapperId);
         artCards.filter(function (card) { return !!card; }).forEach(function (card) { dojo.place("<div class=\"art-card art-card-".concat(card.type_arg, "\" style=\"z-index: ").concat(zIndex++, ";\"></div>"), cardsWrapperId); });
+        if (frame) {
+            dojo.place("<div class=\"canvas-frame\" data-type=\"".concat(frame, "\" style=\"z-index: ").concat(zIndex++, ";\"></div>"), node);
+        }
+        if (author) {
+            dojo.place("<div class=\"canvas-frame-author\" style=\"z-index: ".concat(zIndex++, ";\">").concat(author, "</div>"), 'html2canvas-result');
+        }
+        if (includeCopyright) {
+            dojo.place("<div class=\"canvas-copyright\" style=\"z-index: ".concat(zIndex++, "; color: ").concat(frame === 3 ? 'black' : 'white', ";\">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>"), 'html2canvas-result');
+        }
         return paintingId;
     };
-    PaintingManager.prototype.paintingToPng = function (painting) {
+    PaintingManager.prototype.paintingToPng = function (painting, frame) {
         var _this = this;
         var dialogId = 'share-painting-' + painting.id;
         var dialogContentId = 'share-painting-' + painting.id + '-content';
@@ -3982,16 +4181,27 @@ var PaintingManager = /** @class */ (function () {
         myDlg.setTitle(_("Share your painting!"));
         myDlg.setContent("<div id=\"".concat(dialogContentId, "\" class=\"share-painting-dialog-content\"><div class=\"lds-ellipsis\"><div></div><div></div><div></div><div></div></div></div>"));
         myDlg.show();
-        this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large');
-        dojo.place('<div class="canvas-copyright">&#169; Road To Infamy Games - Play Canvas on BoardGameArena.com</div>', 'html2canvas-result');
+        this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large', frame, true, this.canvasGame.getPlayer(painting.playerId).name);
         // @ts-ignore
-        html2canvas(document.querySelector("#html2canvas-result"), { scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true }).then(function (canvas) {
+        html2canvas(document.querySelector("#html2canvas-result"), { scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true, backgroundColor: null }).then(function (canvas) {
             var fileName = "my-canvas-painting-".concat(new Date().getTime(), ".png");
             var dataUrl = canvas.toDataURL("image/png");
-            dojo.place("<img src=\"".concat(dataUrl, "\" crossorigin=\"anonymous\" />"), dialogContentId, 'only');
+            dojo.empty(dialogContentId);
+            dojo.place("<a id=\"change-frame-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a>"), dialogContentId);
+            dojo.place("<img src=\"".concat(dataUrl, "\" crossorigin=\"anonymous\" />"), dialogContentId);
             dojo.place("<span>".concat(_("Share your #CanvasPainting with the world by clicking the buttons below"), "</span>"), dialogContentId);
             dojo.place("<a id=\"download-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\" href=\"").concat(dataUrl, "\" download=\"").concat(fileName, "\"><i class=\"fa fa-download\" aria-hidden=\"true\"></i></a>"), dialogContentId);
             dojo.place("<a id=\"share-painting-".concat(painting.id, "\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-share\" aria-hidden=\"true\"></i></a>"), dialogContentId);
+            dojo.connect($("change-frame-".concat(painting.id)), 'onclick', function () { return __awaiter(_this, void 0, void 0, function () {
+                var nextFrameIndex;
+                return __generator(this, function (_a) {
+                    nextFrameIndex = frame + 1;
+                    nextFrameIndex = nextFrameIndex > 4 ? 1 : nextFrameIndex;
+                    this.paintingToPng(painting, nextFrameIndex);
+                    return [2 /*return*/];
+                });
+            }); });
+            // Share Button
             dojo.connect($("share-painting-".concat(painting.id)), 'onclick', function () { return __awaiter(_this, void 0, void 0, function () {
                 var blob, data, err_1;
                 return __generator(this, function (_a) {
@@ -4048,7 +4258,6 @@ var PaintingManager = /** @class */ (function () {
 var PlayerManager = /** @class */ (function () {
     function PlayerManager(game) {
         this.game = game;
-        this.ribbonCounters = {};
     }
     PlayerManager.prototype.setUp = function (gameData) {
         var playerAreas = [];
@@ -4105,10 +4314,10 @@ var Canvas = /** @class */ (function () {
         log('gamedatas', gamedatas);
         this.zoomManager = new AutoZoomManager('canvas-table');
         this.animationManager = new AnimationManager(this, { duration: ANIMATION_MS });
+        this.scoringCardManager = new ScoringCardManager(this);
         this.playerManager = new PlayerManager(this);
         this.artCardManager = new ArtCardManager(this);
         this.backgroundCardManager = new BackgroundCardManager(this);
-        this.scoringCardManager = new ScoringCardManager(this);
         this.inspirationTokenManager = new InspirationTokenManager(this);
         this.paintingManager = new PaintingManager(this);
         this.ribbonManager = new RibbonManager(this);

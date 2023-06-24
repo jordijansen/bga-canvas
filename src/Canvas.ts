@@ -28,12 +28,12 @@ class Canvas implements CanvasGame {
     artCardManager: ArtCardManager;
     backgroundCardManager: BackgroundCardManager;
     animationManager: AnimationManager;
+    scoringCardManager: ScoringCardManager;
 
     public gamedatas: CanvasGameData;
     private zoomManager: ZoomManager;
     private playerManager: PlayerManager;
     private paintingManager: PaintingManager;
-    private scoringCardManager: ScoringCardManager;
     private ribbonManager: RibbonManager;
 
     constructor() {
@@ -59,10 +59,10 @@ class Canvas implements CanvasGame {
 
         this.zoomManager = new AutoZoomManager('canvas-table');
         this.animationManager = new AnimationManager(this, {duration: ANIMATION_MS});
+        this.scoringCardManager = new ScoringCardManager(this);
         this.playerManager = new PlayerManager(this);
         this.artCardManager = new ArtCardManager(this);
         this.backgroundCardManager = new BackgroundCardManager(this);
-        this.scoringCardManager = new ScoringCardManager(this);
         this.inspirationTokenManager = new InspirationTokenManager(this);
         this.paintingManager = new PaintingManager(this);
         this.ribbonManager = new RibbonManager(this);
