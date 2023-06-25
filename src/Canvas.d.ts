@@ -29,6 +29,7 @@ interface CanvasGameData extends GameData {
     displayCards: Card[],
     displayInspirationTokens: Token[],
     scoringCards: ScoringCard[]
+    vincent: {active: boolean, inspirationTokens: Token[]}
 }
 
 interface CanvasPlayer extends Player {
@@ -36,7 +37,8 @@ interface CanvasPlayer extends Player {
     backgroundCards: Card[],
     inspirationTokens: Token[],
     paintings: Painting[],
-    ribbons: {[scoringType: string]: number}
+    ribbons: {[scoringType: string]: number},
+    playerNo: string
 }
 
 interface CanvasGame extends Game {

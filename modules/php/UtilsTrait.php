@@ -54,6 +54,10 @@ trait UtilsTrait {
         return $this->getCollectionFromDB("SELECT * FROM player");
     }
 
+    function getPlayerNo(int $playerId) {
+        return $this->getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id = $playerId");
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     //////////// Canvas Utility functions
     ////////////
@@ -68,5 +72,11 @@ trait UtilsTrait {
             $availableActions = [...$availableActions, ACT_COMPLETE_PAINTING];
         }
         return $availableActions;
+    }
+
+    function isPaintingWithVincent(): bool
+    {
+        // Painting with Vincent is included if the players choose so, or if there is only 1 player
+        return $this->getGameStateValue(PAINTING_WITH_VINCENT_OPTION) == PAINTING_WITH_VINCENT_INCLUDED || $this->getPlayersNumber() == 1;
     }
 }

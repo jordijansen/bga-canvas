@@ -29,6 +29,11 @@ trait StateTrait {
             // Find the next player, a player is skipped if they've created 3 paintings already.
             $skipPlayer = true;
             while ($skipPlayer) {
+                if (intval($this->getPlayerNo($this->getActivePlayerId())) == $this->getPlayersNumber() && $this->isPaintingWithVincent()) {
+                    // This was the last player for the round, take vincent turn
+                    $this->performVincentTurn();
+                }
+
                 $this->activeNextPlayer();
                 $playerId = $this->getActivePlayerId();
                 $skipPlayer = sizeof($this->paintingManager->getPaintings($playerId)) == 3;

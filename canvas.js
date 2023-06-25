@@ -3673,6 +3673,9 @@ var ArtCardManager = /** @class */ (function (_super) {
             dojo.place("<div id=\"inspiration-token-card-stock-".concat(card.id, "\" class=\"inspiration-token-card-stock\"></div>"), _this.getCardElement(card).getAttribute("id"));
         });
     };
+    ArtCardManager.prototype.setUpVincent = function () {
+        this.playerHand[Number(-999999)] = new VoidStock(this, $('vincent-card-stock'));
+    };
     ArtCardManager.prototype.takeCard = function (playerId, card) {
         this.updateCardInformations(card);
         return this.playerHand[playerId].addCard(card);
@@ -3844,6 +3847,15 @@ var InspirationTokenManager = /** @class */ (function (_super) {
             });
         }
         this.placeOnCards(gameData.displayInspirationTokens);
+    };
+    InspirationTokenManager.prototype.setUpVincent = function (inspirationTokens) {
+        this.players[Number(-999999)] = new CounterVoidStock(this.canvasGame, this, {
+            counter: new ebg.counter(),
+            targetElement: "canvas-counters-vincent",
+            counterId: "canvas-inspiration-token-counter-vincent",
+            initialCounterValue: inspirationTokens.length,
+            setupIcon: function (element) { element.classList.add("canvas-inspiration-token-2d"); }
+        });
     };
     InspirationTokenManager.prototype.placeOnCards = function (tokens, playerId) {
         var _this = this;
@@ -4274,12 +4286,24 @@ var PlayerManager = /** @class */ (function () {
         }
         playerAreas.forEach(function (playerArea) { return dojo.place(playerArea, "player-areas"); });
     };
+    PlayerManager.prototype.createVincentPlayerPanel = function () {
+        var lastPlayerId = null;
+        for (var playersKey in this.game.gamedatas.players) {
+            if (Object.keys(this.game.gamedatas.players).length === Number(this.game.gamedatas.players[playersKey].playerNo)) {
+                lastPlayerId = this.game.gamedatas.players[playersKey].id;
+            }
+        }
+        console.log(lastPlayerId);
+        dojo.place("<div id=\"overall_vincent_board\" class=\"player-board\" style=\"height: auto;\">\n                                    <div class=\"player_board_inner\">\n                                            <div class=\"player-name\">\n                                               ".concat(_('Vincent'), "\n                                            </div>\n                                            <div class=\"player_board_content\">\n                                                ").concat(this.createCanvasCounterWrapper('vincent'), "\n                                                <div id=\"vincent-card-stock\"></div>\n                                            </div>\n                                    </div>\n                                </div>"), "overall_player_board_".concat(lastPlayerId), 'after');
+    };
     PlayerManager.prototype.createPlayerArea = function (player) {
         return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(player.name).concat(_("'s Art Collection"), "</h1></div></div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(_("Hand Cards"), "</h1></div></div>\n                    <div id=\"player-hand-").concat(player.id, "\" class=\"player-hand\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(_("Finished Paintings"), "</h1></div></div>\n                    <div id=\"player-finished-paintings-").concat(player.id, "\" class=\"player-finished-paintings\"></div>\n                    <div id=\"player-background-").concat(player.id, "\" style=\"display: none;\"></div>\n                </div>");
     };
     PlayerManager.prototype.createPlayerPanels = function (player) {
-        var html = "<div id=\"canvas-counters-".concat(player.id, "\" class=\"canvas-counters\" ></div>");
-        dojo.place(html, "player_board_".concat(player.id));
+        dojo.place(this.createCanvasCounterWrapper(player.id), "player_board_".concat(player.id));
+    };
+    PlayerManager.prototype.createCanvasCounterWrapper = function (id) {
+        return "<div id=\"canvas-counters-".concat(id, "\" class=\"canvas-counters\" ></div>");
     };
     return PlayerManager;
 }());
@@ -4546,6 +4570,14 @@ var Canvas = /** @class */ (function () {
             _this.paintingManager.addPaintingToPngButton(args.painting, "player-finished-painting-".concat(args.painting.id));
             _this.setScore(args.playerId, args.playerScore);
         });
+    };
+    Canvas.prototype.updatePlayerOrdering = function () {
+        this.inherited(arguments);
+        if (this.gamedatas.vincent.active) {
+            this.playerManager.createVincentPlayerPanel();
+            this.inspirationTokenManager.setUpVincent(this.gamedatas.vincent.inspirationTokens);
+            this.artCardManager.setUpVincent();
+        }
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
         var _this = this;

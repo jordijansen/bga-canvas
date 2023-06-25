@@ -27,6 +27,11 @@ const SCORING_CARDS_COMPLEX_ALL_ELEMENTS = 30;
 const SCORING_CARDS_COMPLEX_SPATIAL = 31;
 const SCORING_CARDS_COMPLEX_BONUS = 32;
 
+const PAINTING_WITH_VINCENT_OPTION_ID = 110;
+const PAINTING_WITH_VINCENT_OPTION = 'painting_with_vincent';
+const PAINTING_WITH_VINCENT_EXCLUDED = 0;
+const PAINTING_WITH_VINCENT_INCLUDED = 1;
+
 /**
  * State
  */
@@ -64,6 +69,7 @@ const ZONE_DISPLAY = 'display';
 const ZONE_PLAYER_HAND = 'hand';
 const ZONE_PAINTING = 'painting';
 const ZONE_CARD = 'card';
+const ZONE_PLAYER_HAND_VINCENT = -999999;
 
 /**
  * Element Icons

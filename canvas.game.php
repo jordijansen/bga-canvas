@@ -64,14 +64,15 @@ class Canvas extends Table
         parent::__construct();
         
         self::initGameStateLabels( array(
-            SCORING_CARDS_OPTION => SCORING_CARDS_OPTION_ID
+            SCORING_CARDS_OPTION => SCORING_CARDS_OPTION_ID,
+            PAINTING_WITH_VINCENT_OPTION => PAINTING_WITH_VINCENT_OPTION_ID
         ));
 
         $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"), $this->ART_CARDS);
         $this->backgroundCardManager = new BackgroundCardManager(self::getNew("module.common.deck"));
         $this->scoringCardManager = new ScoringCardManager($this, self::getNew("module.common.deck"), $this->SCORING_CARDS);
         $this->ribbonManager = new RibbonManager();
-        $this->inspirationTokenManager = new InspirationTokenManager(self::getNew("module.common.deck"));
+        $this->inspirationTokenManager = new InspirationTokenManager($this, self::getNew("module.common.deck"));
         $this->paintingManager = new PaintingManager($this);
 
     }
@@ -163,7 +164,7 @@ class Canvas extends Table
     
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score FROM player ";
+        $sql = "SELECT player_id id, player_score score, player_no playerNo FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
         foreach($result['players'] as $playerId => &$player) {
@@ -179,8 +180,12 @@ class Canvas extends Table
         $result['displayCards'] = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY);
         $result['displayInspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_CARD);
 
-        // TODO: Gather all information about current game situation (visible by player $current_player_id).
-  
+        $result['vincent'] = [];
+        $result['vincent']['active'] = $this->isPaintingWithVincent();
+        if ($this->isPaintingWithVincent()) {
+            $result['vincent']['inspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, ZONE_PLAYER_HAND_VINCENT);
+        }
+
         return $result;
     }
 

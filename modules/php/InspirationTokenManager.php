@@ -2,17 +2,19 @@
 
 class InspirationTokenManager {
 
+    protected Canvas $game;
     protected Deck $cards;
 
-    public function __construct(Deck $deck) {
+    public function __construct(Canvas $game, Deck $deck) {
+        $this->game = $game;
         $this->cards = $deck;
         $this->cards->init('inspiration_token');
     }
 
-    public function setUp($players) {
+    public function setUp() {
         $cards = [];
 
-        $cards[] = array('type'=> 'INSPIRATION_TOKEN', 'type_arg' => 'INSPIRATION_TOKEN', 'nbr' => sizeof($players) * NR_OF_INSPIRATION_TOKENS_PER_PLAYER);
+        $cards[] = array('type'=> 'INSPIRATION_TOKEN', 'type_arg' => 'INSPIRATION_TOKEN', 'nbr' => 50);
 
         $this->cards->createCards($cards, 'deck');
     }
@@ -20,6 +22,10 @@ class InspirationTokenManager {
     public function distributeInitialInspirationTokens($players) {
         foreach( $players as $playerId => $player) {
             $this->cards->pickCardsForLocation(NR_OF_INSPIRATION_TOKENS_PER_PLAYER, ZONE_DECK, ZONE_PLAYER_HAND, $playerId);
+        }
+
+        if ($this->game->isPaintingWithVincent()) {
+            $this->cards->pickCardsForLocation(NR_OF_INSPIRATION_TOKENS_PER_PLAYER, ZONE_DECK, ZONE_PLAYER_HAND, ZONE_PLAYER_HAND_VINCENT);
         }
     }
 

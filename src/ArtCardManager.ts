@@ -2,7 +2,7 @@ class ArtCardManager extends CardManager<Card> {
 
     private deck: Deck<Card>
     private display: SlotStock<Card>
-    private playerHand: {[playerId: number]: LineStock<Card> } = {}
+    private playerHand: {[playerId: number]: CardStock<Card> } = {}
     private paintings: {[paintingId: number]: LineStock<Card>} = {}
 
     constructor(protected canvasGame: CanvasGame) {
@@ -44,6 +44,10 @@ class ArtCardManager extends CardManager<Card> {
             this.display.addCard(card)
             dojo.place(`<div id="inspiration-token-card-stock-${card.id}" class="inspiration-token-card-stock"></div>`, this.getCardElement(card).getAttribute("id"))
         })
+    }
+
+    public setUpVincent() {
+        this.playerHand[Number(-999999)] = new VoidStock(this, $('vincent-card-stock'));
     }
 
     takeCard(playerId: number, card: Card) {

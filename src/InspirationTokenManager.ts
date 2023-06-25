@@ -28,6 +28,16 @@ class InspirationTokenManager extends CardManager<Token> {
         this.placeOnCards(gameData.displayInspirationTokens);
     }
 
+    public setUpVincent(inspirationTokens) {
+        this.players[Number(-999999)] = new CounterVoidStock(this.canvasGame, this, {
+            counter: new ebg.counter(),
+            targetElement: `canvas-counters-vincent`,
+            counterId: `canvas-inspiration-token-counter-vincent`,
+            initialCounterValue: inspirationTokens.length,
+            setupIcon: (element) => {element.classList.add("canvas-inspiration-token-2d")}
+        });
+    }
+
     public placeOnCards(tokens: Token[], playerId?: number) {
         const promises = []
         tokens.forEach(token => {

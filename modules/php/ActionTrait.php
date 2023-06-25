@@ -22,53 +22,10 @@ trait ActionTrait {
         }
     }
 
-    public function takeArtCard($cardId) {
+    public function takeArtCardAction($cardId) {
         self::checkAction(ACT_TAKE_ART_CARD);
 
-        if (!isset($cardId)) {
-            throw new BgaUserException(clienttranslate("You must select an Art Card to take"));
-        }
-
-        $activePlayerId = $this->getActivePlayerId();
-        $inspirationTokens = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $activePlayerId);
-        $availableCards = $this->artCardManager->getAvailableCardsForTake(sizeof($inspirationTokens));
-        $availableCardIds = array_column($availableCards, 'id');
-
-        if (!in_array($cardId, $availableCardIds)) {
-            throw new BgaUserException(clienttranslate("You don't have enough Inspiration Tokens or selected card is not in display"));
-        }
-
-        // Move the card from display to player hand
-        $cardToTake = $this->artCardManager->getCard($cardId);
-        // Place inspiration tokens on other cards if needed
-        $inspirationTokensPlaced = [];
-        for ($i = 1; $i < $cardToTake->location_arg; $i++) {
-            $cardsInThisDisplaySlot = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY, $i);
-            $cardIdsInThisDisplaySlot = array_map(fn($card) => $card->id, array_values($cardsInThisDisplaySlot));
-            $inspirationTokensPlaced[] = $this->inspirationTokenManager->placeInspirationTokenOnCard($activePlayerId, reset($cardIdsInThisDisplaySlot));
-        }
-        // Take inspiration token from card
-        $inspirationTokensTaken = $this->inspirationTokenManager->takeInspirationTokensFromCard($activePlayerId, $cardId);
-        // Take Art Card
-        $cardTaken = $this->artCardManager->takeCard($activePlayerId, $cardId);
-
-        self::notifyAllPlayers('artCardTaken', '${player_name} places ${inspiration_tokens_1} to take <b>${artCardName}</b> and ${inspiration_tokens_2}', [
-            'i18n' => ['artCardName'],
-            'playerId' => $activePlayerId,
-            'player_name' => $this->getPlayerName($activePlayerId),
-            'artCardName' => $cardTaken->name,
-            'inspirationTokensPlaced' => $inspirationTokensPlaced,
-            'inspirationTokensTaken' => $inspirationTokensTaken,
-            'cardTaken' => $cardTaken,
-            // ICONS
-            'inspiration_tokens_1' => sizeof($inspirationTokensPlaced),
-            'inspiration_tokens_2' => sizeof($inspirationTokensTaken)
-        ]);
-
-        $this->artCardManager->refillDisplay();
-        self::notifyAllPlayers('displayRefilled', '', [
-            'displayCards' => $this->artCardManager->getCardsInLocation(ZONE_DISPLAY)
-        ]);
+        $this->takeArtCard($cardId, $this->getActivePlayerId(), $this->getPlayerName($this->getActivePlayerId()));
 
         $this->gamestate->nextState(ST_NEXT_PLAYER);
     }
@@ -139,5 +96,65 @@ trait ActionTrait {
         ]);
 
         $this->gamestate->nextState(ST_NEXT_PLAYER);
+    }
+
+    public function performVincentTurn() {
+        $inspirationTokens = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, ZONE_PLAYER_HAND_VINCENT);
+        $nrOfFaceUpTokens = 0;
+        for ($i = 0; $i < sizeof($inspirationTokens); $i++) {
+            $nrOfFaceUpTokens = $nrOfFaceUpTokens + bga_rand(0, 1);
+        }
+        $nrOfFaceUpTokens = min($nrOfFaceUpTokens, 4);
+
+        $cardsInLocation = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY, $nrOfFaceUpTokens + 1);
+        $cardInLocation = reset($cardsInLocation);
+
+        $this->takeArtCard($cardInLocation->id, ZONE_PLAYER_HAND_VINCENT, 'Vincent');
+    }
+
+    private function takeArtCard($cardId, $playerId, $playerName) {
+        if (!isset($cardId)) {
+            throw new BgaUserException(clienttranslate("You must select an Art Card to take"));
+        }
+
+        $inspirationTokens = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId);
+        $availableCards = $this->artCardManager->getAvailableCardsForTake(sizeof($inspirationTokens));
+        $availableCardIds = array_column($availableCards, 'id');
+
+        if (!in_array($cardId, $availableCardIds)) {
+            throw new BgaUserException(clienttranslate("You don't have enough Inspiration Tokens or selected card is not in display"));
+        }
+
+        // Move the card from display to player hand
+        $cardToTake = $this->artCardManager->getCard($cardId);
+        // Place inspiration tokens on other cards if needed
+        $inspirationTokensPlaced = [];
+        for ($i = 1; $i < $cardToTake->location_arg; $i++) {
+            $cardsInThisDisplaySlot = $this->artCardManager->getCardsInLocation(ZONE_DISPLAY, $i);
+            $cardIdsInThisDisplaySlot = array_map(fn($card) => $card->id, array_values($cardsInThisDisplaySlot));
+            $inspirationTokensPlaced[] = $this->inspirationTokenManager->placeInspirationTokenOnCard($playerId, reset($cardIdsInThisDisplaySlot));
+        }
+        // Take inspiration token from card
+        $inspirationTokensTaken = $this->inspirationTokenManager->takeInspirationTokensFromCard($playerId, $cardId);
+        // Take Art Card
+        $cardTaken = $this->artCardManager->takeCard($playerId, $cardId);
+
+        self::notifyAllPlayers('artCardTaken', '${player_name} places ${inspiration_tokens_1} to take <b>${artCardName}</b> and ${inspiration_tokens_2}', [
+            'i18n' => ['artCardName'],
+            'playerId' => $playerId,
+            'player_name' => $playerName,
+            'artCardName' => $cardTaken->name,
+            'inspirationTokensPlaced' => $inspirationTokensPlaced,
+            'inspirationTokensTaken' => $inspirationTokensTaken,
+            'cardTaken' => $cardTaken,
+            // ICONS
+            'inspiration_tokens_1' => sizeof($inspirationTokensPlaced),
+            'inspiration_tokens_2' => sizeof($inspirationTokensTaken)
+        ]);
+
+        $this->artCardManager->refillDisplay();
+        self::notifyAllPlayers('displayRefilled', '', [
+            'displayCards' => $this->artCardManager->getCardsInLocation(ZONE_DISPLAY)
+        ]);
     }
 }

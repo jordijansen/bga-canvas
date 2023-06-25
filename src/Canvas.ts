@@ -327,7 +327,14 @@ class Canvas implements CanvasGame {
             })
     }
 
-
+    public updatePlayerOrdering() {
+        (this as any).inherited(arguments);
+        if (this.gamedatas.vincent.active) {
+            this.playerManager.createVincentPlayerPanel();
+            this.inspirationTokenManager.setUpVincent(this.gamedatas.vincent.inspirationTokens);
+            this.artCardManager.setUpVincent();
+        }
+    }
     public format_string_recursive(log: string, args: any) {
         try {
             if (log && args && !args.processed) {
