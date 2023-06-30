@@ -1007,11 +1007,23 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
   cursor: pointer;
 }
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper .button-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 250px;
+}
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper .button-wrapper .bgabutton {
+  width: 170px;
+  text-align: center;
+  font-size: 40px;
+  line-height: 20px;
+}
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker {
   display: flex;
   position: relative;
   gap: 8px;
   justify-content: center;
+  margin-bottom: 75px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .art-card.card-side {
   -webkit-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
@@ -1036,16 +1048,11 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   top: 172.5px;
   z-index: 15;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .button-wrapper {
-  display: flex;
-  justify-content: center;
-  width: 250px;
-}
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .button-wrapper .bgabutton {
-  width: 170px;
-  text-align: center;
-  font-size: 40px;
-  line-height: 20px;
+#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .center-overlap-button-wrapper {
+  position: absolute;
+  bottom: -75px;
+  z-index: 15;
+  margin-left: 130px;
 }
 #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .complete-painting-art-card-slot {
   width: 250px;

@@ -476,11 +476,25 @@ html, .mode_3d #game_play_area_background {
           }
         }
 
+        .button-wrapper {
+          display: flex;
+          justify-content: center;
+          width: $portrait-card-width;
+
+          .bgabutton {
+            width: $portrait-card-width - 80px;
+            text-align: center;
+            font-size: 40px;
+            line-height: 20px;
+          }
+        }
+
         #art-cards-picker {
           display: flex;
           position: relative;
           gap: 8px;
           justify-content: center;
+          margin-bottom: 75px;
 
           .art-card.card-side {
             -webkit-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
@@ -509,17 +523,11 @@ html, .mode_3d #game_play_area_background {
             z-index: 15; // Card animations have z-index of 10, we want this button on top of the card
           }
 
-          .button-wrapper {
-            display: flex;
-            justify-content: center;
-            width: $portrait-card-width;
-
-            .bgabutton {
-              width: $portrait-card-width - 80px;
-              text-align: center;
-              font-size: 40px;
-              line-height: 20px;
-            }
+          .center-overlap-button-wrapper {
+            position: absolute;
+            bottom: -75px;
+            z-index: 15; // Card animations have z-index of 10, we want this button on top of the card
+            margin-left: 130px;
           }
 
           .complete-painting-art-card-slot {

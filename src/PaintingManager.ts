@@ -78,6 +78,9 @@ class PaintingManager {
             if (this.completePaintingMode.painting.artCards[i]) {
                 this.addCardToPaintingAtPosition(this.completePaintingMode.painting.artCards[i], i)
             }
+            if (i !== 2) {
+                dojo.connect($(`art-cards-swap-${i}`), 'onclick', () => this.swapArtCards(i));
+            }
         }
 
         this.updateUnusedCards();
@@ -146,6 +149,9 @@ class PaintingManager {
     private createArtCardSlot(id: number) {
         return `
             <div>
+                <div class="button-wrapper center-overlap-button-wrapper">
+                    <a id="art-cards-swap-${id}" class="bgabutton bgabutton_blue" style="${id === 2 ? 'display: none;' : ''}"><i class="fa fa-exchange" aria-hidden="true"></i></a>
+                </div>
                 <div id="complete-painting-art-card-slot-${id}" class="complete-painting-art-card-slot"><span>${id + 1}</span></div>
             </div>
         `
@@ -181,18 +187,45 @@ class PaintingManager {
             .forEach(card => {
                 const cardElement = this.createArtCardElement(card);
                 dojo.place(cardElement,`art-cards-picker-unused`)
-                dojo.connect($(cardElement.id), 'onclick', () => this.addCardToPainting(card));
+                dojo.connect($(cardElement.id), 'onclick', () => {
+                    this.addCardToPainting(card)
+                    this.updateUnusedCards();
+                    this.updatePreview();
+                });
             })
+    }
+
+    private swapArtCards(i: number) {
+        const cardInPosition1 = this.completePaintingMode.painting.artCards[i];
+        const cardInPosition2 = this.completePaintingMode.painting.artCards[i + 1];
+
+        if (cardInPosition1) {
+            this.removeCardFromPainting(cardInPosition1);
+        }
+        if (cardInPosition2) {
+            this.removeCardFromPainting(cardInPosition2);
+        }
+
+        if (cardInPosition1) {
+            this.addCardToPaintingAtPosition(cardInPosition1, i + 1);
+        }
+        if (cardInPosition2) {
+            this.addCardToPaintingAtPosition(cardInPosition2, i);
+        }
+
+        this.updateUnusedCards();
+        this.updatePreview();
     }
 
     private addCardToPaintingAtPosition(card, index) {
         this.completePaintingMode.painting.artCards[index] = card;
         const cardElement = this.createArtCardElement(card);
         dojo.place(cardElement, `complete-painting-art-card-slot-${index}`, 'only')
-        dojo.connect($(cardElement.id), 'onclick', () => this.removeCardFromPainting(card));
-
-        this.updateUnusedCards();
-        this.updatePreview();
+        dojo.connect($(cardElement.id), 'onclick', () => {
+            this.removeCardFromPainting(card);
+            this.updateUnusedCards();
+            this.updatePreview();
+        });
     }
 
     private addCardToPainting(card) {
@@ -210,9 +243,6 @@ class PaintingManager {
         const index = this.completePaintingMode.painting.artCards.indexOf(card);
         this.completePaintingMode.painting.artCards[index] = undefined;
         dojo.place(`<span>${index + 1}</span>`, `complete-painting-art-card-slot-${index}`, 'only')
-
-        this.updateUnusedCards();
-        this.updatePreview();
     }
 
     private updatePreview() {

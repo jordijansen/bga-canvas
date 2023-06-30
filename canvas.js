@@ -2664,11 +2664,18 @@ var PaintingManager = /** @class */ (function () {
         dojo.place(this.createBackgroundSlot(), 'art-cards-picker-top-text', 'before');
         dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard), 'complete-painting-background-card-slot');
         dojo.connect($('change-background-button'), 'onclick', function () { return _this.changeBackgroundCard(); });
-        for (var i = 0; i < 3; i++) {
-            dojo.place(this.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
-            if (this.completePaintingMode.painting.artCards[i]) {
-                this.addCardToPaintingAtPosition(this.completePaintingMode.painting.artCards[i], i);
+        var _loop_3 = function (i) {
+            dojo.place(this_1.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
+            if (this_1.completePaintingMode.painting.artCards[i]) {
+                this_1.addCardToPaintingAtPosition(this_1.completePaintingMode.painting.artCards[i], i);
             }
+            if (i !== 2) {
+                dojo.connect($("art-cards-swap-".concat(i)), 'onclick', function () { return _this.swapArtCards(i); });
+            }
+        };
+        var this_1 = this;
+        for (var i = 0; i < 3; i++) {
+            _loop_3(i);
         }
         this.updateUnusedCards();
         this.updatePreview();
@@ -2706,7 +2713,7 @@ var PaintingManager = /** @class */ (function () {
         return "\n            <div id=\"complete-painting-preview\">\n                <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>".concat(_("Painting Preview"), "</h1></div></div>\n                <div id=\"complete-painting-preview-scoring\"></div>\n                <div id=\"complete-painting-preview-slot-wrapper\">\n                    <div id=\"complete-painting-preview-slot\" class=\"canvas-painting\"></div>   \n                </div>  \n            </div>\n        ");
     };
     PaintingManager.prototype.createArtCardSlot = function (id) {
-        return "\n            <div>\n                <div id=\"complete-painting-art-card-slot-".concat(id, "\" class=\"complete-painting-art-card-slot\"><span>").concat(id + 1, "</span></div>\n            </div>\n        ");
+        return "\n            <div>\n                <div class=\"button-wrapper center-overlap-button-wrapper\">\n                    <a id=\"art-cards-swap-".concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"").concat(id === 2 ? 'display: none;' : '', "\"><i class=\"fa fa-exchange\" aria-hidden=\"true\"></i></a>\n                </div>\n                <div id=\"complete-painting-art-card-slot-").concat(id, "\" class=\"complete-painting-art-card-slot\"><span>").concat(id + 1, "</span></div>\n            </div>\n        ");
     };
     PaintingManager.prototype.createBackgroundSlot = function () {
         return "\n            <div>\n                <div class=\"center-button-wrapper button-wrapper\"><a id=\"change-background-button\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-background-card-slot\" class=\"complete-painting-art-card-slot\"></div>\n            </div>\n        ";
@@ -2733,17 +2740,41 @@ var PaintingManager = /** @class */ (function () {
             .forEach(function (card) {
             var cardElement = _this.createArtCardElement(card);
             dojo.place(cardElement, "art-cards-picker-unused");
-            dojo.connect($(cardElement.id), 'onclick', function () { return _this.addCardToPainting(card); });
+            dojo.connect($(cardElement.id), 'onclick', function () {
+                _this.addCardToPainting(card);
+                _this.updateUnusedCards();
+                _this.updatePreview();
+            });
         });
+    };
+    PaintingManager.prototype.swapArtCards = function (i) {
+        var cardInPosition1 = this.completePaintingMode.painting.artCards[i];
+        var cardInPosition2 = this.completePaintingMode.painting.artCards[i + 1];
+        if (cardInPosition1) {
+            this.removeCardFromPainting(cardInPosition1);
+        }
+        if (cardInPosition2) {
+            this.removeCardFromPainting(cardInPosition2);
+        }
+        if (cardInPosition1) {
+            this.addCardToPaintingAtPosition(cardInPosition1, i + 1);
+        }
+        if (cardInPosition2) {
+            this.addCardToPaintingAtPosition(cardInPosition2, i);
+        }
+        this.updateUnusedCards();
+        this.updatePreview();
     };
     PaintingManager.prototype.addCardToPaintingAtPosition = function (card, index) {
         var _this = this;
         this.completePaintingMode.painting.artCards[index] = card;
         var cardElement = this.createArtCardElement(card);
         dojo.place(cardElement, "complete-painting-art-card-slot-".concat(index), 'only');
-        dojo.connect($(cardElement.id), 'onclick', function () { return _this.removeCardFromPainting(card); });
-        this.updateUnusedCards();
-        this.updatePreview();
+        dojo.connect($(cardElement.id), 'onclick', function () {
+            _this.removeCardFromPainting(card);
+            _this.updateUnusedCards();
+            _this.updatePreview();
+        });
     };
     PaintingManager.prototype.addCardToPainting = function (card) {
         var index = 0;
@@ -2759,8 +2790,6 @@ var PaintingManager = /** @class */ (function () {
         var index = this.completePaintingMode.painting.artCards.indexOf(card);
         this.completePaintingMode.painting.artCards[index] = undefined;
         dojo.place("<span>".concat(index + 1, "</span>"), "complete-painting-art-card-slot-".concat(index), 'only');
-        this.updateUnusedCards();
-        this.updatePreview();
     };
     PaintingManager.prototype.updatePreview = function () {
         this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large');
