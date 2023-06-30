@@ -9,7 +9,6 @@
     "allowJs": true
   },
   "files": [
-    "src/html2canvas.min.js",
     "src/bga/Framework.d.ts",
     "src/bga/Counter.d.ts",
     "src/bga/Define.ts",

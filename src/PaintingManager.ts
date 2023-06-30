@@ -281,48 +281,50 @@ class PaintingManager {
         myDlg.setTitle( _("Share your painting!") );
         myDlg.setContent(`<div id="${dialogContentId}" class="share-painting-dialog-content"><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>`);
         myDlg.show();
-
         this.createPaintingElement(painting.backgroundCard, painting.artCards, 'html2canvas-result', 'large', frame, true, this.canvasGame.getPlayer(painting.playerId).name);
+
         // @ts-ignore
-        html2canvas(document.querySelector("#html2canvas-result"), {scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true, backgroundColor: null}).then(canvas => {
-            const fileName = `my-canvas-painting-${new Date().getTime()}.png`;
-            const dataUrl = canvas.toDataURL("image/png");
-            dojo.empty(dialogContentId);
-            dojo.place(`<a id="change-frame-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-refresh" aria-hidden="true"></i></a>`, dialogContentId)
-            dojo.place(`<img src="${dataUrl}" crossorigin="anonymous" />`, dialogContentId)
-            dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking the buttons below")}</span>`, dialogContentId)
-            dojo.place(`<a id="download-painting-${painting.id}" class="bgabutton bgabutton_blue" href="${dataUrl}" download="${fileName}"><i class="fa fa-download" aria-hidden="true"></i></a>`, dialogContentId)
-            dojo.place(`<a id="share-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-share" aria-hidden="true"></i></a>`, dialogContentId)
-            dojo.connect($(`change-frame-${painting.id}`), 'onclick', async () => {
-                let nextFrameIndex = frame + 1;
-                nextFrameIndex = nextFrameIndex > 4 ? 1 : nextFrameIndex;
-                this.paintingToPng(painting, nextFrameIndex)
-            });
+        require([g_gamethemeurl + 'modules/html2canvas.js'], function(html2canvas) {
+            html2canvas(document.querySelector("#html2canvas-result"), {scale: 1, imageTimeout: 0, allowTaint: true, useCORS: true, backgroundColor: null}).then(canvas => {
+                const fileName = `my-canvas-painting-${new Date().getTime()}.png`;
+                const dataUrl = canvas.toDataURL("image/png");
+                dojo.empty(dialogContentId);
+                dojo.place(`<a id="change-frame-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-refresh" aria-hidden="true"></i></a>`, dialogContentId)
+                dojo.place(`<img src="${dataUrl}" crossorigin="anonymous" />`, dialogContentId)
+                dojo.place(`<span>${_("Share your #CanvasPainting with the world by clicking the buttons below")}</span>`, dialogContentId)
+                dojo.place(`<a id="download-painting-${painting.id}" class="bgabutton bgabutton_blue" href="${dataUrl}" download="${fileName}"><i class="fa fa-download" aria-hidden="true"></i></a>`, dialogContentId)
+                dojo.place(`<a id="share-painting-${painting.id}" class="bgabutton bgabutton_blue"><i class="fa fa-share" aria-hidden="true"></i></a>`, dialogContentId)
+                dojo.connect($(`change-frame-${painting.id}`), 'onclick', async () => {
+                    let nextFrameIndex = frame + 1;
+                    nextFrameIndex = nextFrameIndex > 4 ? 1 : nextFrameIndex;
+                    this.paintingToPng(painting, nextFrameIndex)
+                });
 
 
-            // Share Button
-            dojo.connect($(`share-painting-${painting.id}`), 'onclick', async () => {
-                const blob = await this.asBlob(dataUrl);
-                const data = {
-                    files: [
-                        new File([blob], fileName, {
-                            type: blob.type,
-                        }),
-                    ],
-                    title: 'Canvas Painting',
-                    text: 'Look at my #CanvasPainting. Play Canvas on BoardGameArena.com'
-                };
-                try {
-                    if (navigator.canShare && navigator.canShare(data)) {
-                        await navigator.share(data);
-                    } else {
-                        document.getElementById(`download-painting-${painting.id}`).click();
+                // Share Button
+                dojo.connect($(`share-painting-${painting.id}`), 'onclick', async () => {
+                    const blob = await this.asBlob(dataUrl);
+                    const data = {
+                        files: [
+                            new File([blob], fileName, {
+                                type: blob.type,
+                            }),
+                        ],
+                        title: 'Canvas Painting',
+                        text: 'Look at my #CanvasPainting. Play Canvas on BoardGameArena.com'
+                    };
+                    try {
+                        if (navigator.canShare && navigator.canShare(data)) {
+                            await navigator.share(data);
+                        } else {
+                            document.getElementById(`download-painting-${painting.id}`).click();
+                        }
+                    } catch (err) {
+                        console.error(err.name, err.message);
                     }
-                } catch (err) {
-                    console.error(err.name, err.message);
-                }
+                });
             });
-        });
+        }.bind(this));
     }
 
     private asBlob(dataUrl) : Promise<Blob> {
