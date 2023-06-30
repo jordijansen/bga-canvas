@@ -119,25 +119,21 @@ class ScoringCardManager extends APP_DbObject{
                 }
             } else if ($scoringCard->type == 'PROXIMITY') {
                 // Scores for each set of TEXTURE and TONE elements in adjacent swatches.
-                $foundTexture = false;
-                $foundTone = false;
+                $previousTexture = false;
+                $previousTone = false;
+
                 foreach ($allIcons as $swatch) {
-                    if (in_array(TEXTURE, $swatch) && $foundTone) {
+                    $foundTexture = in_array(TEXTURE, $swatch);
+                    $foundTone = in_array(TONE, $swatch);
+                    if ($foundTexture && $previousTone) {
                         $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
                     }
-                    if (in_array(TONE, $swatch) && $foundTexture) {
+                    if ($foundTone && $previousTexture) {
                         $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
-                        $foundTone = false;
-                    } else {
-                        $foundTone = in_array(TONE, $swatch);
-
                     }
 
-                    if (in_array(TEXTURE, $swatch) && $foundTone) {
-                        $foundTexture = false;
-                    } else {
-                        $foundTexture = in_array(TEXTURE, $swatch);
-                    }
+                    $previousTexture = $foundTexture && $previousTone ? false : $foundTexture;
+                    $previousTone = $foundTone && $previousTexture ? false : $foundTone;
                 }
             } else if ($scoringCard->type == 'PROPORTION') {
                 // Score sets of at least 3 of the same icons and 2 of the same icon. Can be 5 of the same icon as well.
@@ -148,13 +144,12 @@ class ScoringCardManager extends APP_DbObject{
                 $result[$scoringCard->location] = $result[$scoringCard->location] + $elementsWith5OrMoreCount;
                 if ($elementsWith3Or4Count == 1 && $elementsWith2Count == 1) {
                     $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
-                } else if ($elementsWith3Or4Count >= 2) {
-                    if ($elementsWith2Count == 0) {
-                        $result[$scoringCard->location] = $result[$scoringCard->location] + floor($elementsWith3Or4Count / 2);
-                    } else {
-                        $elementsWith3Or4CountRemaining = $elementsWith3Or4Count - $elementsWith2Count;
-                        $result[$scoringCard->location] = $result[$scoringCard->location] + $elementsWith2Count;
-                        $result[$scoringCard->location] = $result[$scoringCard->location] + floor($elementsWith3Or4CountRemaining / 2);
+                } else if ($elementsWith3Or4Count > 1) {
+                    $diff = abs($elementsWith3Or4Count - $elementsWith2Count);
+                    $sets = max($elementsWith3Or4Count, $elementsWith2Count) - $diff;
+                    $result[$scoringCard->location] = $result[$scoringCard->location] + $sets;
+                    if (max($elementsWith3Or4Count, $elementsWith2Count) == $elementsWith3Or4Count) {
+                        $result[$scoringCard->location] = $result[$scoringCard->location] + floor($diff / 2);
                     }
                 }
             }  else if ($scoringCard->type == 'REPETITION') {

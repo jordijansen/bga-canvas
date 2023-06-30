@@ -85,7 +85,7 @@ $game_options = [
             ],
             PAINTING_WITH_VINCENT_INCLUDED => [
                 'name' => 'enabled',
-                'description' => totranslate('In this variant, you play with a simulated, non-scoring player called Vincent. You can use this variant to increase the turnover of the available cards. Recommended for 2-player and solo tables, but can also be used in 3-player games'),
+                'description' => totranslate('In this variant, you play with a simulated, non-scoring player called Vincent. You can use this variant to increase the turnover of the available cards. Always included in Solo tables. Can be optionally included in 2 and 3-player tables.'),
             ]
         ],
         'displaycondition' => [
