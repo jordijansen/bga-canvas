@@ -379,7 +379,20 @@ class Canvas extends Table
 //        // Please add your future database scheme changes here
 //
 //
-
-
+        if( $from_version <= 2307011035 ) {
+            $newSchema = self::DbQuery('SHOW COLUMNS FROM `painting` LIKE \'red_ribbons\'')->num_rows === 1;
+            if (!$newSchema) {
+                $sql = "ALTER TABLE `painting` ADD `red_ribbons` TINYINT NOT NULL DEFAULT 0;";
+                self::applyDbUpgradeToAllDB($sql);
+                $sql = "ALTER TABLE `painting` ADD `green_ribbons` TINYINT NOT NULL DEFAULT 0;";
+                self::applyDbUpgradeToAllDB($sql);
+                $sql = "ALTER TABLE `painting` ADD `blue_ribbons` TINYINT NOT NULL DEFAULT 0;";
+                self::applyDbUpgradeToAllDB($sql);
+                $sql = "ALTER TABLE `painting` ADD `purple_ribbons` TINYINT NOT NULL DEFAULT 0;";
+                self::applyDbUpgradeToAllDB($sql);
+                $sql = "ALTER TABLE `painting` ADD `grey_ribbons` TINYINT NOT NULL DEFAULT 0;";
+                self::applyDbUpgradeToAllDB($sql);
+            }
+        }
     }    
 }

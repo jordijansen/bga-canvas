@@ -576,21 +576,6 @@ html, .mode_3d #game_play_area_background {
           justify-content: center;
           align-items: center;
         }
-
-        #complete-painting-preview-scoring {
-          display: flex;
-          gap: 20px;
-          margin-bottom: 20px;
-
-          .complete-painting-preview-scoring-ribbon {
-            font-family: Welcome2019, serif;
-            font-size: 50px;
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            line-height: 50px;
-          }
-        }
       }
     }
   }
@@ -609,13 +594,29 @@ html, .mode_3d #game_play_area_background {
       }
 
       .player-finished-paintings {
-        height: $portrait-card-height + 75px; // add button height
+        height: $portrait-card-height + 75px + 150px; // add button height + ribbons height
         display: flex;
         justify-content: center;
-        gap: 8px;
+        gap: 25px;
         text-align: center;
       }
     }
+  }
+}
+
+.canvas-painting-ribbons {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  height: 120px;
+
+  .canvas-painting-ribbons-ribbon {
+    font-family: Welcome2019, serif;
+    font-size: 50px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    line-height: 50px;
   }
 }
 
@@ -650,7 +651,10 @@ html, .mode_3d #game_play_area_background {
 }
 
 .canvas-painting {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
     .canvas-painting-cards-wrapper {
       width: $portrait-card-width;

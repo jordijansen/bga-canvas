@@ -79,6 +79,11 @@ CREATE TABLE IF NOT EXISTS `inspiration_token` (
 CREATE TABLE IF NOT EXISTS `painting` (
     `id` int(10) unsigned NOT NULL,
     `player_id` int(20) NOT NULL,
+    `red_ribbons` tinyint NOT NULL DEFAULT 0,
+    `green_ribbons` tinyint NOT NULL DEFAULT 0,
+    `blue_ribbons` tinyint NOT NULL DEFAULT 0,
+    `purple_ribbons` tinyint NOT NULL DEFAULT 0,
+    `grey_ribbons` tinyint NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 

@@ -2630,7 +2630,17 @@ var PaintingManager = /** @class */ (function () {
         var targetElementId = "player-finished-paintings-".concat(painting.playerId);
         var paintingElementId = "player-finished-painting-".concat(painting.id);
         var cardsWrapperId = "".concat(paintingElementId, "-cards-wrapper");
-        dojo.place("<div id=\"".concat(paintingElementId, "\" class=\"canvas-painting\">\n                            <div id=\"").concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>\n                         </div>"), showAnimation ? 'canvas-table' : targetElementId);
+        var ribbonsWrapperId = "".concat(paintingElementId, "-ribbons-wrapper");
+        dojo.place("<div id=\"".concat(paintingElementId, "\" class=\"canvas-painting\">\n                            <div id=\"").concat(ribbonsWrapperId, "\" style=\"color: white;\" class=\"canvas-painting-ribbons\"></div>\n                            <div id=\"").concat(cardsWrapperId, "\" class=\"canvas-painting-cards-wrapper\"></div>\n                         </div>"), showAnimation ? 'canvas-table' : targetElementId);
+        Object.entries(painting.ribbons)
+            .filter(function (_a) {
+            var key = _a[0], value = _a[1];
+            return value > 0;
+        })
+            .forEach(function (_a) {
+            var key = _a[0], value = _a[1];
+            dojo.place("<span class=\"canvas-painting-ribbons-ribbon\"><span>".concat(value, "</span><span class=\"canvas-ribbon\" data-type=\"").concat(key, "\"></span></span>"), ribbonsWrapperId);
+        });
         this.canvasGame.backgroundCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.backgroundCard);
         this.canvasGame.artCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.artCards);
         var element = $(paintingElementId);
@@ -2710,7 +2720,7 @@ var PaintingManager = /** @class */ (function () {
         return "\n            <div id=\"complete-painting-picker-wrapper\">\n                <div class=\"title-wrapper\"><div class=\"title\"><h1>".concat(_("Art Picker"), "</h1></div></div>\n                <div id=\"art-cards-picker\">\n                    <div id=\"art-cards-picker-bottom-text\"><h1>").concat(_("Back"), "</h1></div>\n                    <div id=\"art-cards-picker-top-text\"><h1>").concat(_("Front"), "</h1></div>\n                </div> \n                <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Unused Cards"), "</h1></div></div>\n                <div id=\"art-cards-picker-unused\">\n                    \n                </div> \n            </div>\n        ");
     };
     PaintingManager.prototype.createCompletePaintingPreviewElement = function () {
-        return "\n            <div id=\"complete-painting-preview\">\n                <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>".concat(_("Painting Preview"), "</h1></div></div>\n                <div id=\"complete-painting-preview-scoring\"></div>\n                <div id=\"complete-painting-preview-slot-wrapper\">\n                    <div id=\"complete-painting-preview-slot\" class=\"canvas-painting\"></div>   \n                </div>  \n            </div>\n        ");
+        return "\n            <div id=\"complete-painting-preview\">\n                <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>".concat(_("Painting Preview"), "</h1></div></div>\n                <div id=\"complete-painting-preview-scoring\" class=\"canvas-painting-ribbons\"></div>\n                <div id=\"complete-painting-preview-slot-wrapper\">\n                    <div id=\"complete-painting-preview-slot\" class=\"canvas-painting\"></div>   \n                </div>  \n            </div>\n        ");
     };
     PaintingManager.prototype.createArtCardSlot = function (id) {
         return "\n            <div>\n                <div class=\"button-wrapper center-overlap-button-wrapper\">\n                    <a id=\"art-cards-swap-".concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"").concat(id === 2 ? 'display: none;' : '', "\"><i class=\"fa fa-exchange\" aria-hidden=\"true\"></i></a>\n                </div>\n                <div id=\"complete-painting-art-card-slot-").concat(id, "\" class=\"complete-painting-art-card-slot\"><span>").concat(id + 1, "</span></div>\n            </div>\n        ");
@@ -2805,7 +2815,7 @@ var PaintingManager = /** @class */ (function () {
         dojo.empty($('complete-painting-preview-scoring'));
         Object.entries(args).forEach(function (_a) {
             var key = _a[0], value = _a[1];
-            dojo.place("<span class=\"complete-painting-preview-scoring-ribbon\"><span>".concat(value, "</span><span class=\"canvas-ribbon\" data-type=\"").concat(key, "\"></span></span>"), 'complete-painting-preview-scoring');
+            dojo.place("<span class=\"canvas-painting-ribbons-ribbon\"><span>".concat(value, "</span><span class=\"canvas-ribbon\" data-type=\"").concat(key, "\"></span></span>"), 'complete-painting-preview-scoring');
         });
     };
     PaintingManager.prototype.confirmPainting = function () {

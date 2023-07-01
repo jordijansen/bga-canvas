@@ -58,7 +58,6 @@ trait ActionTrait {
         if ($backgroundCard->location != ZONE_PLAYER_HAND || $backgroundCard->location_arg != $activePlayerId) {
             throw new BgaUserException("Background card not in your hand");
         }
-        $this->DbQuery("INSERT INTO painting (id, player_id) VALUES (".$backgroundCard->id.", ". $activePlayerId .")");
         $backgroundCard = $this->backgroundCardManager->addCardToPainting($backgroundCard->id, 0, $backgroundCard->id);
 
         $artCards = [];
@@ -77,6 +76,8 @@ trait ActionTrait {
 
         $paintingRibbons = $this->scoringCardManager->scorePainting($artCards, $this->getActivePlayerId());
         $this->ribbonManager->updateRibbons($activePlayerId, $paintingRibbons);
+
+        $this->paintingManager->createPainting($backgroundCard->id, $activePlayerId, $paintingRibbons);
 
         $paintingName = $this->paintingManager->getPaintingName($backgroundCard->id);
 

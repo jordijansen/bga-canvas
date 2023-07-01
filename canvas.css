@@ -1097,19 +1097,6 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   justify-content: center;
   align-items: center;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-preview #complete-painting-preview-scoring {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-preview #complete-painting-preview-scoring .complete-painting-preview-scoring-ribbon {
-  font-family: Welcome2019, serif;
-  font-size: 50px;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  line-height: 50px;
-}
 #canvas-table #player-areas {
   display: flex;
   justify-content: center;
@@ -1124,11 +1111,26 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   height: 425px;
 }
 #canvas-table #player-areas .player-area .player-finished-paintings {
-  height: 500px;
+  height: 650px;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 25px;
   text-align: center;
+}
+
+.canvas-painting-ribbons {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  height: 120px;
+}
+.canvas-painting-ribbons .canvas-painting-ribbons-ribbon {
+  font-family: Welcome2019, serif;
+  font-size: 50px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  line-height: 50px;
 }
 
 .canvas-frame {
@@ -1161,7 +1163,10 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 
 .canvas-painting {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .canvas-painting .canvas-painting-cards-wrapper {
   width: 250px;

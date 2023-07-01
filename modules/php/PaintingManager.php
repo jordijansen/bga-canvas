@@ -10,8 +10,9 @@ class PaintingManager extends APP_DbObject {
         $this->game = $game;
     }
 
-    public function createPainting($backgroundCardId, $playerId) {
-        $this->DbQuery("INSERT INTO painting (id, player_id) VALUES (".$backgroundCardId.", ". $playerId .")");
+    public function createPainting($backgroundCardId, $playerId, $paintingRibbons) {
+        $this->DbQuery("INSERT INTO painting (id, player_id, red_ribbons, green_ribbons, blue_ribbons, purple_ribbons, grey_ribbons) 
+                            VALUES (".$backgroundCardId.", ". $playerId .", " .$paintingRibbons['red'].", " .$paintingRibbons['green'].", " .$paintingRibbons['blue'].", " .$paintingRibbons['purple'].", " .$paintingRibbons['grey'] . ")");
     }
 
     public function countAllPaintings(): int

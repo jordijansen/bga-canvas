@@ -22,7 +22,8 @@ interface Painting {
     id: number,
     playerId: number,
     backgroundCard: Card,
-    artCards: Card[]
+    artCards: Card[],
+    ribbons: {[scoringType: string]: number}
 }
 
 interface CanvasGameData extends GameData {

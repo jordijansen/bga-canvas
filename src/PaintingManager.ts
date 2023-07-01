@@ -33,9 +33,17 @@ class PaintingManager {
         const targetElementId = `player-finished-paintings-${painting.playerId}`;
         const paintingElementId = `player-finished-painting-${painting.id}`;
         const cardsWrapperId = `${paintingElementId}-cards-wrapper`;
+        const ribbonsWrapperId = `${paintingElementId}-ribbons-wrapper`;
         dojo.place(`<div id="${paintingElementId}" class="canvas-painting">
+                            <div id="${ribbonsWrapperId}" style="color: white;" class="canvas-painting-ribbons"></div>
                             <div id="${cardsWrapperId}" class="canvas-painting-cards-wrapper"></div>
                          </div>`, showAnimation ? 'canvas-table' : targetElementId);
+
+        Object.entries(painting.ribbons)
+            .filter(([key, value]) => value > 0)
+            .forEach(([key, value]) => {
+                dojo.place(`<span class="canvas-painting-ribbons-ribbon"><span>${value}</span><span class="canvas-ribbon" data-type="${key}"></span></span>`, ribbonsWrapperId);
+            })
 
         this.canvasGame.backgroundCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.backgroundCard);
         this.canvasGame.artCardManager.createPaintingStock(painting.id, cardsWrapperId, painting.artCards);
@@ -138,7 +146,7 @@ class PaintingManager {
         return `
             <div id="complete-painting-preview">
                 <div class="title-wrapper"><div class="title secondary"><h1>${_("Painting Preview")}</h1></div></div>
-                <div id="complete-painting-preview-scoring"></div>
+                <div id="complete-painting-preview-scoring" class="canvas-painting-ribbons"></div>
                 <div id="complete-painting-preview-slot-wrapper">
                     <div id="complete-painting-preview-slot" class="canvas-painting"></div>   
                 </div>  
@@ -260,7 +268,7 @@ class PaintingManager {
     public updatePreviewScore(args: NotifPaintingScored) {
         dojo.empty($('complete-painting-preview-scoring'));
         Object.entries(args).forEach(([key, value]) => {
-            dojo.place(`<span class="complete-painting-preview-scoring-ribbon"><span>${value}</span><span class="canvas-ribbon" data-type="${key}"></span></span>`, 'complete-painting-preview-scoring');
+            dojo.place(`<span class="canvas-painting-ribbons-ribbon"><span>${value}</span><span class="canvas-ribbon" data-type="${key}"></span></span>`, 'complete-painting-preview-scoring');
         })
     }
 
