@@ -243,7 +243,7 @@ class ScoringCardManager extends APP_DbObject{
         $scoreBreakdown = $this->getScoreBreakDown($playerId);
         $playerScore = array_sum(array_values($scoreBreakdown));
         $playerScoreAux = sizeof($this->game->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId));
-        $this->DbQuery("UPDATE player SET player_score = ".$playerScore.", player_score_aux = ".$playerScoreAux." WHERE player_id = ". $playerId);
+        $this->game->updatePlayerScoreAndAux($playerId, $playerScore, $playerScoreAux);
         return $playerScore;
     }
 

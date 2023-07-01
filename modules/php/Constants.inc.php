@@ -32,6 +32,14 @@ const PAINTING_WITH_VINCENT_OPTION = 'painting_with_vincent';
 const PAINTING_WITH_VINCENT_EXCLUDED = 0;
 const PAINTING_WITH_VINCENT_INCLUDED = 1;
 
+const SOLO_MODE_DIFFICULTY_ID = 120;
+const SOLO_MODE_DIFFICULTY = 'solo_mode_difficulty';
+const SOLO_MODE_EASY = 25;
+const SOLO_MODE_NORMAL = 30;
+const SOLO_MODE_HARD = 35;
+const SOLO_MODE_MASTER = 40;
+
+
 /**
  * State
  */

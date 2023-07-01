@@ -24,6 +24,14 @@ trait StateTrait {
         $totalPaintingCount = $this->paintingManager->countAllPaintings();
 
         if (intval($totalPaintingCount) == ($this->getPlayersNumber() * NR_OF_PAINTINGS_PER_PLAYER)) {
+            if ($this->getPlayersNumber() == 1) {
+                $playerScore = intval($this->getPlayerScore($this->getActivePlayerId()));
+                if ($playerScore < $this->getSoloScoreToBeat()) {
+                    $negatedScore = -$playerScore;
+                    $this->updatePlayerScore($this->getActivePlayerId(), $negatedScore);
+                }
+            }
+
             $this->gamestate->nextState( ST_GAME_END);
         } else {
             // Find the next player, a player is skipped if they've created 3 paintings already.

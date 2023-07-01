@@ -207,17 +207,6 @@ class Canvas implements CanvasGame {
         }
     }
 
-
-    private wrapInConfirm(runnable: () => void) {
-        if (this.isAskForConfirmation()) {
-            (this as any).confirmationDialog(_("This action can not be undone. Are you sure?"), () => {
-                runnable();
-            });
-        } else {
-            runnable();
-        }
-    }
-
     ///////////////////////////////////////////////////
     //// Utility methods
     ///////////////////////////////////////////////////
@@ -257,6 +246,16 @@ class Canvas implements CanvasGame {
 
     private isAskForConfirmation() {
         return true; // For now always ask for confirmation, might make this a preference later on.
+    }
+
+    private wrapInConfirm(runnable: () => void) {
+        if (this.isAskForConfirmation()) {
+            (this as any).confirmationDialog(_("This action can not be undone. Are you sure?"), () => {
+                runnable();
+            });
+        } else {
+            runnable();
+        }
     }
 
     ///////////////////////////////////////////////////
@@ -333,6 +332,9 @@ class Canvas implements CanvasGame {
             this.playerManager.createVincentPlayerPanel();
             this.inspirationTokenManager.setUpVincent(this.gamedatas.vincent.inspirationTokens);
             this.artCardManager.setUpVincent();
+        }
+        if (this.gamedatas.soloScoreToBeat) {
+            this.playerManager.createSoloScoreToBeatPanel(this.gamedatas.soloScoreToBeat);
         }
     }
     public format_string_recursive(log: string, args: any) {

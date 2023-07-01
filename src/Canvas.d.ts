@@ -30,6 +30,7 @@ interface CanvasGameData extends GameData {
     displayInspirationTokens: Token[],
     scoringCards: ScoringCard[]
     vincent: {active: boolean, inspirationTokens: Token[]}
+    soloScoreToBeat: number
 }
 
 interface CanvasPlayer extends Player {

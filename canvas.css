@@ -889,6 +889,18 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-image: url("img/canvas-inspiration-token-3d.png");
 }
 
+.canvas-score-crosshair {
+  background-size: cover;
+  background-image: url("img/canvas-solo-goal-crosshair.png");
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  font-size: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 #bga-zoom-controls {
   display: flex;
   flex-direction: column-reverse;
@@ -1319,6 +1331,12 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   display: block;
   text-align: center;
   font-size: 40px;
+}
+
+#overall-solo-score-to-beat .player_board_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #canvas-show-painting-overlay {

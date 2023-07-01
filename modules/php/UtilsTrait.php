@@ -54,9 +54,22 @@ trait UtilsTrait {
         return $this->getCollectionFromDB("SELECT * FROM player");
     }
 
-    function getPlayerNo(int $playerId) {
+    function getPlayerNo($playerId) {
         return $this->getUniqueValueFromDB("SELECT player_no FROM player WHERE player_id = $playerId");
     }
+
+    function getPlayerScore(int $playerId) {
+        return $this->getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $playerId");
+    }
+
+    function updatePlayerScoreAndAux(int $playerId, int $playerScore, int $playerScoreAux = 0) {
+        $this->DbQuery("UPDATE player SET player_score = ".$playerScore.", player_score_aux = ".$playerScoreAux." WHERE player_id = ". $playerId);
+    }
+
+    function updatePlayerScore(int $playerId, int $playerScore) {
+        $this->DbQuery("UPDATE player SET player_score = ".$playerScore." WHERE player_id = ". $playerId);
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////
     //////////// Canvas Utility functions
@@ -78,5 +91,15 @@ trait UtilsTrait {
     {
         // Painting with Vincent is included if the players choose so, or if there is only 1 player
         return $this->getGameStateValue(PAINTING_WITH_VINCENT_OPTION) == PAINTING_WITH_VINCENT_INCLUDED || $this->getPlayersNumber() == 1;
+    }
+
+    function getSoloScoreToBeat(): int
+    {
+        $scoringCardOption = $this->getGameStateValue(SCORING_CARDS_OPTION);
+        if ($scoringCardOption == SCORING_CARDS_STANDARD) {
+            return $this->getGameStateValue(SOLO_MODE_DIFFICULTY);
+        } else {
+            return $this->SOLO_MODE_SCENARIO_GOAL_SCORES[$scoringCardOption];
+        }
     }
 }

@@ -95,6 +95,40 @@ $game_options = [
             ]
         ]
     ],
+
+    SOLO_MODE_DIFFICULTY_ID => [
+        'name' => totranslate('Difficulty'),
+        'values' => [
+            SOLO_MODE_NORMAL => [
+                'default' => true,
+                'name' => totranslate('Normal'),
+                'description' => totranslate('Score to beat: 30'),
+            ],
+            SOLO_MODE_EASY => [
+                'name' => totranslate('Easy'),
+                'description' => totranslate('Score to beat: 25'),
+            ],
+            SOLO_MODE_HARD => [
+                'name' => totranslate('Hard'),
+                'description' => totranslate('Score to beat: 35'),
+            ],
+            SOLO_MODE_MASTER => [
+                'name' => totranslate('Master'),
+                'description' => totranslate('Score to beat: 40'),
+            ],
+        ],
+        'displaycondition' => [
+            [
+                'type' => 'minplayers',
+                'value' => [1]
+            ],
+            [
+                'type' => 'otheroption',
+                'id' => SCORING_CARDS_OPTION_ID,
+                'value' => [SCORING_CARDS_STANDARD]
+            ],
+        ]
+    ],
 ];
 
 

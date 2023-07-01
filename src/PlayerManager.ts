@@ -27,12 +27,9 @@ class PlayerManager  {
                 lastPlayerId = this.game.gamedatas.players[playersKey].id;
             }
         }
-        console.log(lastPlayerId);
         dojo.place(`<div id="overall_vincent_board" class="player-board" style="height: auto;">
                                     <div class="player_board_inner">
-                                            <div class="player-name">
-                                               ${_('Vincent')}
-                                            </div>
+                                            <h1 style="text-align: center;">Vincent</h1>
                                             <div class="player_board_content">
                                                 ${this.createCanvasCounterWrapper('vincent')}
                                                 <div id="vincent-card-stock"></div>
@@ -40,6 +37,17 @@ class PlayerManager  {
                                     </div>
                                 </div>`, `overall_player_board_${lastPlayerId}`, 'after');
 
+    }
+
+    public createSoloScoreToBeatPanel(soloScoreToBeat: number) {
+        dojo.place(`<div id="overall-solo-score-to-beat" class="player-board" style="height: auto;">
+                                    <div class="player_board_inner">
+                                            <div class="player_board_content">
+                                                <h1 style="text-align: center;">${_('Goal Score')}</h1>
+                                                <span class="canvas-score-crosshair">${soloScoreToBeat}</span>
+                                            </div>
+                                    </div>
+                                </div>`, `player_boards`, 'first');
     }
 
     private createPlayerArea(player: CanvasPlayer) {

@@ -65,7 +65,8 @@ class Canvas extends Table
         
         self::initGameStateLabels( array(
             SCORING_CARDS_OPTION => SCORING_CARDS_OPTION_ID,
-            PAINTING_WITH_VINCENT_OPTION => PAINTING_WITH_VINCENT_OPTION_ID
+            PAINTING_WITH_VINCENT_OPTION => PAINTING_WITH_VINCENT_OPTION_ID,
+            SOLO_MODE_DIFFICULTY => SOLO_MODE_DIFFICULTY_ID
         ));
 
         $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"), $this->ART_CARDS);
@@ -184,6 +185,9 @@ class Canvas extends Table
         $result['vincent']['active'] = $this->isPaintingWithVincent();
         if ($this->isPaintingWithVincent()) {
             $result['vincent']['inspirationTokens'] = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, ZONE_PLAYER_HAND_VINCENT);
+        }
+        if ($this->getPlayersNumber() == 1) {
+            $result['soloScoreToBeat'] = $this->getSoloScoreToBeat();
         }
 
         return $result;

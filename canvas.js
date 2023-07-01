@@ -2961,8 +2961,10 @@ var PlayerManager = /** @class */ (function () {
                 lastPlayerId = this.game.gamedatas.players[playersKey].id;
             }
         }
-        console.log(lastPlayerId);
-        dojo.place("<div id=\"overall_vincent_board\" class=\"player-board\" style=\"height: auto;\">\n                                    <div class=\"player_board_inner\">\n                                            <div class=\"player-name\">\n                                               ".concat(_('Vincent'), "\n                                            </div>\n                                            <div class=\"player_board_content\">\n                                                ").concat(this.createCanvasCounterWrapper('vincent'), "\n                                                <div id=\"vincent-card-stock\"></div>\n                                            </div>\n                                    </div>\n                                </div>"), "overall_player_board_".concat(lastPlayerId), 'after');
+        dojo.place("<div id=\"overall_vincent_board\" class=\"player-board\" style=\"height: auto;\">\n                                    <div class=\"player_board_inner\">\n                                            <h1 style=\"text-align: center;\">Vincent</h1>\n                                            <div class=\"player_board_content\">\n                                                ".concat(this.createCanvasCounterWrapper('vincent'), "\n                                                <div id=\"vincent-card-stock\"></div>\n                                            </div>\n                                    </div>\n                                </div>"), "overall_player_board_".concat(lastPlayerId), 'after');
+    };
+    PlayerManager.prototype.createSoloScoreToBeatPanel = function (soloScoreToBeat) {
+        dojo.place("<div id=\"overall-solo-score-to-beat\" class=\"player-board\" style=\"height: auto;\">\n                                    <div class=\"player_board_inner\">\n                                            <div class=\"player_board_content\">\n                                                <h1 style=\"text-align: center;\">".concat(_('Goal Score'), "</h1>\n                                                <span class=\"canvas-score-crosshair\">").concat(soloScoreToBeat, "</span>\n                                            </div>\n                                    </div>\n                                </div>"), "player_boards", 'first');
     };
     PlayerManager.prototype.createPlayerArea = function (player) {
         return "<div id=\"player-area-".concat(player.id, "\" class=\"player-area whiteblock\">\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(player.name).concat(_("'s Art Collection"), "</h1></div></div>\n                    <div id=\"player-inspiration-tokens-").concat(player.id, "\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(_("Hand Cards"), "</h1></div></div>\n                    <div id=\"player-hand-").concat(player.id, "\" class=\"player-hand\"></div>\n                    <div class=\"title-wrapper\"><div class=\"title color-").concat(player.color, "\"><h1>").concat(_("Finished Paintings"), "</h1></div></div>\n                    <div id=\"player-finished-paintings-").concat(player.id, "\" class=\"player-finished-paintings\"></div>\n                    <div id=\"player-background-").concat(player.id, "\" style=\"display: none;\"></div>\n                </div>");
@@ -3133,16 +3135,6 @@ var Canvas = /** @class */ (function () {
             this.paintingManager.enterCompletePaintingMode(this.backgroundCardManager.getPlayerCards(this.getPlayerId()), this.artCardManager.getPlayerCards(this.getPlayerId()));
         }
     };
-    Canvas.prototype.wrapInConfirm = function (runnable) {
-        if (this.isAskForConfirmation()) {
-            this.confirmationDialog(_("This action can not be undone. Are you sure?"), function () {
-                runnable();
-            });
-        }
-        else {
-            runnable();
-        }
-    };
     ///////////////////////////////////////////////////
     //// Utility methods
     ///////////////////////////////////////////////////
@@ -3178,6 +3170,16 @@ var Canvas = /** @class */ (function () {
     };
     Canvas.prototype.isAskForConfirmation = function () {
         return true; // For now always ask for confirmation, might make this a preference later on.
+    };
+    Canvas.prototype.wrapInConfirm = function (runnable) {
+        if (this.isAskForConfirmation()) {
+            this.confirmationDialog(_("This action can not be undone. Are you sure?"), function () {
+                runnable();
+            });
+        }
+        else {
+            runnable();
+        }
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
@@ -3245,6 +3247,9 @@ var Canvas = /** @class */ (function () {
             this.playerManager.createVincentPlayerPanel();
             this.inspirationTokenManager.setUpVincent(this.gamedatas.vincent.inspirationTokens);
             this.artCardManager.setUpVincent();
+        }
+        if (this.gamedatas.soloScoreToBeat) {
+            this.playerManager.createSoloScoreToBeatPanel(this.gamedatas.soloScoreToBeat);
         }
     };
     Canvas.prototype.format_string_recursive = function (log, args) {
