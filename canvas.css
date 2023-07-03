@@ -431,7 +431,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-image: url("img/canvas-white-background.png");
   font-family: "Welcome2019", cursive;
   font-size: 18px;
-  background-size: 500%;
+  background-size: 100%;
 }
 
 .bgabutton.bgabutton_blue, .bgabutton.bgabutton_blue:hover {
@@ -995,7 +995,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 #canvas-table #complete-painting-wrapper #complete-painting {
   width: 2000px;
   background-image: url("img/canvas-white-background.png");
-  background-size: cover;
+  background-size: 25%;
   display: flex;
   border-radius: 25px;
   justify-content: center;
