@@ -11,8 +11,14 @@ class PaintingManager extends APP_DbObject {
     }
 
     public function createPainting($backgroundCardId, $playerId, $paintingRibbons) {
+        $redRibbons = array_key_exists('red', $paintingRibbons) ? $paintingRibbons['red'] : 0;
+        $greenRibbons = array_key_exists('green', $paintingRibbons) ? $paintingRibbons['green'] : 0;
+        $blueRibbons = array_key_exists('blue', $paintingRibbons) ? $paintingRibbons['blue'] : 0;
+        $purpleRibbons = array_key_exists('purple', $paintingRibbons) ? $paintingRibbons['purple'] : 0;
+        $greyRibbons = array_key_exists('grey', $paintingRibbons) ? $paintingRibbons['grey'] : 0;
+
         $this->DbQuery("INSERT INTO painting (id, player_id, red_ribbons, green_ribbons, blue_ribbons, purple_ribbons, grey_ribbons) 
-                            VALUES (".$backgroundCardId.", ". $playerId .", " .$paintingRibbons['red'].", " .$paintingRibbons['green'].", " .$paintingRibbons['blue'].", " .$paintingRibbons['purple'].", " .$paintingRibbons['grey'] . ")");
+                            VALUES (".$backgroundCardId.", ". $playerId .", " .$redRibbons.", " .$greenRibbons.", " .$blueRibbons.", " .$purpleRibbons.", " .$greyRibbons. ")");
     }
 
     public function countAllPaintings(): int
