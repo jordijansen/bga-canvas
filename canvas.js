@@ -3057,7 +3057,7 @@ var Canvas = /** @class */ (function () {
         }
     };
     Canvas.prototype.onEnteringCompletePainting = function (args) {
-        if (this.isCurrentPlayerActive()) {
+        if (!this.isReadOnly() && this.isCurrentPlayerActive()) {
             if (!this.paintingManager.isCompletePaintingMode) {
                 this.toggleCompletePaintingTool();
             }
@@ -3233,7 +3233,9 @@ var Canvas = /** @class */ (function () {
         return this.artCardManager.updateDisplayCards(args.displayCards);
     };
     Canvas.prototype.notif_paintingScored = function (args) {
-        this.paintingManager.updatePreviewScore(args);
+        if (this.paintingManager.isCompletePaintingMode) {
+            this.paintingManager.updatePreviewScore(args);
+        }
     };
     Canvas.prototype.notif_paintingCompleted = function (args) {
         var _this = this;
@@ -3267,7 +3269,7 @@ var Canvas = /** @class */ (function () {
         try {
             if (log && args && !args.processed) {
                 Object.keys(args).forEach(function (argKey) {
-                    if (argKey.startsWith('ribbonIcons')) {
+                    if (argKey.startsWith('ribbonIcons') && typeof args[argKey] == 'object') {
                         var ribbons_1 = [];
                         Object.keys(args[argKey]).forEach(function (key) {
                             for (var i = 0; i < args[argKey][key]; i++) {

@@ -105,7 +105,7 @@ class Canvas implements CanvasGame {
     }
 
     private onEnteringCompletePainting(args: CompletePaintingArgs) {
-        if ((this as any).isCurrentPlayerActive()) {
+        if (!this.isReadOnly() && (this as any).isCurrentPlayerActive()) {
             if (!this.paintingManager.isCompletePaintingMode) {
                 this.toggleCompletePaintingTool();
             }
@@ -306,7 +306,9 @@ class Canvas implements CanvasGame {
     }
 
     notif_paintingScored(args: NotifPaintingScored) {
-        this.paintingManager.updatePreviewScore(args)
+        if (this.paintingManager.isCompletePaintingMode) {
+            this.paintingManager.updatePreviewScore(args)
+        }
     }
 
     notif_paintingCompleted(args: NotifPaintingCompleted) {
@@ -341,7 +343,7 @@ class Canvas implements CanvasGame {
         try {
             if (log && args && !args.processed) {
                 Object.keys(args).forEach(argKey => {
-                    if (argKey.startsWith('ribbonIcons')) {
+                    if (argKey.startsWith('ribbonIcons') && typeof args[argKey] == 'object') {
                         const ribbons = [];
                         Object.keys(args[argKey]).forEach(key => {
                             for (let i = 0; i < args[argKey][key]; i++) {
