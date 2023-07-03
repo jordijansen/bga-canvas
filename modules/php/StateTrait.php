@@ -31,7 +31,7 @@ trait StateTrait {
                     $this->updatePlayerScore($this->getActivePlayerId(), $negatedScore);
                 }
             }
-
+            $this->setEndGameStats();
             $this->gamestate->nextState( ST_GAME_END);
         } else {
             // Find the next player, a player is skipped if they've created 3 paintings already.

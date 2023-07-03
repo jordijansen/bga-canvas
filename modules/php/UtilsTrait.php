@@ -1,5 +1,6 @@
 <?php
 
+use objects\Painting;
 use objects\Undo;
 
 trait UtilsTrait {
@@ -100,6 +101,39 @@ trait UtilsTrait {
             return $this->getGameStateValue(SOLO_MODE_DIFFICULTY);
         } else {
             return $this->SOLO_MODE_SCENARIO_GOAL_SCORES[$scoringCardOption];
+        }
+    }
+
+    function setEndGameStats()
+    {
+        $this->setStat(intval($this->getUniqueValueFromDB("SELECT sum(number) / (SELECT count(1) FROM painting) FROM ribbon")), TABLE_NUMBER_OF_RIBBONS_PER_PAINTING);
+
+        foreach ($this->getPlayers() as $player) {
+            $playerId = intval($player['player_id']);
+            $inspirationTokens = $this->inspirationTokenManager->getTokensInLocation(ZONE_PLAYER_HAND, $playerId);
+            $this->setStat(sizeof($inspirationTokens), PLAYER_INSPIRATION_TOKENS,  $playerId);
+
+            $paintings = $this->paintingManager->getPaintings($playerId);
+            $ribbonCount = 0;
+            /** @var Painting $painting */
+            foreach ($paintings as $painting) {
+                foreach ($painting->ribbons as $ribbonType => $nrOfRibbons) {
+                    $ribbonCount += $nrOfRibbons;
+                }
+            }
+            $this->setStat($ribbonCount / sizeof($paintings), PLAYER_NUMBER_OF_RIBBONS_PER_PAINTING, $playerId);
+
+            $ribbons = $this->ribbonManager->getRibbonsForPlayer($playerId);
+
+            /** @var ScoringCard $scoringCard */
+            foreach ($this->scoringCardManager->getAllScoringCards() as $scoringCard) {
+                $statName = 'PLAYER_RIBBONS_' .$scoringCard->type;
+                $nrOfRibbons = $ribbons[$scoringCard->location];
+
+                $this->setStat($nrOfRibbons, $statName, $playerId);
+            }
+
+            $this->setStat($ribbons[SCORING_GREY], PLAYER_RIBBONS_GREY, $playerId);
         }
     }
 }

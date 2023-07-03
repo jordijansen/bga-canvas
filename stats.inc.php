@@ -46,50 +46,96 @@
     * Statistic name is the English description of the statistic as shown to players
     
 */
+require_once(__DIR__.'/modules/php/Constants.inc.php');
 
-$stats_type = array(
+$stats_type = [
 
     // Statistics global to table
-    "table" => array(
+    "table" => [
+        TABLE_NUMBER_OF_RIBBONS_PER_PAINTING => [
+            "id"=> TABLE_NUMBER_OF_RIBBONS_PER_PAINTING_ID,
+            "name" => totranslate("Ribbons per painting"),
+            "type" => "float"
+        ],
+    ],
 
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-
-/*
-        Examples:
-
-
-        "table_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("table test stat 1"), 
-                                "type" => "int" ),
-                                
-        "table_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("table test stat 2"), 
-                                "type" => "float" )
-*/  
-    ),
-    
     // Statistics existing for each player
-    "player" => array(
+    "player" => [
+        PLAYER_INSPIRATION_TOKENS => [
+            "id"=> PLAYER_INSPIRATION_TOKENS_ID,
+            "name" => totranslate("Inspiration tokens remaining"),
+            "type" => "int"
+        ],
+        PLAYER_NUMBER_OF_RIBBONS_PER_PAINTING => [
+            "id"=> PLAYER_NUMBER_OF_RIBBONS_PER_PAINTING_ID,
+            "name" => totranslate("Ribbons per painting"),
+            "type" => "float"
+        ],
+        PLAYER_RIBBONS_GREY => [
+            "id"=> PLAYER_RIBBONS_GREY_ID,
+            "name" => totranslate("Grey Ribbons"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_COMPOSITION => [
+            "id"=> PLAYER_RIBBONS_COMPOSITION_ID,
+            "name" => totranslate("Ribbons for Composition"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_CONSISTENCY => [
+            "id"=> PLAYER_RIBBONS_CONSISTENCY_ID,
+            "name" => totranslate("Ribbons for Consistency"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_EMPHASIS => [
+            "id"=> PLAYER_RIBBONS_EMPHASIS_ID,
+            "name" => totranslate("Ribbons for Emphasis"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_HIERARCHY => [
+            "id"=> PLAYER_RIBBONS_HIERARCHY_ID,
+            "name" => totranslate("Ribbons for Hierarchy"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_MOVEMENT => [
+            "id"=> PLAYER_RIBBONS_MOVEMENT_ID,
+            "name" => totranslate("Ribbons for Movement"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_PROXIMITY => [
+            "id"=> PLAYER_RIBBONS_PROXIMITY_ID,
+            "name" => totranslate("Ribbons for Proximity"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_PROPORTION => [
+            "id"=> PLAYER_RIBBONS_PROPORTION_ID,
+            "name" => totranslate("Ribbons for Proportion"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_REPETITION => [
+            "id"=> PLAYER_RIBBONS_REPETITION_ID,
+            "name" => totranslate("Ribbons for Proportion"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_SPACE => [
+            "id"=> PLAYER_RIBBONS_SPACE_ID,
+            "name" => totranslate("Ribbons for Space"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_STYLE => [
+            "id"=> PLAYER_RIBBONS_STYLE_ID,
+            "name" => totranslate("Ribbons for Space"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_SYMMETRY => [
+            "id"=> PLAYER_RIBBONS_SYMMETRY_ID,
+            "name" => totranslate("Ribbons for Symmetry"),
+            "type" => "int"
+        ],
+        PLAYER_RIBBONS_VARIETY => [
+            "id"=> PLAYER_RIBBONS_VARIETY_ID,
+            "name" => totranslate("Ribbons for Variety"),
+            "type" => "int"
+        ],
+    ]
 
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
-                    "type" => "int" ),
-    
-/*
-        Examples:    
-        
-        
-        "player_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("player test stat 1"), 
-                                "type" => "int" ),
-                                
-        "player_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("player test stat 2"), 
-                                "type" => "float" )
-
-*/    
-    )
-
-);
+];
