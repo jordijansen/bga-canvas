@@ -2427,14 +2427,8 @@ var ScoringCardManager = /** @class */ (function (_super) {
                 div.classList.add('canvas-scoring-card');
                 div.dataset.id = '' + card.id;
             },
-            setupFrontDiv: function (card, div) {
-                div.id = "".concat(_this.getId(card), "-front");
-                div.dataset.type = '' + card.type_arg;
-            },
-            setupBackDiv: function (card, div) {
-                div.id = "".concat(_this.getId(card), "-back");
-                div.dataset.type = '' + card.type_arg;
-            },
+            setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
+            setupBackDiv: function (card, div) { return _this.setupBackDiv(card, div); },
             cardWidth: CARD_WIDTH,
             cardHeight: CARD_HEIGHT,
         }) || this;
@@ -2449,10 +2443,51 @@ var ScoringCardManager = /** @class */ (function (_super) {
             slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple', 'scoring-card-display-slot-grey'],
         });
         this.display.onCardClick = function (card) { return _this.flipCard(card); };
-        gameData.scoringCards.forEach(function (card) { return _this.display.addCard(card); });
+        gameData.scoringCards.forEach(function (card) { return _this.display.addCard(card).then(function () {
+            _this.canvasGame.setTooltip(_this.getId(card), _this.formatDescription(card.description));
+        }); });
     };
     ScoringCardManager.prototype.getCardForType = function (type) {
         return this.display.getCards().find(function (card) { return card.location === type; });
+    };
+    ScoringCardManager.prototype.setupFrontDiv = function (card, div) {
+        div.id = "".concat(this.getId(card), "-front");
+        div.dataset.type = '' + card.type_arg;
+        if (div.getElementsByClassName('scoring-card-title').length === 0) {
+            var title = document.createElement('div');
+            title.classList.add('scoring-card-title');
+            var titleText = document.createTextNode(_(card.name));
+            title.appendChild(titleText);
+            div.appendChild(title);
+        }
+    };
+    ScoringCardManager.prototype.setupBackDiv = function (card, div) {
+        div.id = "".concat(this.getId(card), "-back");
+        div.dataset.type = '' + card.type_arg;
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        if (div.getElementsByClassName('scoring-card-clarifications').length === 0) {
+            var clarifications = document.createElement('div');
+            clarifications.classList.add('scoring-card-clarifications');
+            var clarificationsText = document.createTextNode(_("Clarifications"));
+            clarifications.appendChild(clarificationsText);
+            div.appendChild(clarifications);
+            var description = document.createElement('div');
+            description.classList.add('scoring-card-description');
+            description.innerHTML = this.formatDescription(card.description);
+            div.appendChild(description);
+            var examples = document.createElement('div');
+            examples.classList.add('scoring-card-examples');
+            var examplesText = document.createTextNode(_("Examples"));
+            examples.appendChild(examplesText);
+            div.appendChild(examples);
+        }
+    };
+    ScoringCardManager.prototype.formatDescription = function (description) {
+        //@ts-ignore
+        return bga_format(_(description), {
+            '_': function (t) { return "<span class=\"canvas-element-icon ".concat(t, "\"></span>"); }
+        });
     };
     return ScoringCardManager;
 }(CardManager));

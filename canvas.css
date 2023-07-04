@@ -429,9 +429,11 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 
 .player-board {
   background-image: url("img/canvas-white-background.png");
+  background-size: 100%;
+}
+.player-board#overall-solo-score-to-beat, .player-board#overall_vincent_board {
   font-family: "Welcome2019", cursive;
   font-size: 18px;
-  background-size: 100%;
 }
 
 .bgabutton.bgabutton_blue, .bgabutton.bgabutton_blue:hover {
@@ -773,11 +775,59 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   pointer-events: none;
   user-select: none;
 }
+.canvas-element-icon {
+  background-image: url("img/canvas-element-icons.png");
+  background-size: cover;
+  height: 25px;
+  width: 25px;
+  line-height: 14px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.canvas-element-icon.icon-shape {
+  background-position: 0 0;
+}
+.canvas-element-icon.icon-hue {
+  background-position: 33.3333333333% 0;
+}
+.canvas-element-icon.icon-texture {
+  background-position: 66.6666666667% 0;
+}
+.canvas-element-icon.icon-tone {
+  background-position: 100% 0;
+}
+
 .canvas-scoring-card {
   display: inline-block;
   position: relative;
   width: 425px;
   height: 250px;
+}
+.canvas-scoring-card .scoring-card-title {
+  font-family: "Welcome2019", cursive;
+  color: white;
+  font-size: 28px;
+  position: relative;
+  top: 28px;
+  text-align: center;
+}
+.canvas-scoring-card .scoring-card-clarifications {
+  font-family: "Welcome2019", cursive;
+  text-align: center;
+  font-size: 21px;
+  padding-top: 19px;
+}
+.canvas-scoring-card .scoring-card-description {
+  text-align: center;
+  font-size: 14px;
+  height: 180px;
+  padding: 0 10px;
+}
+.canvas-scoring-card .scoring-card-examples {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  font-style: italic;
 }
 .canvas-scoring-card .card-sides .card-side {
   border-radius: 10px;

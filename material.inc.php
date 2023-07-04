@@ -95,18 +95,18 @@ $this->ART_CARDS = [
 
 $this->SCORING_CARDS = [
     "BASE_GAME" => [
-        1 =>  new ScoringCardType('COMPOSITION', [1 => 1, 2 => 3, 3 => 9], clienttranslate('Composition'), clienttranslate('')),
-        2 =>  new ScoringCardType('CONSISTENCY', [1 => 3, 2 => 6, 3 => 10], clienttranslate('Consistency'), clienttranslate('')),
-        3 =>  new ScoringCardType('EMPHASIS', [1 => 1, 2 => 4, 3 => 11], clienttranslate('Emphasis'), clienttranslate('')),
-        4 =>  new ScoringCardType('HIERARCHY', [1 => 4, 2 => 9, 3 => 15], clienttranslate('Hierarchy'), clienttranslate('')),
-        5 =>  new ScoringCardType('MOVEMENT', [1 => 3, 2 => 7, 3 => 12], clienttranslate('Movement'), clienttranslate('')),
-        6 =>  new ScoringCardType('PROXIMITY', [1 => 2, 2 => 5, 3 => 8, 4 => 12], clienttranslate('Proximity'), clienttranslate('')),
-        7 =>  new ScoringCardType('PROPORTION', [1 => 2, 2 => 5, 3 => 10], clienttranslate('Proportion'), clienttranslate('')),
-        8 =>  new ScoringCardType('REPETITION', [1 => 3, 2 => 7, 3 => 11, 4 => 16], clienttranslate('Repetition'), clienttranslate('')),
-        9 =>  new ScoringCardType('SPACE', [1 => 2, 2 => 4, 3 => 7, 4 => 11], clienttranslate('Space'), clienttranslate('')),
-        10 => new ScoringCardType('STYLE', [1 => 4, 2 => 10, 3 => 18], clienttranslate('Style'), clienttranslate('')),
-        11 => new ScoringCardType('SYMMETRY', [1 => 1, 2 => 3, 3 => 6, 4 => 11], clienttranslate('Symmetry'), clienttranslate('')),
-        12 => new ScoringCardType('VARIETY', [1 => 4, 2 => 8, 3 => 13], clienttranslate('Variety'), clienttranslate('')),
+        1 =>  new ScoringCardType('COMPOSITION', [1 => 1, 2 => 3, 3 => 9], clienttranslate('Composition'), clienttranslate('Score <b>Composition</b> if all 5 Swatches have Elements or Bonus Icons.')),
+        2 =>  new ScoringCardType('CONSISTENCY', [1 => 3, 2 => 6, 3 => 10], clienttranslate('Consistency'), clienttranslate('Score <b>Consistency</b> if the painting has exactly 6 Elements.')),
+        3 =>  new ScoringCardType('EMPHASIS', [1 => 1, 2 => 4, 3 => 11], clienttranslate('Emphasis'), clienttranslate('Score <b>Emphasis</b> if the painting has exactly 1 _icon-hue_. Do not score if it has 2 or more _icon-hue_.')),
+        4 =>  new ScoringCardType('HIERARCHY', [1 => 4, 2 => 9, 3 => 15], clienttranslate('Hierarchy'), clienttranslate('Score <b>Hierarchy</b> if the number of _icon-tone_ is greater than or equal to each of the other Elements.')),
+        5 =>  new ScoringCardType('MOVEMENT', [1 => 3, 2 => 7, 3 => 12], clienttranslate('Movement'), clienttranslate('Score <b>Movement</b> if 3 matching Elements appear in 3 consecutive Swatches. Movement can be scored twice with 2 unique sets. Each Element counts only once, so 4 or more in a row still scores 1 Ribbon.')),
+        6 =>  new ScoringCardType('PROXIMITY', [1 => 2, 2 => 5, 3 => 8, 4 => 12], clienttranslate('Proximity'), clienttranslate('Score <b>Proximity</b> for each set of _icon-texture_ and _icon-tone_ in adjacent Swatches. _icon-texture_ and _icon-tone_ in the same Swatch are not considered adjacent. Remember, each Element can only be counted once per scoring condition.')),
+        7 =>  new ScoringCardType('PROPORTION', [1 => 2, 2 => 5, 3 => 10], clienttranslate('Proportion'), clienttranslate('Score <b>Proportion</b> if the painting has a set of at least 3 of the same Element and a set of at least 2 of the same Element. The 2 sets can be of the same Element type or 2 different Element types.')),
+        8 =>  new ScoringCardType('REPETITION', [1 => 3, 2 => 7, 3 => 11, 4 => 16], clienttranslate('Repetition'), clienttranslate('Score <b>Repetition</b> for each pair of _icon-shape_. Remember, each Element can only be counted once per scoring condition.')),
+        9 =>  new ScoringCardType('SPACE', [1 => 2, 2 => 4, 3 => 7, 4 => 11], clienttranslate('Space'), clienttranslate('Score <b>Space</b> for each set of _icon-hue_ and _icon-shape_ that are not in adjacent Swatches, nor the same Swatch. Remember, each Element can only be counted once per scoring condition.')),
+        10 => new ScoringCardType('STYLE', [1 => 4, 2 => 10, 3 => 18], clienttranslate('Style'), clienttranslate('Score <b>Style</b> for each set of 3 _icon-texture_. Remember, each Element can only be counted once per scoring condition.')),
+        11 => new ScoringCardType('SYMMETRY', [1 => 1, 2 => 3, 3 => 6, 4 => 11], clienttranslate('Symmetry'), clienttranslate('Score <b>Symmetry</b> if the painting has a pair of Elements in the red and violet Swatches, or a pair in the yellow and blue Swatches. There may be other Elements in the Swatch.')),
+        12 => new ScoringCardType('VARIETY', [1 => 4, 2 => 8, 3 => 13], clienttranslate('Variety'), clienttranslate('Score <b>Variety</b> for each complete set of the 4 Elements.')),
     ]
 ];
 

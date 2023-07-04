@@ -8,6 +8,8 @@ interface Card {
 
 interface ScoringCard extends Card {
     scoring: {[nrOfRibbons: number]: number}
+    name: string,
+    description: string
 }
 
 interface Token {
