@@ -217,6 +217,9 @@ class ScoringCardManager extends APP_DbObject{
                     break;
             }
         }
+
+
+
         return $result;
     }
 

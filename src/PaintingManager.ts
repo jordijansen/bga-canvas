@@ -21,10 +21,16 @@ class PaintingManager {
     }
 
     public setUp(gameData: CanvasGameData) {
-
         for (const playersKey in gameData.players) {
             const player = gameData.players[playersKey];
             player.paintings.forEach(painting => this.createPainting(painting, false))
+
+            if (Number(playersKey) === this.canvasGame.getPlayerId()) {
+                if (player.draftPainting) {
+                    this.completePaintingMode.painting.backgroundCard = player.backgroundCards.find(card => card.id === player.draftPainting.backgroundCardId);
+                    this.completePaintingMode.painting.artCards = player.draftPainting.artCardIds.map(artCardId => artCardId ? player.handCards.find(card => card.id === artCardId) : undefined)
+                }
+            }
         }
 
     }
@@ -256,7 +262,7 @@ class PaintingManager {
     private updatePreview() {
         this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large')
 
-        const artCardIds = this.completePaintingMode.painting.artCards.filter(card => !!card).map(card => card.id);
+        const artCardIds = this.completePaintingMode.painting.artCards.map(card => card ? card.id : null);
         this.canvasGame.takeNoLockAction('scorePainting', {
             painting: JSON.stringify({
                 backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,

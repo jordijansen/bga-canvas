@@ -43,6 +43,7 @@ interface CanvasPlayer extends Player {
     paintings: Painting[],
     ribbons: {[scoringType: string]: number},
     playerNo: string
+    draftPainting?: {backgroundCardId: number, artCardIds: number[]}
 }
 
 interface CanvasGame extends Game {

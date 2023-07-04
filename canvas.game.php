@@ -167,6 +167,7 @@ class Canvas extends Table
             $player['paintings'] = $this->paintingManager->getPaintings($playerId);
             $player['ribbons'] = $this->ribbonManager->getRibbonsForPlayer($playerId);
             $player['scoreBreakDown'] = $this->scoringCardManager->getScoreBreakDown($playerId);
+            $player['draftPainting'] = $this->getGlobalVariable('DRAFT_PAINTING_' .$playerId);
         }
 
         $result['scoringCards'] = $this->scoringCardManager->getAllScoringCards();

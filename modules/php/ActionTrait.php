@@ -38,11 +38,15 @@ trait ActionTrait {
     public function scorePainting($painting) {
         $artCards = [];
         foreach ($painting['artCardIds'] as $index => $artCardId) {
-            $artCards[] = $this->artCardManager->getCard($artCardId);
+            if (isset($artCardId)) {
+                $artCards[] = $this->artCardManager->getCard($artCardId);
+            }
         }
 
         // Current player, this can be called off turn
         $result = $this->scoringCardManager->scorePainting($artCards, $this->getCurrentPlayerId());
+
+        $this->setGlobalVariable('DRAFT_PAINTING_' .$this->getCurrentPlayerId(), $painting);
 
         self::notifyPlayer($this->getCurrentPlayerId(), 'paintingScored', '', $result);
     }
@@ -95,6 +99,8 @@ trait ActionTrait {
             // ICONS
             'ribbonIcons' => $paintingRibbons
         ]);
+
+        $this->deleteGlobalVariable('DRAFT_PAINTING_' .$activePlayerId);
 
         $this->gamestate->nextState(ST_NEXT_PLAYER);
     }

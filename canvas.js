@@ -2656,9 +2656,19 @@ var PaintingManager = /** @class */ (function () {
     }
     PaintingManager.prototype.setUp = function (gameData) {
         var _this = this;
-        for (var playersKey in gameData.players) {
+        var _loop_3 = function (playersKey) {
             var player = gameData.players[playersKey];
             player.paintings.forEach(function (painting) { return _this.createPainting(painting, false); });
+            if (Number(playersKey) === this_1.canvasGame.getPlayerId()) {
+                if (player.draftPainting) {
+                    this_1.completePaintingMode.painting.backgroundCard = player.backgroundCards.find(function (card) { return card.id === player.draftPainting.backgroundCardId; });
+                    this_1.completePaintingMode.painting.artCards = player.draftPainting.artCardIds.map(function (artCardId) { return artCardId ? player.handCards.find(function (card) { return card.id === artCardId; }) : undefined; });
+                }
+            }
+        };
+        var this_1 = this;
+        for (var playersKey in gameData.players) {
+            _loop_3(playersKey);
         }
     };
     PaintingManager.prototype.createPainting = function (painting, showAnimation) {
@@ -2709,18 +2719,18 @@ var PaintingManager = /** @class */ (function () {
         dojo.place(this.createBackgroundSlot(), 'art-cards-picker-top-text', 'before');
         dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard), 'complete-painting-background-card-slot');
         dojo.connect($('change-background-button'), 'onclick', function () { return _this.changeBackgroundCard(); });
-        var _loop_3 = function (i) {
-            dojo.place(this_1.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
-            if (this_1.completePaintingMode.painting.artCards[i]) {
-                this_1.addCardToPaintingAtPosition(this_1.completePaintingMode.painting.artCards[i], i);
+        var _loop_4 = function (i) {
+            dojo.place(this_2.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
+            if (this_2.completePaintingMode.painting.artCards[i]) {
+                this_2.addCardToPaintingAtPosition(this_2.completePaintingMode.painting.artCards[i], i);
             }
             if (i !== 2) {
                 dojo.connect($("art-cards-swap-".concat(i)), 'onclick', function () { return _this.swapArtCards(i); });
             }
         };
-        var this_1 = this;
+        var this_2 = this;
         for (var i = 0; i < 3; i++) {
-            _loop_3(i);
+            _loop_4(i);
         }
         this.updateUnusedCards();
         this.updatePreview();
@@ -2838,7 +2848,7 @@ var PaintingManager = /** @class */ (function () {
     };
     PaintingManager.prototype.updatePreview = function () {
         this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large');
-        var artCardIds = this.completePaintingMode.painting.artCards.filter(function (card) { return !!card; }).map(function (card) { return card.id; });
+        var artCardIds = this.completePaintingMode.painting.artCards.map(function (card) { return card ? card.id : null; });
         this.canvasGame.takeNoLockAction('scorePainting', {
             painting: JSON.stringify({
                 backgroundCardId: this.completePaintingMode.painting.backgroundCard.id,
