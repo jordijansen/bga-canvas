@@ -142,7 +142,7 @@ class ScoringCardManager extends APP_DbObject{
                 $elementsWith2Count = sizeof(array_filter($elementsByCount, fn($arrayValue) => $arrayValue == 2));
 
                 $result[$scoringCard->location] = $result[$scoringCard->location] + $elementsWith5OrMoreCount;
-                if ($elementsWith3Or4Count > 1) {
+                if ($elementsWith3Or4Count > 0) {
                     $diff = abs($elementsWith3Or4Count - $elementsWith2Count);
                     $sets = max($elementsWith3Or4Count, $elementsWith2Count) - $diff;
                     $result[$scoringCard->location] = $result[$scoringCard->location] + $sets;
