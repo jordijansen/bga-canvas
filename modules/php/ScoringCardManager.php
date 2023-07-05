@@ -132,8 +132,11 @@ class ScoringCardManager extends APP_DbObject{
                         $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
                     }
 
-                    $previousTexture = $foundTexture && $previousTone ? false : $foundTexture;
-                    $previousTone = $foundTone && $previousTexture ? false : $foundTone;
+                    $newPreviousTexture = $foundTexture && $previousTone ? false : $foundTexture;
+                    $newPreviousTone = $foundTone && $previousTexture ? false : $foundTone;
+
+                    $previousTexture = $newPreviousTexture;
+                    $previousTone = $newPreviousTone;
                 }
             } else if ($scoringCard->type == 'PROPORTION') {
                 // Score sets of at least 3 of the same icons and 2 of the same icon. Can be 5 of the same icon as well.
