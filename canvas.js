@@ -3135,7 +3135,7 @@ var Canvas = /** @class */ (function () {
     //
     Canvas.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
-        if (this.isCurrentPlayerActive() && !this.isReadOnly()) {
+        if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'playerTurn':
                     if (args.availableActions.includes('takeArtCard')) {
@@ -3162,7 +3162,7 @@ var Canvas = /** @class */ (function () {
                 this.addActionButton('undoLastMoves', _("Undo last moves"), function () { return _this.undoLastMoves(); }, null, null, 'gray');
             }
         }
-        if (!this.isReadOnly() && !(this.isCurrentPlayerActive() && stateName == 'completePainting')) {
+        if (!(this.isCurrentPlayerActive() && stateName == 'completePainting')) {
             this.addActionButton('toggleCompletePaintingTool', _("Show/Hide Complete Painting Tool"), function () { return _this.toggleCompletePaintingTool(); }, null, null, 'gray');
         }
     };

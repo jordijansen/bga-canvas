@@ -280,6 +280,7 @@ html, .mode_3d #game_play_area_background {
   line-height: 14px;
   display: inline-block;
   vertical-align: middle;
+  filter: drop-shadow(1px 1px 1px black);
 
   &.icon-shape {
     background-position: 0 0;
@@ -472,7 +473,7 @@ html, .mode_3d #game_play_area_background {
       width: 2000px;
       height: 885px;
       filter: drop-shadow(1px 1px 1px black);
-      -webkit-filter: drop-shadow(1px 1px 2px black);
+      -webkit-filter: drop-shadow(1px 1px 1px black);
       position: relative;
       border-radius: 25px;
 

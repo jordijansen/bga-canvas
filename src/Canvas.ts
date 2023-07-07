@@ -144,7 +144,7 @@ class Canvas implements CanvasGame {
     //
     public onUpdateActionButtons(stateName: string, args: any) {
 
-        if ((this as any).isCurrentPlayerActive() && !this.isReadOnly()) {
+        if ((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'playerTurn':
                     if (args.availableActions.includes('takeArtCard')) {
@@ -173,7 +173,7 @@ class Canvas implements CanvasGame {
             }
         }
 
-        if (!this.isReadOnly() && !((this as any).isCurrentPlayerActive() && stateName == 'completePainting')) {
+        if (!((this as any).isCurrentPlayerActive() && stateName == 'completePainting')) {
             (this as any).addActionButton('toggleCompletePaintingTool', _("Show/Hide Complete Painting Tool"), () => this.toggleCompletePaintingTool(), null, null, 'gray');
         }
     }
