@@ -181,9 +181,11 @@ class ScoringCardManager extends APP_DbObject{
             } else if ($scoringCard->type == 'SYMMETRY') {
                $foundPairs = 0;
                foreach (BASIC_ELEMENTS as $basicElement) {
-                   if ((in_array($basicElement, $redIcons) && in_array($basicElement, $purpleIcons)) ||
-                       (in_array($basicElement, $yellowIcons) && in_array($basicElement, $blueIcons))) {
-                       $foundPairs = $foundPairs + 1;
+                   if (in_array($basicElement, $redIcons) && in_array($basicElement, $purpleIcons)) {
+                       $foundPairs += 1;
+                   }
+                   if (in_array($basicElement, $yellowIcons) && in_array($basicElement, $blueIcons)) {
+                       $foundPairs += 1;
                    }
                }
                $result[$scoringCard->location] = $foundPairs;
