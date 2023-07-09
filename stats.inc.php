@@ -113,7 +113,7 @@ $stats_type = [
         ],
         PLAYER_RIBBONS_REPETITION => [
             "id"=> PLAYER_RIBBONS_REPETITION_ID,
-            "name" => totranslate("Ribbons for Proportion"),
+            "name" => totranslate("Ribbons for Repetition"),
             "type" => "int"
         ],
         PLAYER_RIBBONS_SPACE => [
@@ -123,7 +123,7 @@ $stats_type = [
         ],
         PLAYER_RIBBONS_STYLE => [
             "id"=> PLAYER_RIBBONS_STYLE_ID,
-            "name" => totranslate("Ribbons for Space"),
+            "name" => totranslate("Ribbons for Style"),
             "type" => "int"
         ],
         PLAYER_RIBBONS_SYMMETRY => [

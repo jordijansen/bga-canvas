@@ -260,14 +260,6 @@ html, .mode_3d #game_play_area_background {
         pointer-events: none;
         user-select: none;
       }
-
-      &.back {
-        // No back
-      }
-
-      &.front {
-
-      }
     }
   }
 }
@@ -459,6 +451,12 @@ html, .mode_3d #game_play_area_background {
     margin-top: 10px;
     margin-bottom: 10px;
   }
+}
+
+// Attempt at fixing https://boardgamearena.com/bug?id=92787
+.canvas-scoring-card .card-sides .card-side.front {
+  z-index: 2;
+  transform: rotateY(0deg);
 }
 
 #canvas-table {
