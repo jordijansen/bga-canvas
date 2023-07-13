@@ -66,7 +66,8 @@ class Canvas extends Table
         self::initGameStateLabels( array(
             SCORING_CARDS_OPTION => SCORING_CARDS_OPTION_ID,
             PAINTING_WITH_VINCENT_OPTION => PAINTING_WITH_VINCENT_OPTION_ID,
-            SOLO_MODE_DIFFICULTY => SOLO_MODE_DIFFICULTY_ID
+            SOLO_MODE_DIFFICULTY => SOLO_MODE_DIFFICULTY_ID,
+            PREF_FONT_STYLE => PREF_FONT_STYLE_ID
         ));
 
         $this->artCardManager = new ArtCardManager(self::getNew("module.common.deck"), $this->ART_CARDS);

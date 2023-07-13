@@ -25,6 +25,18 @@
  */
 require_once(__DIR__.'/modules/php/Constants.inc.php');
 
+$game_preferences = [
+    PREF_FONT_STYLE_ID => [
+        'name' => totranslate('Font style'),
+        'needReload' => true, // after user changes this preference game interface would auto-reload
+        'values' => [
+            PREF_FONT_STYLE_CANVAS_ID => ['name' => totranslate( 'Canvas font' ), 'cssPref' => 'canvas-font'],
+            PREF_FONT_STYLE_BASIC_ID => ['name' => totranslate( 'Basic font' ), 'cssPref' => 'basic-font'],
+        ],
+        'default' => 1
+    ],
+];
+
 $game_options = [
 
     SCORING_CARDS_OPTION_ID => [

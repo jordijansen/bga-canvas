@@ -39,6 +39,15 @@ const SOLO_MODE_NORMAL = 30;
 const SOLO_MODE_HARD = 35;
 const SOLO_MODE_MASTER = 40;
 
+/**
+ * Preferences
+ */
+const PREF_FONT_STYLE_ID = 100;
+const PREF_FONT_STYLE = 'font_style';
+
+const PREF_FONT_STYLE_CANVAS_ID = 1;
+const PREF_FONT_STYLE_BASIC_ID = 2;
+
 
 /**
  * State

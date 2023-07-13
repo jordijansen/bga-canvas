@@ -402,6 +402,14 @@ body > .card {
     transform: translate(24px, 0);
   }
 }
+:root {
+  --canvas-custom-font: Roboto;
+}
+
+.canvas-font {
+  --canvas-custom-font: "Welcome2019", cursive !important;
+}
+
 /* latin-ext */
 @font-face {
   font-family: "Welcome2019";
@@ -432,7 +440,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-size: 100%;
 }
 .player-board#overall-solo-score-to-beat, .player-board#overall_vincent_board {
-  font-family: "Welcome2019", cursive;
+  font-family: var(--canvas-custom-font);
   font-size: 18px;
 }
 
@@ -806,7 +814,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   height: 250px;
 }
 .canvas-scoring-card .scoring-card-title {
-  font-family: "Welcome2019", cursive;
+  font-family: var(--canvas-custom-font);
   color: white;
   font-size: 28px;
   position: relative;
@@ -814,7 +822,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   text-align: center;
 }
 .canvas-scoring-card .scoring-card-clarifications {
-  font-family: "Welcome2019", cursive;
+  font-family: var(--canvas-custom-font);
   text-align: center;
   font-size: 21px;
   padding-top: 19px;
@@ -991,7 +999,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   background-position: 0 100%;
 }
 .title-wrapper .title h1 {
-  font-family: "Welcome2019", cursive;
+  font-family: var(--canvas-custom-font);
   text-align: center;
   font-size: 35px;
   padding-top: 10px;
@@ -1129,7 +1137,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   border: 3px solid lightgrey;
   border-radius: 10px;
   box-sizing: border-box;
-  font-family: "Welcome2019", cursive;
+  font-family: var(--canvas-custom-font);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1182,7 +1190,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   height: 120px;
 }
 .canvas-painting-ribbons .canvas-painting-ribbons-ribbon {
-  font-family: Welcome2019, serif;
+  font-family: var(--canvas-custom-font);
   font-size: 50px;
   display: flex;
   flex-direction: column;
@@ -1260,7 +1268,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .current-player-ribbon-counter {
   position: relative;
   top: -315px;
-  font-family: "Welcome2019", cursive;
+  font-family: var(--canvas-custom-font);
   font-size: 50px;
   color: white;
   width: 100%;
@@ -1314,7 +1322,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  font-family: Welcome2019, serif;
+  font-family: var(--canvas-custom-font);
 }
 .player-board .canvas-counters .counter-void-stock-wrapper {
   display: flex;

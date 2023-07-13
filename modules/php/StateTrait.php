@@ -46,7 +46,7 @@ trait StateTrait {
                 $playerId = $this->getActivePlayerId();
                 $skipPlayer = sizeof($this->paintingManager->getPaintings($playerId)) == 3;
             }
-            $this->giveExtraTime($playerId);
+            $this->giveExtraTime($this->getActivePlayerId());
             $this->gamestate->nextState( ST_PLAYER_TURN);
         }
     }

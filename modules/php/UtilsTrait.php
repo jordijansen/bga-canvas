@@ -121,7 +121,9 @@ trait UtilsTrait {
                     $ribbonCount += $nrOfRibbons;
                 }
             }
-            $this->setStat($ribbonCount / sizeof($paintings), PLAYER_NUMBER_OF_RIBBONS_PER_PAINTING, $playerId);
+            if (sizeof($paintings) > 0) {
+                $this->setStat($ribbonCount / sizeof($paintings), PLAYER_NUMBER_OF_RIBBONS_PER_PAINTING, $playerId);
+            }
 
             $ribbons = $this->ribbonManager->getRibbonsForPlayer($playerId);
 
