@@ -403,11 +403,11 @@ body > .card {
   }
 }
 :root {
-  --canvas-custom-font: Roboto;
+  --canvas-custom-font: Roboto,Arial,sans-serif;
 }
 
 .canvas-font {
-  --canvas-custom-font: "Welcome2019", cursive !important;
+  --canvas-custom-font: "Welcome2019",cursive !important;
 }
 
 /* latin-ext */
