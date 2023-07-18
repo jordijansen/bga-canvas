@@ -124,7 +124,7 @@ class PaintingManager {
         dojo.empty(overlayId);
         dojo.addClass(overlayId, 'overlay-visible');
 
-        dojo.place(`<div class="title-wrapper"><div class="title color-${player.color}"><h1>${player.name}${_("'s Completed Painting")}</h1></div></div>`, overlayId)
+        dojo.place(`<div class="title-wrapper"><div class="title color-${player.color}"><h1>${dojo.string.substitute(_("${playerName}'s Completed Painting"), { playerName: player.name })}</h1></div></div>`, overlayId)
     }
 
     public exitHighlightPaintingMode() {

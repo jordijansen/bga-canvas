@@ -158,19 +158,44 @@ class ScoringCardManager extends APP_DbObject{
                 $shapeIcons = array_filter($allIconsFlat, fn($arrayValue) => $arrayValue == SHAPE);
                 $result[$scoringCard->location] = floor(sizeof($shapeIcons) / 2);
             } else if ($scoringCard->type == 'SPACE') {
+                $foundHue = [];
+                $foundShape = [];
                 foreach ($allIcons as $index => $swatch) {
-                    $foundHue[$index] = in_array(HUE, $swatch);
-                    $foundShape[$index] = in_array(SHAPE, $swatch);
+                    if (in_array(SHAPE, $swatch)) {
+                        $foundShape[$index] = true;
+                    }
+                }
+
+                foreach ($allIcons as $index => $swatch) {
+                    if (in_array(HUE, $swatch)) {
+                        $foundHue[$index] = [];
+                        foreach ($foundShape as $shapeIndex => $unused) {
+                            if ($index != $shapeIndex && $shapeIndex != ($index - 1) && $shapeIndex != ($index + 1)) {
+                                $foundHue[$index][] = $shapeIndex;
+                            }
+                        }
+                    }
                 }
 
                 $usedShapeIndexes = [];
-                foreach ($foundHue as $i => $hueFound) {
-                    if ($hueFound) {
-                        foreach ($foundShape as $x => $shapeFound) {
-                            if ($shapeFound && $x != $i && !in_array($x, $usedShapeIndexes) && $x != ($i - 1) && $x != ($i + 1)) {
-                                $usedShapeIndexes[] = $x;
+                // First find the elements that have only one match
+                foreach ($foundHue as $index => $shapeIndexes) {
+                    if (sizeof($shapeIndexes) == 1) {
+                        $shapeIndex = reset($shapeIndexes);
+                        if (!in_array($shapeIndex, $usedShapeIndexes)) {
+                            $usedShapeIndexes[] = $shapeIndex;
+                            $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
+                        }
+                    }
+                }
+
+                // Then figure out the rest of the matches
+                foreach ($foundHue as $index => $shapeIndexes) {
+                    if (sizeof($shapeIndexes) > 1) {
+                        foreach ($shapeIndexes as $i => $shapeIndex) {
+                            if (!in_array($shapeIndex, $usedShapeIndexes)) {
+                                $usedShapeIndexes[] = $shapeIndex;
                                 $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
-                                break;
                             }
                         }
                     }

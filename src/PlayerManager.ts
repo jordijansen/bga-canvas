@@ -52,7 +52,7 @@ class PlayerManager  {
 
     private createPlayerArea(player: CanvasPlayer) {
         return `<div id="player-area-${player.id}" class="player-area whiteblock">
-                    <div class="title-wrapper"><div class="title color-${player.color}"><h1>${player.name}${_("'s Art Collection")}</h1></div></div>
+                    <div class="title-wrapper"><div class="title color-${player.color}"><h1>${dojo.string.substitute( _("${playerName}'s Art Collection"), {playerName: player.name} )}</h1></div></div>
                     <div id="player-inspiration-tokens-${player.id}"></div>
                     <div class="title-wrapper"><div class="title color-${player.color}"><h1>${_("Hand Cards")}</h1></div></div>
                     <div id="player-hand-${player.id}" class="player-hand"></div>
