@@ -87,7 +87,7 @@ trait ActionTrait {
 
         $playerScore = $this->scoringCardManager->updatePlayerScore($activePlayerId);
 
-        self::notifyAllPlayers( 'paintingCompleted', '${player_name} completes <b>${paintingNameLeft} ${paintingNameRight}</b> and gains ${ribbonIcons}', [
+        self::notifyAllPlayers( 'paintingCompleted', clienttranslate('${player_name} completes <b>${paintingNameLeft} ${paintingNameRight}</b> and gains ${ribbonIcons}'), [
             'i18n' => ['paintingNameLeft', 'paintingNameRight'],
             'playerId' => $activePlayerId,
             'player_name' => $this->getPlayerName($activePlayerId),
@@ -146,7 +146,7 @@ trait ActionTrait {
         // Take Art Card
         $cardTaken = $this->artCardManager->takeCard($playerId, $cardId);
 
-        self::notifyAllPlayers('artCardTaken', '${player_name} places ${inspiration_tokens_1} to take <b>${artCardName}</b> and ${inspiration_tokens_2}', [
+        self::notifyAllPlayers('artCardTaken', clienttranslate('${player_name} places ${inspiration_tokens_1} to take <b>${artCardName}</b> and ${inspiration_tokens_2}'), [
             'i18n' => ['artCardName'],
             'playerId' => $playerId,
             'player_name' => $playerName,

@@ -196,6 +196,7 @@ class ScoringCardManager extends APP_DbObject{
                             if (!in_array($shapeIndex, $usedShapeIndexes)) {
                                 $usedShapeIndexes[] = $shapeIndex;
                                 $result[$scoringCard->location] = $result[$scoringCard->location] + 1;
+                                break;
                             }
                         }
                     }
