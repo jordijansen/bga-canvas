@@ -7,12 +7,8 @@ declare const g_gamethemeurl;
 declare const g_replayFrom;
 declare const g_archive_mode;
 
-const ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
-
-const BOARD_WIDTH = 2000;
 const ANIMATION_MS = 800;
 const TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
-const LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
 const CARD_WIDTH = 250;
 const CARD_HEIGHT = 425;
 const INSPIRATION_TOKEN_WIDTH = 60;
@@ -57,7 +53,7 @@ class Canvas implements CanvasGame {
         log( "Starting game setup" );
         log('gamedatas', gamedatas);
 
-        this.zoomManager = new AutoZoomManager('canvas-table');
+        this.zoomManager = new AutoZoomManager('canvas-table', 'canvas-zoom-level');
         this.animationManager = new AnimationManager(this, {duration: ANIMATION_MS});
         this.scoringCardManager = new ScoringCardManager(this);
         this.playerManager = new PlayerManager(this);
@@ -312,7 +308,9 @@ class Canvas implements CanvasGame {
     }
 
     notif_paintingCompleted(args: NotifPaintingCompleted) {
-        this.paintingManager.exitCompletePaintingMode();
+        if (args.playerId === this.getPlayerId()) {
+            this.paintingManager.exitCompletePaintingMode();
+        }
         this.paintingManager.enterHighlightPaintingMode(this.getPlayer(args.playerId));
 
         return this.paintingManager.createPainting(args.painting, true)

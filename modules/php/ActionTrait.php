@@ -89,7 +89,7 @@ trait ActionTrait {
 
         self::notifyAllPlayers( 'paintingCompleted', clienttranslate('${player_name} completes <b>${paintingNameLeft} ${paintingNameRight}</b> and gains ${ribbonIcons}'), [
             'i18n' => ['paintingNameLeft', 'paintingNameRight'],
-            'playerId' => $activePlayerId,
+            'playerId' => intval($activePlayerId),
             'player_name' => $this->getPlayerName($activePlayerId),
             'playerScore' => $playerScore,
             'painting' => $this->paintingManager->getPainting($backgroundCard->id),

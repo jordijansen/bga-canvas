@@ -1,40 +1,46 @@
-const determineMaxZoomLevel = () => {
-    const bodycoords = dojo.marginBox("canvas-overall");
-    const contentWidth = bodycoords.w;
-    const rowWidth = BOARD_WIDTH;
+const determineBoardWidth = () => {
+    return 2000;
+}
 
-    if (contentWidth >= rowWidth) {
-        return 1;
-    }
+const determineMaxZoomLevel = () => {
+    const bodycoords = dojo.marginBox("zoom-overall");
+    const contentWidth = bodycoords.w;
+    const rowWidth = determineBoardWidth();
+
     return contentWidth / rowWidth;
 }
 
 const getZoomLevels = (maxZoomLevels: number) => {
-    const increments = maxZoomLevels / 5;
-    return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels]
+    let zoomLevels = [];
+    if (maxZoomLevels > 1) {
+        const maxZoomLevelsAbove1 = maxZoomLevels - 1;
+        const increments = (maxZoomLevelsAbove1 / 3)
+        zoomLevels = [ (increments) + 1, increments + increments + 1, increments + increments + increments + 1 ]
+    }
+    zoomLevels = [...zoomLevels, 1, 0.8, 0.6];
+    return zoomLevels.sort();
 }
 
 class AutoZoomManager extends ZoomManager {
 
-    constructor(elementId: string) {
+    constructor(elementId: string, localStorageKey: string) {
+        const storedZoomLevel = localStorage.getItem(localStorageKey);
+        const maxZoomLevel = determineMaxZoomLevel();
+        if (storedZoomLevel && Number(storedZoomLevel) > maxZoomLevel) {
+            localStorage.removeItem(localStorageKey);
+        }
+
         const zoomLevels = getZoomLevels(determineMaxZoomLevel());
         super({
             element: document.getElementById(elementId),
             smooth: true,
             zoomLevels: zoomLevels,
-            defaultZoom: zoomLevels[zoomLevels.length - 1],
+            defaultZoom: 1,
+            localStorageZoomKey: localStorageKey,
             zoomControls: {
                 color: 'black',
-            },
-            onDimensionsChange: (zoom) => {
-                if (this) {
-                    const newMaxZoomLevel = determineMaxZoomLevel();
-                    const currentMaxZoomLevel = this.zoomLevels[this.zoomLevels.length -1];
-                    if (newMaxZoomLevel != currentMaxZoomLevel) {
-                        this.setZoomLevels(getZoomLevels(newMaxZoomLevel), newMaxZoomLevel)
-                    }
-                }
-            },
+                position: 'top-right'
+            }
         });
     }
 }

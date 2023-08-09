@@ -2176,43 +2176,45 @@ var Numbers = /** @class */ (function () {
     };
     return Numbers;
 }());
+var determineBoardWidth = function () {
+    return 2000;
+};
 var determineMaxZoomLevel = function () {
-    var bodycoords = dojo.marginBox("canvas-overall");
+    var bodycoords = dojo.marginBox("zoom-overall");
     var contentWidth = bodycoords.w;
-    var rowWidth = BOARD_WIDTH;
-    if (contentWidth >= rowWidth) {
-        return 1;
-    }
+    var rowWidth = determineBoardWidth();
     return contentWidth / rowWidth;
 };
 var getZoomLevels = function (maxZoomLevels) {
-    var increments = maxZoomLevels / 5;
-    return [increments, increments * 2, increments * 3, increments * 4, maxZoomLevels];
+    var zoomLevels = [];
+    if (maxZoomLevels > 1) {
+        var maxZoomLevelsAbove1 = maxZoomLevels - 1;
+        var increments = (maxZoomLevelsAbove1 / 3);
+        zoomLevels = [(increments) + 1, increments + increments + 1, increments + increments + increments + 1];
+    }
+    zoomLevels = __spreadArray(__spreadArray([], zoomLevels, true), [1, 0.8, 0.6], false);
+    return zoomLevels.sort();
 };
 var AutoZoomManager = /** @class */ (function (_super) {
     __extends(AutoZoomManager, _super);
-    function AutoZoomManager(elementId) {
-        var _this = this;
+    function AutoZoomManager(elementId, localStorageKey) {
+        var storedZoomLevel = localStorage.getItem(localStorageKey);
+        var maxZoomLevel = determineMaxZoomLevel();
+        if (storedZoomLevel && Number(storedZoomLevel) > maxZoomLevel) {
+            localStorage.removeItem(localStorageKey);
+        }
         var zoomLevels = getZoomLevels(determineMaxZoomLevel());
-        _this = _super.call(this, {
+        return _super.call(this, {
             element: document.getElementById(elementId),
             smooth: true,
             zoomLevels: zoomLevels,
-            defaultZoom: zoomLevels[zoomLevels.length - 1],
+            defaultZoom: 1,
+            localStorageZoomKey: localStorageKey,
             zoomControls: {
                 color: 'black',
-            },
-            onDimensionsChange: function (zoom) {
-                if (_this) {
-                    var newMaxZoomLevel = determineMaxZoomLevel();
-                    var currentMaxZoomLevel = _this.zoomLevels[_this.zoomLevels.length - 1];
-                    if (newMaxZoomLevel != currentMaxZoomLevel) {
-                        _this.setZoomLevels(getZoomLevels(newMaxZoomLevel), newMaxZoomLevel);
-                    }
-                }
-            },
+                position: 'top-right'
+            }
         }) || this;
-        return _this;
     }
     return AutoZoomManager;
 }(ZoomManager));
@@ -3032,11 +3034,8 @@ var PlayerManager = /** @class */ (function () {
     };
     return PlayerManager;
 }());
-var ZOOM_LEVELS = [0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1];
-var BOARD_WIDTH = 2000;
 var ANIMATION_MS = 800;
 var TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
-var LOCAL_STORAGE_ZOOM_KEY = 'Canvas-zoom';
 var CARD_WIDTH = 250;
 var CARD_HEIGHT = 425;
 var INSPIRATION_TOKEN_WIDTH = 60;
@@ -3061,7 +3060,7 @@ var Canvas = /** @class */ (function () {
     Canvas.prototype.setup = function (gamedatas) {
         log("Starting game setup");
         log('gamedatas', gamedatas);
-        this.zoomManager = new AutoZoomManager('canvas-table');
+        this.zoomManager = new AutoZoomManager('canvas-table', 'canvas-zoom-level');
         this.animationManager = new AnimationManager(this, { duration: ANIMATION_MS });
         this.scoringCardManager = new ScoringCardManager(this);
         this.playerManager = new PlayerManager(this);
@@ -3284,7 +3283,9 @@ var Canvas = /** @class */ (function () {
     };
     Canvas.prototype.notif_paintingCompleted = function (args) {
         var _this = this;
-        this.paintingManager.exitCompletePaintingMode();
+        if (args.playerId === this.getPlayerId()) {
+            this.paintingManager.exitCompletePaintingMode();
+        }
         this.paintingManager.enterHighlightPaintingMode(this.getPlayer(args.playerId));
         return this.paintingManager.createPainting(args.painting, true)
             .then(function () { return _this.ribbonManager.updateRibbonCounters(args.playerId, args.painting, args.paintingRibbons); })

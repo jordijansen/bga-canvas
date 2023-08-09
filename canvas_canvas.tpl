@@ -44,7 +44,7 @@
     <div id="canvas-show-painting-overlay"></div>
 </div>
 
-<div id="canvas-overall"></div>
+<div id="zoom-overall"></div>
 <div id="html2canvas-result"></div>
 
 <script type="text/javascript">

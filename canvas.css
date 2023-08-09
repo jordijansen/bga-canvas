@@ -1426,6 +1426,7 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   flex-direction: column;
   transform-origin: top center;
   transform: scale(1.5);
+  z-index: 500;
 }
 #canvas-show-painting-overlay.overlay-visible {
   visibility: visible;
