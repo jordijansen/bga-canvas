@@ -83,12 +83,10 @@ class PaintingManager {
         dojo.place(this.createCompletePaintingPickerElement(), 'complete-painting')
         dojo.place(this.createCompletePaintingPreviewElement(), 'complete-painting')
 
-        dojo.place(this.createBackgroundSlot(), 'art-cards-picker-top-text', 'before');
-        dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard),'complete-painting-background-card-slot')
         dojo.connect($('change-background-button'), 'onclick', () => this.changeBackgroundCard());
 
         for (let i = 0; i < 3; i++) {
-            dojo.place(this.createArtCardSlot(i), 'art-cards-picker-top-text', 'before')
+            dojo.place(this.createArtCardSlot(i), 'art-cards-picker')
             if (this.completePaintingMode.painting.artCards[i]) {
                 this.addCardToPaintingAtPosition(this.completePaintingMode.painting.artCards[i], i)
             }
@@ -108,7 +106,6 @@ class PaintingManager {
         }
         const newBackgroundCard = this.completePaintingMode.backgroundCards[newBackgroundCardIndex];
         if (newBackgroundCard) {
-            dojo.place(this.createBackgroundElement(newBackgroundCard), 'complete-painting-background-card-slot', 'only')
             this.completePaintingMode.painting.backgroundCard = newBackgroundCard;
         }
         this.updatePreview();
@@ -137,8 +134,6 @@ class PaintingManager {
             <div id="complete-painting-picker-wrapper">
                 <div class="title-wrapper"><div class="title"><h1>${_("Art Picker")}</h1></div></div>
                 <div id="art-cards-picker">
-                    <div id="art-cards-picker-bottom-text"><h1>${_("Back")}</h1></div>
-                    <div id="art-cards-picker-top-text"><h1>${_("Front")}</h1></div>
                 </div> 
                 <div class="title-wrapper"><div class="title"><h1>${_("Unused Cards")}</h1></div></div>
                 <div id="art-cards-picker-unused">
@@ -156,6 +151,7 @@ class PaintingManager {
                 <div id="complete-painting-preview-slot-wrapper">
                     <div id="complete-painting-preview-slot" class="canvas-painting"></div>   
                 </div>  
+                <a id="change-background-button" class="bgabutton bgabutton_blue"><i class="fa fa-refresh" aria-hidden="true"></i> ${_('Change Background')}</a>
             </div>
         `
     }
@@ -169,23 +165,6 @@ class PaintingManager {
                 <div id="complete-painting-art-card-slot-${id}" class="complete-painting-art-card-slot"><span>${id + 1}</span></div>
             </div>
         `
-    }
-
-    private createBackgroundSlot() {
-        return `
-            <div>
-                <div class="center-button-wrapper button-wrapper"><a id="change-background-button" class="bgabutton bgabutton_blue"><i class="fa fa-refresh" aria-hidden="true"></i></a></div>
-                <div id="complete-painting-background-card-slot" class="complete-painting-art-card-slot"></div>
-            </div>
-        `
-    }
-
-    private createBackgroundElement(card: Card, postfix: string = 'clone') {
-        console.log(card);
-        const clone = this.canvasGame.backgroundCardManager.getCardElement(card).cloneNode(true) as any;
-        clone.id = `${clone.id}-${postfix}`;
-        clone.style = '';
-        return clone;
     }
 
     private createArtCardElement(card: Card, postfix: string = 'clone') {
@@ -260,7 +239,7 @@ class PaintingManager {
     }
 
     private updatePreview() {
-        this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large')
+        this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'medium')
 
         const artCardIds = this.completePaintingMode.painting.artCards.map(card => card ? card.id : null);
         this.canvasGame.takeNoLockAction('scorePainting', {

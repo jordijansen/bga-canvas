@@ -11,8 +11,8 @@ const ANIMATION_MS = 800;
 const TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 const CARD_WIDTH = 250;
 const CARD_HEIGHT = 425;
-const INSPIRATION_TOKEN_WIDTH = 60;
-const INSPIRATION_TOKEN_HEIGHT = 52;
+const INSPIRATION_TOKEN_WIDTH = 45;
+const INSPIRATION_TOKEN_HEIGHT = 39;
 const RIBBON_TOKEN_WIDTH = 88;
 const RIBBON_TOKEN_HEIGHT = 140;
 

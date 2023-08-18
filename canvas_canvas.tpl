@@ -27,20 +27,27 @@
 
 
 <div id="canvas-table">
-    <div id="complete-painting-wrapper">
-        <div id="complete-painting"></div>
-    </div>
-    <div id="canvas-board-wrapper">
-        <div id="canvas-board">
+    <div class="canvas-board-wrapper">
+        <div id="canvas-scoring-card-board">
             <div id="scoring-card-display">
-            </div>
-            <div id="art-card-display">
-            </div>
-            <div id="art-card-deck">
             </div>
         </div>
     </div>
-    <div id="player-areas"></div>
+    <div class="canvas-board-wrapper">
+        <div id="complete-painting"></div>
+    </div>
+    <div class="canvas-board-wrapper">
+        <div id="canvas-main-area-wrapper">
+            <div id="canvas-board">
+                <div id="art-card-display">
+                </div>
+                <div id="art-card-deck">
+                </div>
+            </div>
+            <div id="player-areas"></div>
+        </div>
+
+    </div>
     <div id="canvas-show-painting-overlay"></div>
 </div>
 

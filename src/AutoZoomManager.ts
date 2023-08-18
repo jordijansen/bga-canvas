@@ -1,5 +1,5 @@
 const determineBoardWidth = () => {
-    return 2000;
+    return 1000;
 }
 
 const determineMaxZoomLevel = () => {

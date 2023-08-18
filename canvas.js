@@ -2177,7 +2177,7 @@ var Numbers = /** @class */ (function () {
     return Numbers;
 }());
 var determineBoardWidth = function () {
-    return 2000;
+    return 1000;
 };
 var determineMaxZoomLevel = function () {
     var bodycoords = dojo.marginBox("zoom-overall");
@@ -2441,6 +2441,8 @@ var ScoringCardManager = /** @class */ (function (_super) {
         var _this = this;
         this.display = new SlotStock(this, $('scoring-card-display'), {
             mapCardToSlot: function (card) { return "scoring-card-display-slot-".concat(card.location); },
+            gap: '25px',
+            center: false,
             slotClasses: ['scoring-card-display-slot'],
             slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple', 'scoring-card-display-slot-grey'],
         });
@@ -2718,11 +2720,9 @@ var PaintingManager = /** @class */ (function () {
         this.completePaintingMode.painting.backgroundCard = this.completePaintingMode.painting.backgroundCard ? this.completePaintingMode.painting.backgroundCard : backgroundCards[0];
         dojo.place(this.createCompletePaintingPickerElement(), 'complete-painting');
         dojo.place(this.createCompletePaintingPreviewElement(), 'complete-painting');
-        dojo.place(this.createBackgroundSlot(), 'art-cards-picker-top-text', 'before');
-        dojo.place(this.createBackgroundElement(this.completePaintingMode.painting.backgroundCard), 'complete-painting-background-card-slot');
         dojo.connect($('change-background-button'), 'onclick', function () { return _this.changeBackgroundCard(); });
         var _loop_4 = function (i) {
-            dojo.place(this_2.createArtCardSlot(i), 'art-cards-picker-top-text', 'before');
+            dojo.place(this_2.createArtCardSlot(i), 'art-cards-picker');
             if (this_2.completePaintingMode.painting.artCards[i]) {
                 this_2.addCardToPaintingAtPosition(this_2.completePaintingMode.painting.artCards[i], i);
             }
@@ -2744,7 +2744,6 @@ var PaintingManager = /** @class */ (function () {
         }
         var newBackgroundCard = this.completePaintingMode.backgroundCards[newBackgroundCardIndex];
         if (newBackgroundCard) {
-            dojo.place(this.createBackgroundElement(newBackgroundCard), 'complete-painting-background-card-slot', 'only');
             this.completePaintingMode.painting.backgroundCard = newBackgroundCard;
         }
         this.updatePreview();
@@ -2764,24 +2763,13 @@ var PaintingManager = /** @class */ (function () {
         dojo.removeClass(overlayId, 'overlay-visible');
     };
     PaintingManager.prototype.createCompletePaintingPickerElement = function () {
-        return "\n            <div id=\"complete-painting-picker-wrapper\">\n                <div class=\"title-wrapper\"><div class=\"title\"><h1>".concat(_("Art Picker"), "</h1></div></div>\n                <div id=\"art-cards-picker\">\n                    <div id=\"art-cards-picker-bottom-text\"><h1>").concat(_("Back"), "</h1></div>\n                    <div id=\"art-cards-picker-top-text\"><h1>").concat(_("Front"), "</h1></div>\n                </div> \n                <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Unused Cards"), "</h1></div></div>\n                <div id=\"art-cards-picker-unused\">\n                    \n                </div> \n            </div>\n        ");
+        return "\n            <div id=\"complete-painting-picker-wrapper\">\n                <div class=\"title-wrapper\"><div class=\"title\"><h1>".concat(_("Art Picker"), "</h1></div></div>\n                <div id=\"art-cards-picker\">\n                </div> \n                <div class=\"title-wrapper\"><div class=\"title\"><h1>").concat(_("Unused Cards"), "</h1></div></div>\n                <div id=\"art-cards-picker-unused\">\n                    \n                </div> \n            </div>\n        ");
     };
     PaintingManager.prototype.createCompletePaintingPreviewElement = function () {
-        return "\n            <div id=\"complete-painting-preview\">\n                <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>".concat(_("Painting Preview"), "</h1></div></div>\n                <div id=\"complete-painting-preview-scoring\" class=\"canvas-painting-ribbons\"></div>\n                <div id=\"complete-painting-preview-slot-wrapper\">\n                    <div id=\"complete-painting-preview-slot\" class=\"canvas-painting\"></div>   \n                </div>  \n            </div>\n        ");
+        return "\n            <div id=\"complete-painting-preview\">\n                <div class=\"title-wrapper\"><div class=\"title secondary\"><h1>".concat(_("Painting Preview"), "</h1></div></div>\n                <div id=\"complete-painting-preview-scoring\" class=\"canvas-painting-ribbons\"></div>\n                <div id=\"complete-painting-preview-slot-wrapper\">\n                    <div id=\"complete-painting-preview-slot\" class=\"canvas-painting\"></div>   \n                </div>  \n                <a id=\"change-background-button\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i> ").concat(_('Change Background'), "</a>\n            </div>\n        ");
     };
     PaintingManager.prototype.createArtCardSlot = function (id) {
         return "\n            <div>\n                <div class=\"button-wrapper center-overlap-button-wrapper\">\n                    <a id=\"art-cards-swap-".concat(id, "\" class=\"bgabutton bgabutton_blue\" style=\"").concat(id === 2 ? 'display: none;' : '', "\"><i class=\"fa fa-exchange\" aria-hidden=\"true\"></i></a>\n                </div>\n                <div id=\"complete-painting-art-card-slot-").concat(id, "\" class=\"complete-painting-art-card-slot\"><span>").concat(id + 1, "</span></div>\n            </div>\n        ");
-    };
-    PaintingManager.prototype.createBackgroundSlot = function () {
-        return "\n            <div>\n                <div class=\"center-button-wrapper button-wrapper\"><a id=\"change-background-button\" class=\"bgabutton bgabutton_blue\"><i class=\"fa fa-refresh\" aria-hidden=\"true\"></i></a></div>\n                <div id=\"complete-painting-background-card-slot\" class=\"complete-painting-art-card-slot\"></div>\n            </div>\n        ";
-    };
-    PaintingManager.prototype.createBackgroundElement = function (card, postfix) {
-        if (postfix === void 0) { postfix = 'clone'; }
-        console.log(card);
-        var clone = this.canvasGame.backgroundCardManager.getCardElement(card).cloneNode(true);
-        clone.id = "".concat(clone.id, "-").concat(postfix);
-        clone.style = '';
-        return clone;
     };
     PaintingManager.prototype.createArtCardElement = function (card, postfix) {
         if (postfix === void 0) { postfix = 'clone'; }
@@ -2849,7 +2837,7 @@ var PaintingManager = /** @class */ (function () {
         dojo.place("<span>".concat(index + 1, "</span>"), "complete-painting-art-card-slot-".concat(index), 'only');
     };
     PaintingManager.prototype.updatePreview = function () {
-        this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'large');
+        this.createPaintingElement(this.completePaintingMode.painting.backgroundCard, this.completePaintingMode.painting.artCards, 'complete-painting-preview-slot', 'medium');
         var artCardIds = this.completePaintingMode.painting.artCards.map(function (card) { return card ? card.id : null; });
         this.canvasGame.takeNoLockAction('scorePainting', {
             painting: JSON.stringify({
@@ -3038,8 +3026,8 @@ var ANIMATION_MS = 800;
 var TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 var CARD_WIDTH = 250;
 var CARD_HEIGHT = 425;
-var INSPIRATION_TOKEN_WIDTH = 60;
-var INSPIRATION_TOKEN_HEIGHT = 52;
+var INSPIRATION_TOKEN_WIDTH = 45;
+var INSPIRATION_TOKEN_HEIGHT = 39;
 var RIBBON_TOKEN_WIDTH = 88;
 var RIBBON_TOKEN_HEIGHT = 140;
 var Canvas = /** @class */ (function () {

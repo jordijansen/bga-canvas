@@ -19,7 +19,8 @@ class ScoringCardManager extends CardManager<ScoringCard> {
     public setUp(gameData: CanvasGameData) {
         this.display = new SlotStock<ScoringCard>(this, $('scoring-card-display'), {
             mapCardToSlot: (card) => `scoring-card-display-slot-${card.location}`,
-
+            gap: '25px',
+            center: false,
             slotClasses: ['scoring-card-display-slot'],
             slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple', 'scoring-card-display-slot-grey'],
         });

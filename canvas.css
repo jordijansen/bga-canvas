@@ -449,8 +449,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 
 .art-card {
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
   background-size: auto 600%;
   background-image: url("img/canvas-art-cards.png");
 }
@@ -654,8 +654,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 
 .background-card {
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
   background-size: auto 300%;
   background-image: url("img/canvas-background-cards.png");
 }
@@ -726,17 +726,17 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .canvas-art-card {
   display: inline-block;
   position: relative;
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
   background-color: white;
   border-radius: 10px;
 }
 .canvas-art-card.bga-cards_selectable-card .card-side {
-  outline: 8px rgba(80, 200, 255, 0.75) solid;
+  outline: 4px rgba(80, 200, 255, 0.75) solid;
   cursor: pointer;
 }
 .canvas-art-card.bga-cards_selected-card .card-side {
-  outline: 8px rgba(124, 252, 0, 0.75) solid;
+  outline: 4px rgba(124, 252, 0, 0.75) solid;
   cursor: pointer;
 }
 .canvas-art-card.cost-indicator .card-side::before {
@@ -744,8 +744,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   filter: drop-shadow(3px 3px 3px rgba(0, 0, 0, 0.6274509804));
   width: 80px;
   height: 80px;
-  margin-left: 85px;
-  margin-top: 172.5px;
+  margin-left: 52px;
+  margin-top: 116px;
   content: "";
   background: url("img/canvas-inspiration-token-cost.png") no-repeat 0 0;
   background-size: 100%;
@@ -758,8 +758,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 }
 .canvas-art-card .card-sides .card-side {
   border-radius: 10px;
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
 }
 .canvas-art-card .card-sides .card-side > * {
   pointer-events: none;
@@ -771,13 +771,13 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .canvas-background-card {
   display: inline-block;
   position: relative;
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
 }
 .canvas-background-card .card-sides .card-side {
   border-radius: 10px;
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
 }
 .canvas-background-card .card-sides .card-side > * {
   pointer-events: none;
@@ -932,13 +932,13 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .canvas-inspiration-token {
   display: inline-block;
   position: relative;
-  width: 60px;
-  height: 52px;
+  width: 45px;
+  height: 39px;
 }
 .canvas-inspiration-token .card-sides .card-side {
   box-shadow: none;
-  width: 60px;
-  height: 52px;
+  width: 45px;
+  height: 39px;
 }
 .canvas-inspiration-token .card-sides .card-side > * {
   pointer-events: none;
@@ -1001,7 +1001,6 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
 .title-wrapper .title h1 {
   font-family: var(--canvas-custom-font);
   text-align: center;
-  font-size: 35px;
   padding-top: 10px;
   padding-left: 50px;
   padding-right: 50px;
@@ -1012,107 +1011,119 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   transform: rotateY(0deg);
 }
 
-#canvas-table #canvas-board-wrapper {
+#canvas-table .canvas-board-wrapper {
   display: flex;
   justify-content: center;
 }
-#canvas-table #canvas-board-wrapper #canvas-board {
-  background-image: url("img/canvas-board.png");
+#canvas-table .canvas-board-wrapper #canvas-scoring-card-board {
+  background-image: url("img/canvas-scoring-card-board.png");
   background-repeat: no-repeat;
-  width: 2000px;
-  height: 885px;
+  width: 1000px;
+  height: 700px;
+  filter: drop-shadow(1px 1px 1px black);
+  -webkit-filter: drop-shadow(1px 1px 1px black);
+}
+#canvas-table .canvas-board-wrapper #canvas-scoring-card-board #scoring-card-display {
+  margin-top: 75px;
+  margin-left: 20px;
+  justify-content: left;
+}
+#canvas-table .canvas-board-wrapper #canvas-scoring-card-board #scoring-card-display .scoring-card-display-slot[data-slot-id=scoring-card-display-slot-grey] {
+  position: absolute;
+  right: 0;
+  height: 700px;
+  width: 10px;
+}
+#canvas-table .canvas-board-wrapper {
+  display: flex;
+  justify-content: center;
+}
+#canvas-table .canvas-board-wrapper #canvas-board {
+  background-image: url("img/canvas-art-card-board.png");
+  background-repeat: no-repeat;
+  width: 1000px;
+  height: 328px;
   filter: drop-shadow(1px 1px 1px black);
   -webkit-filter: drop-shadow(1px 1px 1px black);
   position: relative;
-  border-radius: 25px;
+  border-radius: 10px;
+  margin: 10px 0;
 }
-#canvas-table #canvas-board-wrapper #canvas-board #art-card-display {
-  height: 425px;
-  position: absolute;
-  top: 407px;
-  margin-left: 53px;
-  width: 1570px;
+#canvas-table .canvas-board-wrapper #canvas-board #art-card-display {
+  height: 312px;
   display: flex;
-  gap: 79px;
+  gap: 9px;
+  justify-content: left;
+  padding-top: 9px;
+  padding-left: 9px;
 }
-#canvas-table #canvas-board-wrapper #canvas-board #art-card-display .art-card-display-slot {
-  width: 250px;
+#canvas-table .canvas-board-wrapper #canvas-board #art-card-display .art-card-display-slot {
+  width: 184px;
 }
-#canvas-table #canvas-board-wrapper #canvas-board #scoring-card-display {
-  height: 250px;
+#canvas-table .canvas-board-wrapper #canvas-board #art-card-deck {
+  height: 312px;
   position: absolute;
-  top: 107px;
-  margin-left: 50px;
-  display: flex;
-  gap: 40px;
+  right: -230px;
+  top: 13px;
 }
-#canvas-table #canvas-board-wrapper #canvas-board #art-card-deck {
-  height: 425px;
-  position: absolute;
-  top: 407px;
-  right: 0;
-  margin-right: 53px;
-}
-#canvas-table #complete-painting-wrapper {
+#canvas-table .canvas-board-wrapper {
   display: flex;
   justify-content: center;
 }
-#canvas-table #complete-painting-wrapper #complete-painting {
-  width: 2000px;
+#canvas-table .canvas-board-wrapper #complete-painting {
+  width: 1000px;
   background-image: url("img/canvas-white-background.png");
   background-size: 25%;
   display: flex;
   border-radius: 25px;
   justify-content: center;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper {
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: center;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused {
   display: flex;
   justify-content: center;
   padding-bottom: 10px;
   gap: 8px;
-  height: 425px;
+  flex-wrap: wrap;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused .art-card.card-side {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker-unused .art-card.card-side {
   -webkit-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
   -moz-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
   box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
   cursor: pointer;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper .button-wrapper {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper .button-wrapper {
   display: flex;
   justify-content: center;
-  width: 250px;
+  width: 184px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper .button-wrapper .bgabutton {
-  width: 170px;
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper .button-wrapper .bgabutton {
+  width: 104px;
   text-align: center;
-  font-size: 40px;
-  line-height: 20px;
+  font-size: 18px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker {
   display: flex;
   position: relative;
   gap: 8px;
   justify-content: center;
-  margin-bottom: 75px;
+  margin-bottom: 40px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .art-card.card-side {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .art-card.card-side {
   -webkit-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
   -moz-box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
   box-shadow: inset 0 0 0 8px rgba(124, 252, 0, 0.75);
   cursor: pointer;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .canvas-art-card {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .canvas-art-card {
   background-color: white;
   border-radius: 10px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker #art-cards-picker-bottom-text, #canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker #art-cards-picker-top-text {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker #art-cards-picker-bottom-text, #canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker #art-cards-picker-top-text {
   writing-mode: vertical-rl;
   text-orientation: upright;
   text-transform: uppercase;
@@ -1120,20 +1131,20 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   font-weight: bolder;
   padding: 10px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .center-button-wrapper {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .center-button-wrapper {
   position: absolute;
-  top: 172.5px;
+  top: 116px;
   z-index: 15;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .center-overlap-button-wrapper {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .center-overlap-button-wrapper {
   position: absolute;
-  bottom: -75px;
+  bottom: -50px;
   z-index: 15;
-  margin-left: 130px;
+  margin-left: 95px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .complete-painting-art-card-slot {
-  width: 250px;
-  height: 425px;
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-picker-wrapper #art-cards-picker .complete-painting-art-card-slot {
+  width: 184px;
+  height: 312px;
   border: 3px solid lightgrey;
   border-radius: 10px;
   box-sizing: border-box;
@@ -1144,20 +1155,18 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   font-size: 80px;
   color: lightgrey;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-preview {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-preview {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-bottom: 50px;
-  padding-top: 50px;
-  padding-right: 50px;
+  padding-right: 10px;
 }
-#canvas-table #complete-painting-wrapper #complete-painting #complete-painting-preview #complete-painting-preview-slot-wrapper {
+#canvas-table .canvas-board-wrapper #complete-painting #complete-painting-preview #complete-painting-preview-slot-wrapper {
   background-image: url("img/canvas-painting-frame.png");
   background-size: cover;
-  width: 545px;
-  height: 810px;
+  width: 360px;
+  height: 535px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1169,14 +1178,14 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   align-items: center;
 }
 #canvas-table #player-areas .player-area {
-  width: 1980px;
+  width: 980px;
   backdrop-filter: blur(10px);
 }
 #canvas-table #player-areas .player-area .player-hand {
-  height: 425px;
+  height: 312px;
 }
 #canvas-table #player-areas .player-area .player-finished-paintings {
-  height: 650px;
+  height: 537px;
   display: flex;
   justify-content: center;
   gap: 25px;
@@ -1234,8 +1243,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   align-items: center;
 }
 .canvas-painting .canvas-painting-cards-wrapper {
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
   position: relative;
 }
 .canvas-painting .canvas-painting-cards-wrapper .canvas-art-card {
@@ -1245,13 +1254,21 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   position: absolute;
   top: 0;
   left: 0;
-  width: 250px;
-  height: 425px;
+  width: 184px;
+  height: 312px;
 }
 .canvas-painting .bgabutton {
-  width: 170px;
+  width: 104px;
   text-align: center;
   font-size: 40px;
+}
+.canvas-painting.medium .canvas-painting-cards-wrapper {
+  width: 235px;
+  height: 398px;
+}
+.canvas-painting.medium .canvas-painting-cards-wrapper .art-card, .canvas-painting.medium .canvas-painting-cards-wrapper .background-card, .canvas-painting.medium .canvas-painting-cards-wrapper .card {
+  width: 235px;
+  height: 398px;
 }
 .canvas-painting.large #canvas-copyright {
   width: 363px;
@@ -1338,8 +1355,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   font-size: 35px;
 }
 .player-board .canvas-counters .canvas-ribbon {
-  width: 22px;
-  height: 35px;
+  width: 33px;
+  height: 53px;
   margin: 5px;
 }
 
