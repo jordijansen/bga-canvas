@@ -17,7 +17,7 @@ const getZoomLevels = (maxZoomLevels: number) => {
         const increments = (maxZoomLevelsAbove1 / 3)
         zoomLevels = [ (increments) + 1, increments + increments + 1, increments + increments + increments + 1 ]
     }
-    zoomLevels = [...zoomLevels, 1, 0.8, 0.6];
+    zoomLevels = [...zoomLevels, 1, 0.8, 0.7, 0.6, 0.5, 0.4];
     return zoomLevels.sort();
 }
 

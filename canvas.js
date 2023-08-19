@@ -2192,7 +2192,7 @@ var getZoomLevels = function (maxZoomLevels) {
         var increments = (maxZoomLevelsAbove1 / 3);
         zoomLevels = [(increments) + 1, increments + increments + 1, increments + increments + increments + 1];
     }
-    zoomLevels = __spreadArray(__spreadArray([], zoomLevels, true), [1, 0.8, 0.6], false);
+    zoomLevels = __spreadArray(__spreadArray([], zoomLevels, true), [1, 0.8, 0.7, 0.6, 0.5, 0.4], false);
     return zoomLevels.sort();
 };
 var AutoZoomManager = /** @class */ (function (_super) {
@@ -2304,7 +2304,7 @@ var ArtCardManager = /** @class */ (function (_super) {
             slotsIds: ['art-card-display-slot-1', 'art-card-display-slot-2', 'art-card-display-slot-3', 'art-card-display-slot-4', 'art-card-display-slot-5']
         });
         for (var playersKey in gameData.players) {
-            this.playerHand[Number(playersKey)] = new LineStock(this, $("player-hand-".concat(playersKey)), {});
+            this.playerHand[Number(playersKey)] = new LineStock(this, $("player-hand-".concat(playersKey)), { wrap: 'wrap' });
             this.playerHand[Number(playersKey)].addCards(gameData.players[playersKey].handCards);
         }
         gameData.displayCards.forEach(function (card) {
@@ -2441,7 +2441,7 @@ var ScoringCardManager = /** @class */ (function (_super) {
         var _this = this;
         this.display = new SlotStock(this, $('scoring-card-display'), {
             mapCardToSlot: function (card) { return "scoring-card-display-slot-".concat(card.location); },
-            gap: '25px',
+            gap: '5px',
             center: false,
             slotClasses: ['scoring-card-display-slot'],
             slotsIds: ['scoring-card-display-slot-red', 'scoring-card-display-slot-green', 'scoring-card-display-slot-blue', 'scoring-card-display-slot-purple', 'scoring-card-display-slot-grey'],

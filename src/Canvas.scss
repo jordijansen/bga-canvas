@@ -90,8 +90,8 @@ $landscape-card-height: 250px;
 $inspiration-token-card-width: 45px;
 $inspiration-token-card-height: 39px;
 
-$ribbon-token-width: 33px;
-$ribbon-token-height: 53px;
+$ribbon-token-width: 22px;
+$ribbon-token-height: 35px;
 
 
 @mixin selectable {
@@ -476,24 +476,35 @@ html, .mode_3d #game_play_area_background {
     justify-content: center;
 
     #canvas-scoring-card-board {
-      background-image: url('img/canvas-scoring-card-board.png');
-      background-repeat: no-repeat;
-      width: 1000px;
-      height: 700px;
-      filter: drop-shadow(1px 1px 1px black);
-      -webkit-filter: drop-shadow(1px 1px 1px black);
 
       #scoring-card-display {
-        margin-top: 75px;
-        margin-left: 20px;
-        justify-content: left;
+        justify-content: center;
 
         .scoring-card-display-slot {
+          filter: drop-shadow(1px 1px 1px black);
+          -webkit-filter: drop-shadow(1px 1px 1px black);
+          height: 335px;
+          width: 450px;
           &[data-slot-id="scoring-card-display-slot-grey"] {
-            position: absolute;
-            right: 0;
-            height: 700px;
-            width: 10px;
+            width: 74px;
+            background-image: url('img/canvas-scoring-slot-grey.png');
+          }
+          &[data-slot-id="scoring-card-display-slot-red"] {
+            background-image: url('img/canvas-scoring-slot-red.png');
+          }
+          &[data-slot-id="scoring-card-display-slot-green"] {
+            background-image: url('img/canvas-scoring-slot-green.png');
+          }
+          &[data-slot-id="scoring-card-display-slot-blue"] {
+            background-image: url('img/canvas-scoring-slot-blue.png');
+          }
+          &[data-slot-id="scoring-card-display-slot-purple"] {
+            background-image: url('img/canvas-scoring-slot-purple.png');
+          }
+
+          .canvas-scoring-card {
+            margin-top: 73px;
+            margin-left: 15px;
           }
         }
       }
@@ -518,7 +529,7 @@ html, .mode_3d #game_play_area_background {
       margin: 10px 0;
 
       #art-card-display {
-        height: $portrait-card-height;
+        min-height: $portrait-card-height;
         display: flex;
         gap: 9px;
         justify-content: left;
@@ -661,15 +672,17 @@ html, .mode_3d #game_play_area_background {
   #player-areas {
     display: flex;
     justify-content: center;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
 
     .player-area {
-      width: 980px;
+      min-width: 570px;
+      flex: 1;
       backdrop-filter: blur(10px);
 
       .player-hand {
-        height: $portrait-card-height;
+        min-height: $portrait-card-height;
       }
 
       .player-finished-paintings {

@@ -36,7 +36,7 @@ class ArtCardManager extends CardManager<Card> {
         });
 
         for (const playersKey in gameData.players) {
-            this.playerHand[Number(playersKey)] = new LineStock<Card>(this, $(`player-hand-${playersKey}`), {})
+            this.playerHand[Number(playersKey)] = new LineStock<Card>(this, $(`player-hand-${playersKey}`), { wrap: 'wrap'})
             this.playerHand[Number(playersKey)].addCards(gameData.players[playersKey].handCards);
         }
 

@@ -44,10 +44,9 @@
                 <div id="art-card-deck">
                 </div>
             </div>
-            <div id="player-areas"></div>
         </div>
-
     </div>
+    <div id="player-areas"></div>
     <div id="canvas-show-painting-overlay"></div>
 </div>
 
