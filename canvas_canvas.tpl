@@ -37,12 +37,12 @@
         <div id="complete-painting"></div>
     </div>
     <div class="canvas-board-wrapper">
-        <div id="canvas-main-area-wrapper">
-            <div id="canvas-board">
-                <div id="art-card-display">
-                </div>
-                <div id="art-card-deck">
-                </div>
+        <div id="canvas-board">
+            <div id="art-card-display">
+
+            </div>
+            <div id="art-card-deck">
+
             </div>
         </div>
     </div>

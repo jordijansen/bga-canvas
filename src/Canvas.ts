@@ -31,6 +31,8 @@ class Canvas implements CanvasGame {
     private playerManager: PlayerManager;
     private paintingManager: PaintingManager;
     private ribbonManager: RibbonManager;
+    private jumpToManager: JumpToManager;
+    private gameinterface_zoomFactor: number;
 
     constructor() {
 
@@ -70,6 +72,15 @@ class Canvas implements CanvasGame {
         this.inspirationTokenManager.setUp(gamedatas);
         this.paintingManager.setUp(gamedatas);
         this.ribbonManager.setUp(gamedatas);
+
+        this.jumpToManager = new JumpToManager(this, {
+            localStorageFoldedKey: 'canvas-jumpto-folded',
+            entryClasses: 'round-point',
+            topEntries: [
+                new JumpToEntry(_('Scoring Cards'), 'canvas-scoring-card-board', { 'color': 'darkgray' }),
+                new JumpToEntry(_('Art Card Display'), 'canvas-board', { 'color': 'darkgray' })
+            ],
+        });
 
         this.setupNotifications();
         log( "Ending game setup" );

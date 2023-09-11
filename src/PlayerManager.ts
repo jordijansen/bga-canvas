@@ -5,9 +5,12 @@ class PlayerManager  {
 
     public setUp(gameData: CanvasGameData) {
         const playerAreas = [];
+        let players = [];
         for (const playerId in gameData.players) {
-            const player = gameData.players[playerId];
-
+            players.push(gameData.players[playerId]);
+        }
+        players = this.getOrderedPlayers(players);
+        players.forEach(player => {
             const playerArea=this.createPlayerArea(player);
             if (Number(player.id) === this.game.getPlayerId()) {
                 playerAreas.unshift(playerArea);
@@ -16,8 +19,14 @@ class PlayerManager  {
             }
 
             this.createPlayerPanels(player);
-        }
+        })
         playerAreas.forEach(playerArea => dojo.place(playerArea, "player-areas"))
+    }
+
+    private getOrderedPlayers(players: CanvasPlayer[]) {
+        const result = players.sort((a, b) => Number(a.playerNo) - Number(b.playerNo));
+        const playerIndex = result.findIndex(player => Number(player.id) === Number((this.game as any).player_id));
+        return playerIndex > 0 ? [...players.slice(playerIndex), ...players.slice(0, playerIndex)] : players;
     }
 
     public createVincentPlayerPanel() {
@@ -51,7 +60,7 @@ class PlayerManager  {
     }
 
     private createPlayerArea(player: CanvasPlayer) {
-        return `<div id="player-area-${player.id}" class="player-area whiteblock">
+        return `<div id="player-table-${player.id}" class="player-area whiteblock">
                     <div class="title-wrapper"><div class="title color-${player.color}"><h1>${dojo.string.substitute( _("${playerName}'s Art Collection"), {playerName: player.name} )}</h1></div></div>
                     <div id="player-inspiration-tokens-${player.id}"></div>
                     <div class="title-wrapper"><div class="title color-${player.color}"><h1>${_("Hand Cards")}</h1></div></div>

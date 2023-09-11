@@ -28,7 +28,7 @@ class ScoringCardManager extends CardManager<ScoringCard> {
         this.display.onCardClick = (card) => this.flipCard(card);
 
         gameData.scoringCards.forEach(card => this.display.addCard(card).then(() => {
-            (this.canvasGame as Canvas).setTooltip(this.getId(card), this.formatDescription(card.description))
+            (this.canvasGame as Canvas).setTooltip(this.getId(card), this.formatDescription(_(card.description)))
         }))
     }
 
@@ -66,7 +66,7 @@ class ScoringCardManager extends CardManager<ScoringCard> {
 
             const description = document.createElement('div');
             description.classList.add('scoring-card-description')
-            description.innerHTML = this.formatDescription(card.description)
+            description.innerHTML = this.formatDescription(_(card.description))
             div.appendChild(description);
 
             const examples = document.createElement('div');
@@ -78,9 +78,17 @@ class ScoringCardManager extends CardManager<ScoringCard> {
     }
 
     private formatDescription(description) {
-        //@ts-ignore
-        return bga_format(_(description), {
-            '_': (t) => `<span class="canvas-element-icon ${t}"></span>`
-        });
+        const tags = description.match(/<[^>]*?>/g);
+        tags.forEach(originalTag => {
+            if (originalTag.includes('icon-')) {
+                let tag = '';
+                tag = originalTag.replace('<', '')
+                tag = tag.replace('>', '');
+                const resultTag = `<span class="canvas-element-icon ${tag}"></span>`;
+                description = description.replace(originalTag, resultTag)
+            }
+        })
+
+        return description;
     }
 }

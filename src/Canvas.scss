@@ -70,6 +70,7 @@
 
 @import '../node_modules/bga-zoom/bga-zoom';
 @import '../node_modules/bga-cards/bga-cards';
+@import '../node_modules/bga-jump-to/bga-jump-to';
 @import 'LoadingIndicator';
 
 $portrait-card-width: 184px;
@@ -184,6 +185,11 @@ html, .mode_3d #game_play_area_background {
   height: $portrait-card-height;
   background-size: auto 600%;
   background-image: url('img/canvas-art-cards.png');
+
+  &.art-card-medium {
+    width: $medium-portrait-card-width;
+    height: $medium-portrait-card-height;
+  }
 
   @for $row from 0 through 5 {
     @for $column from 0 through 10 {
@@ -476,9 +482,11 @@ html, .mode_3d #game_play_area_background {
     justify-content: center;
 
     #canvas-scoring-card-board {
+      scroll-margin-top: 50px;
 
       #scoring-card-display {
         justify-content: center;
+        margin-bottom: 10px;
 
         .scoring-card-display-slot {
           filter: drop-shadow(1px 1px 1px black);
@@ -518,6 +526,7 @@ html, .mode_3d #game_play_area_background {
     justify-content: center;
 
     #canvas-board {
+      scroll-margin-top: 50px;
       background-image: url('img/canvas-art-card-board.png');
       background-repeat: no-repeat;
       width: 1000px;
@@ -555,16 +564,17 @@ html, .mode_3d #game_play_area_background {
     justify-content: center;
 
     #complete-painting {
-      width: 1000px;
       background-image: url('img/canvas-white-background.png');
       background-size: 25%;
       display: flex;
       border-radius: 25px;
       justify-content: center;
+      gap: 15px;
+      flex: 1;
+      max-width: 1890px;
 
       #complete-painting-picker-wrapper {
         display: flex;
-        flex: 1;
         flex-direction: column;
 
         #art-cards-picker-unused {
@@ -573,6 +583,8 @@ html, .mode_3d #game_play_area_background {
           padding-bottom: 10px;
           gap: 8px;
           flex-wrap: wrap;
+          flex: 1;
+          max-width: 955px;
           .art-card.card-side {
             -webkit-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
             -moz-box-shadow: inset 0 0 0 8px rgba(80, 200, 255, 0.75);
@@ -680,14 +692,16 @@ html, .mode_3d #game_play_area_background {
       min-width: 570px;
       flex: 1;
       backdrop-filter: blur(10px);
+      scroll-margin-top: 50px;
 
       .player-hand {
         min-height: $portrait-card-height;
       }
 
       .player-finished-paintings {
-        height: $portrait-card-height + 75px + 150px; // add button height + ribbons height
+        min-height: $portrait-card-height + 75px + 150px; // add button height + ribbons height
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
         gap: 25px;
         text-align: center;
@@ -982,4 +996,8 @@ html, .mode_3d #game_play_area_background {
     visibility: visible;
     opacity: 1;
   }
+}
+
+#bga-jump-to_controls {
+  left: -2px;
 }

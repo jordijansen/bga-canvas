@@ -17,6 +17,8 @@ class ArtCardManager extends CardManager<Card> {
                 div.classList.add('art-card')
                 div.classList.add('art-card-'+card.type_arg)
                 div.dataset.type = ''+card.type_arg;
+                this.canvasGame.setTooltip(div.id, this.getTooltip(card as ArtCard))
+
             },
             isCardVisible: (card: Card) => !!card.type,
             cardWidth: CARD_WIDTH,
@@ -43,7 +45,7 @@ class ArtCardManager extends CardManager<Card> {
         gameData.displayCards.forEach(card => {
             this.display.addCard(card)
             dojo.place(`<div id="inspiration-token-card-stock-${card.id}" class="inspiration-token-card-stock"></div>`, this.getCardElement(card).getAttribute("id"))
-        })
+        });
     }
 
     public setUpVincent() {
@@ -116,5 +118,12 @@ class ArtCardManager extends CardManager<Card> {
 
     getPlayerCards(playerId: number) {
         return this.playerHand[playerId].getCards();
+    }
+
+    private getTooltip(card: ArtCard) {
+        return `<div>
+                    <div class="title-wrapper"><div class="title"><h1>${card.name}</h1></div></div>
+                    <div class="art-card art-card-${card.type_arg}"></div>
+               </div>`;
     }
 }

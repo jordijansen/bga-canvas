@@ -12,6 +12,10 @@ interface ScoringCard extends Card {
     description: string
 }
 
+interface ArtCard extends Card {
+    name: string
+}
+
 interface Token {
     id: number,
     type?: string,
@@ -56,6 +60,7 @@ interface CanvasGame extends Game {
     getPlayer(playerId: number): CanvasPlayer;
     isReadOnly(): boolean;
     setTooltipToClass(className: string, html: string): void;
+    setTooltip(id: string, tooltip: string): void;
 }
 
 interface TakeArtCardArgs {

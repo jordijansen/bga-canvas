@@ -36,6 +36,8 @@
     "node_modules/bga-cards/src/card-manager.ts",
     "node_modules/bga-cards/src/sort.ts",
 
+    "node_modules/bga-jump-to/src/jump-to-manager.ts",
+
     "src/Numbers.ts",
     "src/AutoZoomManager.ts",
     "src/CounterVoidStock.ts",
