@@ -2287,40 +2287,50 @@ var Numbers = /** @class */ (function () {
 var determineBoardWidth = function () {
     return 1000;
 };
-var determineMaxZoomLevel = function () {
+var determineMaxZoomLevel = function (game) {
     var bodycoords = dojo.marginBox("zoom-overall");
     var contentWidth = bodycoords.w;
     var rowWidth = determineBoardWidth();
     return contentWidth / rowWidth;
 };
-var getZoomLevels = function (maxZoomLevels) {
+var getZoomLevels = function (maxZoomLevel) {
     var zoomLevels = [];
-    if (maxZoomLevels > 1) {
-        var maxZoomLevelsAbove1 = maxZoomLevels - 1;
-        var increments = (maxZoomLevelsAbove1 / 3);
-        zoomLevels = [(increments) + 1, increments + increments + 1, increments + increments + increments + 1];
+    var increments = 0.05;
+    if (maxZoomLevel > 1) {
+        var maxZoomLevelsAbove1 = maxZoomLevel - 1;
+        increments = (maxZoomLevelsAbove1 / 9);
+        zoomLevels = [];
+        for (var i = 1; i <= 9; i++) {
+            zoomLevels.push((increments * i) + 1);
+        }
     }
-    zoomLevels = __spreadArray(__spreadArray([], zoomLevels, true), [1, 0.8, 0.7, 0.6, 0.5, 0.4], false);
-    return zoomLevels.sort();
+    for (var i = 1; i <= 9; i++) {
+        zoomLevels.push(1 - (increments * i));
+    }
+    zoomLevels = __spreadArray(__spreadArray([], zoomLevels, true), [1, maxZoomLevel], false);
+    zoomLevels = zoomLevels.sort();
+    zoomLevels = zoomLevels.filter(function (zoomLevel) { return (zoomLevel <= maxZoomLevel) && (zoomLevel > 0.3); });
+    return zoomLevels;
 };
 var AutoZoomManager = /** @class */ (function (_super) {
     __extends(AutoZoomManager, _super);
-    function AutoZoomManager(elementId, localStorageKey) {
+    function AutoZoomManager(game, elementId, localStorageKey) {
         var storedZoomLevel = localStorage.getItem(localStorageKey);
-        var maxZoomLevel = determineMaxZoomLevel();
+        var maxZoomLevel = determineMaxZoomLevel(game);
         if (storedZoomLevel && Number(storedZoomLevel) > maxZoomLevel) {
             localStorage.removeItem(localStorageKey);
         }
-        var zoomLevels = getZoomLevels(determineMaxZoomLevel());
+        var zoomLevels = getZoomLevels(determineMaxZoomLevel(game));
+        console.log(zoomLevels);
+        console.log(maxZoomLevel < 1 ? maxZoomLevel : 1);
         return _super.call(this, {
             element: document.getElementById(elementId),
-            smooth: true,
+            smooth: false,
             zoomLevels: zoomLevels,
-            defaultZoom: 1,
-            localStorageZoomKey: localStorageKey,
+            defaultZoom: maxZoomLevel < 1 ? maxZoomLevel : 1,
             zoomControls: {
-                color: 'black',
-                position: 'top-right'
+                color: 'white',
+                position: 'top-right',
             }
         }) || this;
     }
@@ -3162,6 +3172,8 @@ var RIBBON_TOKEN_WIDTH = 88;
 var RIBBON_TOKEN_HEIGHT = 140;
 var Canvas = /** @class */ (function () {
     function Canvas() {
+        //@ts-ignore
+        this.default_viewport = 'width=1000';
     }
     /*
         setup:
@@ -3178,7 +3190,7 @@ var Canvas = /** @class */ (function () {
     Canvas.prototype.setup = function (gamedatas) {
         log("Starting game setup");
         log('gamedatas', gamedatas);
-        this.zoomManager = new AutoZoomManager('canvas-table', 'canvas-zoom-level');
+        this.zoomManager = new AutoZoomManager(this, 'canvas-table', 'canvas-zoom-level');
         this.animationManager = new AnimationManager(this, { duration: ANIMATION_MS });
         this.scoringCardManager = new ScoringCardManager(this);
         this.playerManager = new PlayerManager(this);

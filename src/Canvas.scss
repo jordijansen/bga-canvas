@@ -132,6 +132,11 @@ $ribbon-token-height: 35px;
   }
 }
 
+#page-content,
+#right-side-first-part {
+  zoom: 1 !important;
+}
+
 :root {
   --canvas-custom-font: Roboto,Arial,sans-serif;
 }

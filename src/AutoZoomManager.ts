@@ -2,7 +2,8 @@ const determineBoardWidth = () => {
     return 1000;
 }
 
-const determineMaxZoomLevel = () => {
+
+const determineMaxZoomLevel = (game: Canvas) => {
     const bodycoords = dojo.marginBox("zoom-overall");
     const contentWidth = bodycoords.w;
     const rowWidth = determineBoardWidth();
@@ -10,36 +11,47 @@ const determineMaxZoomLevel = () => {
     return contentWidth / rowWidth;
 }
 
-const getZoomLevels = (maxZoomLevels: number) => {
+const getZoomLevels = (maxZoomLevel: number) => {
     let zoomLevels = [];
-    if (maxZoomLevels > 1) {
-        const maxZoomLevelsAbove1 = maxZoomLevels - 1;
-        const increments = (maxZoomLevelsAbove1 / 3)
-        zoomLevels = [ (increments) + 1, increments + increments + 1, increments + increments + increments + 1 ]
+    let increments = 0.05;
+    if (maxZoomLevel > 1) {
+        const maxZoomLevelsAbove1 = maxZoomLevel - 1;
+        increments = (maxZoomLevelsAbove1 / 9)
+        zoomLevels = [];
+        for (let i = 1; i <= 9; i++) {
+            zoomLevels.push((increments * i) + 1);
+        }
     }
-    zoomLevels = [...zoomLevels, 1, 0.8, 0.7, 0.6, 0.5, 0.4];
-    return zoomLevels.sort();
+    for (let i = 1; i <= 9; i++) {
+        zoomLevels.push(1 - (increments * i));
+    }
+    zoomLevels = [...zoomLevels, 1, maxZoomLevel];
+    zoomLevels = zoomLevels.sort();
+    zoomLevels = zoomLevels.filter(zoomLevel => (zoomLevel <= maxZoomLevel) && (zoomLevel > 0.3))
+    return zoomLevels;
 }
 
 class AutoZoomManager extends ZoomManager {
 
-    constructor(elementId: string, localStorageKey: string) {
+    constructor(game: Canvas, elementId: string, localStorageKey: string) {
         const storedZoomLevel = localStorage.getItem(localStorageKey);
-        const maxZoomLevel = determineMaxZoomLevel();
+        const maxZoomLevel = determineMaxZoomLevel(game);
         if (storedZoomLevel && Number(storedZoomLevel) > maxZoomLevel) {
             localStorage.removeItem(localStorageKey);
         }
 
-        const zoomLevels = getZoomLevels(determineMaxZoomLevel());
+        const zoomLevels = getZoomLevels(determineMaxZoomLevel(game));
+        console.log(zoomLevels);
+        console.log(maxZoomLevel < 1 ? maxZoomLevel : 1);
         super({
             element: document.getElementById(elementId),
-            smooth: true,
+            smooth: false,
             zoomLevels: zoomLevels,
-            defaultZoom: 1,
-            localStorageZoomKey: localStorageKey,
+            defaultZoom: maxZoomLevel < 1 ? maxZoomLevel : 1,
             zoomControls: {
-                color: 'black',
-                position: 'top-right'
+                color: 'white',
+                position: 'top-right',
+
             }
         });
     }

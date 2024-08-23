@@ -526,6 +526,11 @@ body > .card {
     transform: translate(24px, 0);
   }
 }
+#page-content,
+#right-side-first-part {
+  zoom: 1 !important;
+}
+
 :root {
   --canvas-custom-font: Roboto,Arial,sans-serif;
 }

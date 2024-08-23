@@ -35,7 +35,8 @@ class Canvas implements CanvasGame {
     private gameinterface_zoomFactor: number;
 
     constructor() {
-
+        //@ts-ignore
+        this.default_viewport = 'width=1000';
     }
 
     /*
@@ -55,7 +56,7 @@ class Canvas implements CanvasGame {
         log( "Starting game setup" );
         log('gamedatas', gamedatas);
 
-        this.zoomManager = new AutoZoomManager('canvas-table', 'canvas-zoom-level');
+        this.zoomManager = new AutoZoomManager(this, 'canvas-table', 'canvas-zoom-level');
         this.animationManager = new AnimationManager(this, {duration: ANIMATION_MS});
         this.scoringCardManager = new ScoringCardManager(this);
         this.playerManager = new PlayerManager(this);
