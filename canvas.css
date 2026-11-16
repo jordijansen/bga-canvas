@@ -1609,4 +1609,8 @@ html .whiteblock, .mode_3d #game_play_area_background .whiteblock {
   left: -2px;
 }
 
+html[data-theme=dark] .player-board {
+  color: black;
+}
+
 /*# sourceMappingURL=canvas.css.map */

@@ -35,8 +35,6 @@ class Canvas implements CanvasGame {
     private gameinterface_zoomFactor: number;
 
     constructor() {
-        //@ts-ignore
-        this.default_viewport = 'width=1000';
     }
 
     /*

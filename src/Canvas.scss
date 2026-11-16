@@ -1006,3 +1006,10 @@ html, .mode_3d #game_play_area_background {
 #bga-jump-to_controls {
   left: -2px;
 }
+
+html[data-theme="dark"] {
+  .player-board
+  {
+    color: black;
+  }
+}
